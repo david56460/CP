@@ -3,9 +3,9 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<title>Pilou CP — Lecture &amp; Maths</title>
+<title>Enfant de Dieu CP</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;700;800&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;700;800&family=Nunito:wght@400;600;700;800&family=Cinzel:wght@600;700&display=swap" rel="stylesheet">
 <style>
   :root{
     --sky:#EAF6FF;
@@ -15,6 +15,7 @@
     --coral:#FF6F59;
     --leaf:#4CB963;
     --lilac:#A29BFE;
+    --gold:#D8A234;
     --white:#FFFFFF;
     --shadow: 0 6px 0 rgba(43,42,76,0.15);
   }
@@ -43,7 +44,31 @@
     background:var(--white);border-radius:28px;padding:32px 28px;max-width:380px;width:100%;
     box-shadow:var(--shadow);text-align:center;
   }
-  .mascotte{font-size:64px;line-height:1;margin-bottom:4px;}
+  .mascotte{
+    position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;
+    padding:16px 0 4px;
+  }
+  .mascotte::before{
+    content:"";position:absolute;top:-6px;left:50%;transform:translateX(-50%);
+    width:200px;height:110px;
+    background:radial-gradient(ellipse at center, rgba(255,215,0,0.38) 0%, rgba(255,215,0,0) 72%);
+    filter:blur(4px);z-index:0;
+  }
+  .logo-yeshua{
+    position:relative;z-index:1;font-family:'Cinzel', serif;font-weight:700;font-size:38px;
+    letter-spacing:3px;
+    background:linear-gradient(135deg, #F7DE93 0%, #D8A234 45%, #FFF7DD 70%, #C8901E 100%);
+    -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent;
+    text-shadow:0 0 22px rgba(216,162,52,.45);
+  }
+  .logo-yeshua-heb{
+    position:relative;z-index:1;font-size:16px;letter-spacing:2px;color:#B8860B;margin-top:2px;
+  }
+  .logo-yeshua-mini{
+    font-family:'Cinzel', serif;font-weight:700;font-size:17px;letter-spacing:1px;
+    background:linear-gradient(135deg, #F7DE93 0%, #D8A234 60%, #C8901E 100%);
+    -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent;
+  }
   .login-card h1{font-size:28px;margin:8px 0 4px;color:var(--indigo);}
   .login-card p{margin:0 0 20px;font-size:15px;color:#5b5a7a;}
   .field{text-align:left;margin-bottom:14px;}
@@ -85,6 +110,7 @@
   .tab.active{opacity:1;transform:translateY(-2px);}
   .tab.tab-lecture.active{background:var(--leaf);color:white;box-shadow:0 5px 0 #348a45;}
   .tab.tab-maths.active{background:var(--lilac);color:white;box-shadow:0 5px 0 #7b73e0;}
+  .tab.tab-bible.active{background:var(--gold);color:white;box-shadow:0 5px 0 #a87a1c;}
 
   .path{position:relative;padding:10px 0 20px;}
   .node-wrap{display:flex;margin-bottom:6px;}
@@ -158,9 +184,12 @@
 <!-- ============ ÉCRAN DE CONNEXION ============ -->
 <div id="login-screen">
   <div class="login-card">
-    <div class="mascotte">🦊</div>
-    <h1>Pilou CP</h1>
-    <p>Lecture &amp; Maths, en s'amusant !</p>
+    <div class="mascotte">
+      <div class="logo-yeshua">Yeshua</div>
+      <div class="logo-yeshua-heb">ישוע</div>
+    </div>
+    <h1>Enfant de Dieu CP</h1>
+    <p>Lecture, Maths &amp; Bible, en s'amusant !</p>
     <div class="field">
       <label for="input-prenom">Ton prénom</label>
       <input id="input-prenom" type="text" placeholder="Ex : Léa" autocomplete="off">
@@ -178,7 +207,7 @@
 <div id="app-screen" class="hidden">
   <header class="topbar">
     <div class="who">
-      <span class="mascotte-mini">🦊</span>
+      <span class="mascotte-mini logo-yeshua-mini">Yeshua</span>
       <span id="topbar-name">—</span>
     </div>
     <div class="stats">
@@ -190,6 +219,7 @@
   <div class="tabs">
     <div class="tab tab-lecture active" id="tab-lecture" onclick="switchTrack('lecture')">📖 Lecture</div>
     <div class="tab tab-maths" id="tab-maths" onclick="switchTrack('maths')">🔢 Maths</div>
+    <div class="tab tab-bible" id="tab-bible" onclick="switchTrack('bible')">📖 Bible</div>
   </div>
 
   <div class="badges-row" id="badges-row"></div>
@@ -380,6 +410,88 @@ const CONTENT = {
         {type:"texte", q:"Une classe a 12 filles et 9 garçons. Combien d'élèves y a-t-il en tout ?", answer:"21"}
       ]
     }
+  ],
+  bible: [
+    {
+      id:"bib1", title:"La Création", icon:"🌍",
+      cours:"Au commencement, Dieu a créé le ciel et la terre. Il a créé la lumière, puis les plantes, les animaux, et enfin l'homme et la femme. Il a vu que tout ce qu'il avait fait était très bon.",
+      exos:[
+        {type:"qcm", q:"Que Dieu a-t-il créé en premier ?", options:["le ciel et la terre","les animaux","l'homme","la lune"], answer:"le ciel et la terre"},
+        {type:"qcm", q:"Comment Dieu a-t-il trouvé sa création ?", options:["très bonne","mauvaise","triste","effrayante"], answer:"très bonne"},
+        {type:"texte", q:"Complète : « Dieu a créé la ___. » (elle brille le jour)", answer:"lumiere"},
+        {type:"qcm", q:"Qui Dieu a-t-il créé en dernier ?", options:["l'homme et la femme","les poissons","les oiseaux","les étoiles"], answer:"l'homme et la femme"}
+      ]
+    },
+    {
+      id:"bib2", title:"Noé et l'arche", icon:"🌈",
+      cours:"Dieu demande à Noé de construire une grande arche en bois. Noé fait entrer les animaux, deux par deux. La pluie tombe longtemps, mais Noé, sa famille et les animaux restent en sécurité. À la fin, Dieu envoie un arc-en-ciel dans le ciel.",
+      exos:[
+        {type:"qcm", q:"Que construit Noé ?", options:["une arche","une maison","un bateau de pêche","un pont"], answer:"une arche"},
+        {type:"qcm", q:"Comment les animaux entrent-ils dans l'arche ?", options:["deux par deux","un par un","tous ensemble","trois par trois"], answer:"deux par deux"},
+        {type:"texte", q:"Qu'est-ce que Dieu envoie dans le ciel à la fin de l'histoire ?", answer:"un arc-en-ciel"},
+        {type:"qcm", q:"Qui reste avec Noé dans l'arche ?", options:["sa famille et les animaux","ses voisins","des soldats","personne"], answer:"sa famille et les animaux"}
+      ]
+    },
+    {
+      id:"bib3", title:"La promesse à Abraham", icon:"⭐",
+      cours:"Dieu dit à Abraham de regarder le ciel la nuit. « Compte les étoiles, si tu le peux » lui dit Dieu. « Ta famille sera aussi nombreuse que ces étoiles. » Abraham fait confiance à la promesse de Dieu.",
+      exos:[
+        {type:"qcm", q:"Que Dieu demande-t-il à Abraham de regarder ?", options:["les étoiles","les nuages","les montagnes","les animaux"], answer:"les étoiles"},
+        {type:"qcm", q:"À quoi Dieu compare-t-il la famille future d'Abraham ?", options:["aux étoiles","aux grains de sable","aux oiseaux","aux fleurs"], answer:"aux étoiles"},
+        {type:"texte", q:"Complète : « Abraham fait ___ à la promesse de Dieu. » (il y croit)", answer:"confiance"},
+        {type:"qcm", q:"Quel moment de la journée Abraham regarde-t-il le ciel ?", options:["la nuit","le matin","midi","le coucher du soleil"], answer:"la nuit"}
+      ]
+    },
+    {
+      id:"bib4", title:"Moïse sauvé des eaux", icon:"🧺",
+      cours:"Un bébé nommé Moïse est en danger. Sa maman le place dans un petit panier et le dépose sur le fleuve, parmi les roseaux. La fille du pharaon trouve le panier, découvre le bébé, et décide de l'élever comme son propre fils.",
+      exos:[
+        {type:"qcm", q:"Où la maman de Moïse dépose-t-elle le panier ?", options:["sur le fleuve","dans un champ","dans une grotte","sur une montagne"], answer:"sur le fleuve"},
+        {type:"qcm", q:"Qui trouve le bébé Moïse ?", options:["la fille du pharaon","un berger","un soldat","un pêcheur"], answer:"la fille du pharaon"},
+        {type:"texte", q:"Dans quoi la maman de Moïse place-t-elle son bébé ?", answer:"un panier"},
+        {type:"qcm", q:"Que décide de faire la fille du pharaon ?", options:["élever Moïse comme son fils","le laisser sur le fleuve","le donner à un voisin","le ramener à sa maman aussitôt"], answer:"élever Moïse comme son fils"}
+      ]
+    },
+    {
+      id:"bib5", title:"David et Goliath", icon:"🪨",
+      cours:"Goliath est un géant très fort qui fait peur à toute l'armée. David, un jeune berger, n'a pas peur car il fait confiance à Dieu. Avec seulement une fronde et une petite pierre, David affronte le géant et le vainc.",
+      exos:[
+        {type:"qcm", q:"Quel est le métier de David au début de l'histoire ?", options:["berger","soldat","roi","pêcheur"], answer:"berger"},
+        {type:"qcm", q:"Avec quoi David affronte-t-il Goliath ?", options:["une fronde et une pierre","une épée","un bouclier","un arc"], answer:"une fronde et une pierre"},
+        {type:"texte", q:"Comment s'appelle le géant de l'histoire ?", answer:"goliath"},
+        {type:"qcm", q:"Pourquoi David n'a-t-il pas peur ?", options:["il fait confiance à Dieu","il est très grand","il a une armée","il ne comprend pas le danger"], answer:"il fait confiance à Dieu"}
+      ]
+    },
+    {
+      id:"bib6", title:"Daniel dans la fosse aux lions", icon:"🦁",
+      cours:"Daniel prie Dieu chaque jour, même quand c'est interdit par le roi. À cause de cela, il est jeté dans une fosse remplie de lions. Mais Dieu envoie un ange qui ferme la bouche des lions, et Daniel ressort de la fosse sans aucune blessure.",
+      exos:[
+        {type:"qcm", q:"Que fait Daniel chaque jour, même quand c'est interdit ?", options:["il prie Dieu","il chante","il dort","il travaille"], answer:"il prie Dieu"},
+        {type:"qcm", q:"Où Daniel est-il jeté ?", options:["dans une fosse aux lions","dans un puits","dans une rivière","dans une prison"], answer:"dans une fosse aux lions"},
+        {type:"texte", q:"Qui Dieu envoie-t-il pour fermer la bouche des lions ?", answer:"un ange"},
+        {type:"qcm", q:"Comment Daniel ressort-il de la fosse ?", options:["sans aucune blessure","très fatigué","blessé","malade"], answer:"sans aucune blessure"}
+      ]
+    },
+    {
+      id:"bib7", title:"La naissance de Jésus", icon:"⭐",
+      cours:"Marie et Joseph voyagent jusqu'à Bethléem. Comme il n'y a plus de place dans l'auberge, Jésus naît dans une étable et il est couché dans une mangeoire. Une étoile brille dans le ciel, et des bergers viennent lui rendre visite après avoir entendu le message des anges.",
+      exos:[
+        {type:"qcm", q:"Dans quelle ville Jésus naît-il ?", options:["Bethléem","Jérusalem","Nazareth","Rome"], answer:"Bethléem"},
+        {type:"qcm", q:"Où Jésus est-il couché juste après sa naissance ?", options:["dans une mangeoire","dans un lit","dans un panier","dans une barque"], answer:"dans une mangeoire"},
+        {type:"texte", q:"Qui vient rendre visite à Jésus après avoir entendu les anges ?", answer:"les bergers"},
+        {type:"qcm", q:"Que voit-on briller dans le ciel cette nuit-là ?", options:["une étoile","la lune","un arc-en-ciel","un feu"], answer:"une étoile"}
+      ]
+    },
+    {
+      id:"bib8", title:"Jésus partage les pains", icon:"🐟",
+      cours:"Une grande foule suit Jésus toute la journée pour l'écouter, et personne n'a de quoi manger. Un petit garçon donne cinq pains et deux poissons. Jésus remercie Dieu, partage la nourriture, et tout le monde mange à sa faim : il en reste même douze paniers pleins.",
+      exos:[
+        {type:"qcm", q:"Que donne le petit garçon à Jésus ?", options:["cinq pains et deux poissons","deux pains et cinq poissons","du pain et du fromage","des fruits"], answer:"cinq pains et deux poissons"},
+        {type:"qcm", q:"Que fait Jésus avant de partager la nourriture ?", options:["il remercie Dieu","il compte la foule","il attend la nuit","il part se reposer"], answer:"il remercie Dieu"},
+        {type:"texte", q:"Combien de paniers de nourriture reste-t-il à la fin ?", answer:"douze"},
+        {type:"qcm", q:"Pourquoi la foule suit-elle Jésus ?", options:["pour l'écouter","pour le chasser","pour lui vendre du pain","pour se cacher"], answer:"pour l'écouter"}
+      ]
+    }
   ]
 };
 
@@ -389,7 +501,7 @@ const CONTENT = {
 let student = {
   prenom:"", code:"",
   points:0, streak:0, lastConnection:"",
-  completed:{lecture:[], maths:[]},
+  completed:{lecture:[], maths:[], bible:[]},
   badges:[]
 };
 let currentTrack = "lecture";
@@ -426,11 +538,14 @@ function updateStreak(){
 function checkBadges(){
   const nbLec = student.completed.lecture.length;
   const nbMat = student.completed.maths.length;
+  const nbBib = student.completed.bible.length;
   const want = [];
   if(nbLec >= 4) want.push({id:"lec-4", icon:"📖", label:"4 leçons de lecture"});
   if(nbLec >= 8) want.push({id:"lec-8", icon:"🏆", label:"Lecture terminée"});
   if(nbMat >= 4) want.push({id:"mat-4", icon:"🔢", label:"4 leçons de maths"});
   if(nbMat >= 8) want.push({id:"mat-8", icon:"🏆", label:"Maths terminées"});
+  if(nbBib >= 4) want.push({id:"bib-4", icon:"⭐", label:"4 histoires bibliques"});
+  if(nbBib >= 8) want.push({id:"bib-8", icon:"🕊️", label:"Étude biblique terminée"});
   if(student.points >= 100) want.push({id:"pts-100", icon:"⭐", label:"100 points"});
   if(student.streak >= 3) want.push({id:"streak-3", icon:"🔥", label:"3 jours de suite"});
   want.forEach(b=>{
@@ -462,6 +577,7 @@ async function loadFromServer(){
     student.lastConnection = data.lastConnection || "";
     student.completed.lecture = data.completedLecture || [];
     student.completed.maths = data.completedMaths || [];
+    student.completed.bible = data.completedBible || [];
     student.badges = data.badges || [];
   }
   return data;
@@ -473,6 +589,7 @@ async function saveToServer(){
     lastConnection: student.lastConnection,
     completedLecture: JSON.stringify(student.completed.lecture),
     completedMaths: JSON.stringify(student.completed.maths),
+    completedBible: JSON.stringify(student.completed.bible),
     badges: JSON.stringify(student.badges)
   });
 }
@@ -511,8 +628,9 @@ document.getElementById("btn-login").addEventListener("click", async ()=>{
    ========================================================================= */
 function switchTrack(track){
   currentTrack = track;
-  document.getElementById("tab-lecture").classList.toggle("active", track==="lecture");
-  document.getElementById("tab-maths").classList.toggle("active", track==="maths");
+  ["lecture","maths","bible"].forEach(t=>{
+    document.getElementById("tab-"+t).classList.toggle("active", track===t);
+  });
   renderApp();
 }
 
