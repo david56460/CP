@@ -112,6 +112,18 @@
     background:#F7F9FC;border-radius:14px;padding:12px;margin-bottom:12px;border:2px dashed var(--sky-deep);
   }
   .admin-save-msg{font-size:13px;font-weight:800;color:var(--leaf);min-height:18px;}
+  .mic-block{
+    background:#FFF6E5;border:2px dashed var(--gold);border-radius:14px;padding:12px;margin-bottom:14px;
+  }
+  .mic-block .mic-row{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-top:8px;}
+  .mic-btn{
+    border-radius:14px;padding:10px 16px;font-weight:800;font-size:14px;color:white;
+  }
+  .mic-btn.record{background:var(--coral);box-shadow:0 4px 0 #c0473a;}
+  .mic-btn.stop{background:var(--indigo);box-shadow:0 4px 0 #17162a;}
+  .mic-btn.delete{background:#9a98b5;box-shadow:0 4px 0 #6f6d8c;}
+  .rec-indicator{color:var(--coral);font-weight:800;font-size:13px;}
+  audio.preview-audio{height:36px;}
 
   /* ---------- App principale ---------- */
   #app-screen{max-width:520px;margin:0 auto;padding:16px 16px 60px;}
@@ -238,7 +250,6 @@
     </div>
     <button class="btn btn-leaf btn-full" id="btn-login">C'est parti !</button>
     <div class="sync-msg" id="login-msg"></div>
-    <div class="admin-link" onclick="openAdminLogin()">🔧 Espace admin</div>
   </div>
 </div>
 
@@ -275,6 +286,8 @@
   <div class="lesson-inner" id="lesson-inner"></div>
 </div>
 
+<audio id="tts-audio-player" style="display:none;"></audio>
+
 <script>
 /* =========================================================================
    CONFIGURATION — colle ici l'URL de ton Web App Google Apps Script
@@ -282,6 +295,7 @@
    ========================================================================= */
 const CONFIG = {
   SCRIPT_URL: "https://script.google.com/macros/s/AKfycbyL6vEmI_UHOyB7GEecRi03vD6HxkzmFCzk5LB9meD2en5mbvoK6Pn2LOsGGuNwLl0W/exec",
+  ADMIN_ID: "admin",
   ADMIN_PASSWORD: "ChangeMoi2026"
 };
 
@@ -545,6 +559,7 @@ const loginInstructions = "Bonjour ! Écris ton prénom, puis ton code secret à
 let audioEnabled = true;
 let lastSpokenText = "";
 let frenchVoice = null;
+let replayCurrent = ()=>{};
 
 function pickBestVoice(voices){
   const priority = ["google", "neural", "enhanced", "premium", "natural", "siri", "audrey", "amelie", "thomas"];
@@ -648,6 +663,92 @@ let selectedOptionIdx = null;
 let contentOverrides = {}; // { lessonId: { title, cours, coursAudio, exos:[{q,qAudio,options,answer}] } }
 let isAdmin = false;
 let editingField = null; // null | "cours" | "exo"
+let mediaRecorder = null;
+let recordedChunks = [];
+let isRecording = false;
+let pendingRecording = null; // data URL en cours d'édition, avant sauvegarde
+
+function getSupportedMimeType(){
+  const types = ["audio/webm;codecs=opus", "audio/webm", "audio/mp4"];
+  for(const t of types){
+    if(window.MediaRecorder && MediaRecorder.isTypeSupported && MediaRecorder.isTypeSupported(t)) return t;
+  }
+  return "";
+}
+
+function blobToDataURL(blob){
+  return new Promise((resolve, reject)=>{
+    const reader = new FileReader();
+    reader.onloadend = ()=> resolve(reader.result);
+    reader.onerror = reject;
+    reader.readAsDataURL(blob);
+  });
+}
+
+async function startRecording(){
+  if(!navigator.mediaDevices || !window.MediaRecorder){
+    alert("L'enregistrement micro n'est pas disponible sur ce navigateur.");
+    return;
+  }
+  try{
+    const stream = await navigator.mediaDevices.getUserMedia({audio:true});
+    recordedChunks = [];
+    const mimeType = getSupportedMimeType();
+    mediaRecorder = mimeType ? new MediaRecorder(stream, {mimeType, audioBitsPerSecond:24000}) : new MediaRecorder(stream);
+    mediaRecorder.ondataavailable = e => { if(e.data.size > 0) recordedChunks.push(e.data); };
+    mediaRecorder.onstop = async ()=>{
+      const blob = new Blob(recordedChunks, {type: mediaRecorder.mimeType || "audio/webm"});
+      pendingRecording = await blobToDataURL(blob);
+      stream.getTracks().forEach(t => t.stop());
+      isRecording = false;
+      renderLessonScreen();
+    };
+    mediaRecorder.start();
+    isRecording = true;
+    renderLessonScreen();
+  }catch(e){
+    alert("Impossible d'accéder au micro : autorise l'accès dans ton navigateur.");
+  }
+}
+
+function stopRecording(){
+  if(mediaRecorder && mediaRecorder.state !== "inactive") mediaRecorder.stop();
+}
+
+function deletePendingRecording(){
+  pendingRecording = null;
+  renderLessonScreen();
+}
+
+function micBlockHtml(){
+  if(isRecording){
+    return `
+      <div class="mic-block">
+        <div class="rec-indicator">🔴 Enregistrement en cours…</div>
+        <div class="mic-row">
+          <button class="mic-btn stop" onclick="stopRecording()">⏹️ Arrêter</button>
+        </div>
+      </div>`;
+  }
+  if(pendingRecording){
+    return `
+      <div class="mic-block">
+        <label style="font-weight:800;font-size:12px;color:#5b5a7a;">🎤 Ta voix enregistrée (remplace la voix de synthèse)</label>
+        <div class="mic-row">
+          <audio class="preview-audio" controls src="${pendingRecording}"></audio>
+          <button class="mic-btn record" onclick="startRecording()">🔴 Réenregistrer</button>
+          <button class="mic-btn delete" onclick="deletePendingRecording()">🗑️ Supprimer</button>
+        </div>
+      </div>`;
+  }
+  return `
+    <div class="mic-block">
+      <label style="font-weight:800;font-size:12px;color:#5b5a7a;">🎤 Enregistre ta voix (remplace la voix de synthèse pour ce texte)</label>
+      <div class="mic-row">
+        <button class="mic-btn record" onclick="startRecording()">🔴 Enregistrer</button>
+      </div>
+    </div>`;
+}
 
 /* =========================================================================
    OUTILS
@@ -699,19 +800,24 @@ function getLessonData(track, lessonId){
   const base = CONTENT[track].find(l => l.id === lessonId);
   if(!base) return null;
   const ov = contentOverrides[lessonId];
-  if(!ov) return Object.assign({}, base, {coursAudio: base.cours, exos: base.exos.map(e=>Object.assign({}, e, {qAudio:e.q}))});
+  if(!ov) return Object.assign({}, base, {
+    coursAudio: base.cours, coursRecording: null,
+    exos: base.exos.map(e=>Object.assign({}, e, {qAudio:e.q, qRecording:null}))
+  });
   return {
     id: base.id,
     icon: base.icon,
     title: ov.title || base.title,
     cours: ov.cours || base.cours,
     coursAudio: ov.coursAudio || ov.cours || base.cours,
+    coursRecording: ov.coursRecording || null,
     exos: base.exos.map((exo, i)=>{
       const oe = (ov.exos && ov.exos[i]) || {};
       return {
         type: exo.type,
         q: oe.q || exo.q,
         qAudio: oe.qAudio || oe.q || exo.q,
+        qRecording: oe.qRecording || null,
         options: oe.options || exo.options,
         answer: oe.answer || exo.answer
       };
@@ -745,6 +851,22 @@ async function apiCall(action, extraParams){
     return {ok:false, error:String(e)};
   }
 }
+
+async function saveContentPost(lessonId, data){
+  if(!CONFIG.SCRIPT_URL || CONFIG.SCRIPT_URL.indexOf("COLLE_ICI") !== -1){
+    return {ok:false, offline:true};
+  }
+  try{
+    const res = await fetch(CONFIG.SCRIPT_URL, {
+      method:"POST",
+      headers:{"Content-Type":"text/plain;charset=utf-8"}, // évite le préflight CORS
+      body: JSON.stringify({action:"saveContent", lessonId, data})
+    });
+    return await res.json();
+  }catch(e){
+    return {ok:false, error:String(e)};
+  }
+}
 async function loadFromServer(){
   const data = await apiCall("load");
   if(data && data.ok && data.found){
@@ -772,31 +894,9 @@ async function saveToServer(){
 
 /* =========================================================================
    ESPACE ADMIN — modifier les textes et les audios des leçons
+   (connexion admin gérée directement dans le formulaire de connexion,
+   voir le gestionnaire de clic de btn-login plus bas)
    ========================================================================= */
-function openAdminLogin(){
-  const pwd = prompt("Mot de passe admin :");
-  if(pwd === null) return;
-  if(pwd !== CONFIG.ADMIN_PASSWORD){
-    alert("Mot de passe incorrect.");
-    return;
-  }
-  isAdmin = true;
-  student = {
-    prenom:"Admin", code:"",
-    points:0, streak:0, lastConnection:"",
-    completed:{lecture:[], maths:[], bible:[]},
-    badges:[]
-  };
-  document.getElementById("login-screen").classList.add("hidden");
-  document.getElementById("app-screen").classList.remove("hidden");
-  switchTrack("lecture");
-}
-
-/**
- * En mode admin : on ouvre la même leçon/exercice que l'élève verrait
- * (toutes les leçons sont déverrouillées), avec des boutons ✏️ Modifier
- * qui remplacent le texte par un formulaire, sauvegardé directement.
- */
 async function saveCoursEdit(){
   const lessonId = currentLesson.id;
   const ov = contentOverrides[lessonId]
@@ -805,11 +905,14 @@ async function saveCoursEdit(){
   ov.title = document.getElementById("edit-title").value.trim();
   ov.cours = document.getElementById("edit-cours").value.trim();
   ov.coursAudio = document.getElementById("edit-coursaudio").value.trim();
+  ov.coursRecording = pendingRecording || "";
   contentOverrides[lessonId] = ov;
-  await apiCall("saveContent", {lessonId, data: JSON.stringify(ov)});
+  const msg = await saveContentPost(lessonId, JSON.stringify(ov));
+  pendingRecording = null;
   currentLesson = getLessonData(currentTrack, lessonId);
   editingField = null;
   renderLessonScreen();
+  if(msg && msg.error) alert("L'enregistrement audio est peut-être trop long pour être sauvegardé (limite du Google Sheet). Essaie une phrase plus courte.");
 }
 
 async function saveExoEdit(){
@@ -822,6 +925,7 @@ async function saveExoEdit(){
   const entry = {
     q: document.getElementById("edit-exoq").value.trim(),
     qAudio: document.getElementById("edit-exoqaudio").value.trim(),
+    qRecording: pendingRecording || "",
     answer: document.getElementById("edit-exoanswer").value.trim()
   };
   if(exo.type === "qcm"){
@@ -829,10 +933,12 @@ async function saveExoEdit(){
   }
   ov.exos[exoIndex] = entry;
   contentOverrides[lessonId] = ov;
-  await apiCall("saveContent", {lessonId, data: JSON.stringify(ov)});
+  const msg = await saveContentPost(lessonId, JSON.stringify(ov));
+  pendingRecording = null;
   currentLesson = getLessonData(currentTrack, lessonId);
   editingField = null;
   renderLessonScreen();
+  if(msg && msg.error) alert("L'enregistrement audio est peut-être trop long pour être sauvegardé (limite du Google Sheet). Essaie une phrase plus courte.");
 }
 
 /* =========================================================================
@@ -865,6 +971,22 @@ document.getElementById("btn-login").addEventListener("click", async ()=>{
     msg.textContent = "Écris ton prénom et ton code pour continuer.";
     return;
   }
+
+  // Identifiant admin : mêmes champs que l'élève, mais reconnu comme admin
+  if(prenom.toLowerCase() === CONFIG.ADMIN_ID.toLowerCase() && code === CONFIG.ADMIN_PASSWORD){
+    isAdmin = true;
+    student = {
+      prenom:"Admin", code:"",
+      points:0, streak:0, lastConnection:"",
+      completed:{lecture:[], maths:[], bible:[]},
+      badges:[]
+    };
+    document.getElementById("login-screen").classList.add("hidden");
+    document.getElementById("app-screen").classList.remove("hidden");
+    switchTrack("lecture");
+    return;
+  }
+
   student.prenom = prenom;
   student.code = code;
   msg.textContent = "Connexion en cours...";
@@ -945,6 +1067,7 @@ function openLesson(lesson, lessonId){
   exoIndex = -1; // -1 = écran de cours
   exoScore = 0;
   editingField = null;
+  pendingRecording = null;
   document.getElementById("lesson-screen").classList.remove("hidden");
   renderLessonScreen();
 }
@@ -953,32 +1076,75 @@ function closeLesson(){
   renderApp();
 }
 
+function playAudioOrSpeak(recording, text){
+  if(!audioEnabled) return;
+  lastSpokenText = text;
+  if(recording){
+    const el = document.getElementById("tts-audio-player");
+    el.onended = null;
+    el.src = recording;
+    el.play().catch(()=>{});
+  } else {
+    speak(text);
+  }
+}
+
+function playExercise(exo){
+  if(exo.qRecording){
+    lastSpokenText = exo.qAudio;
+    const el = document.getElementById("tts-audio-player");
+    el.onended = ()=>{
+      el.onended = null;
+      if(exo.type === "qcm"){
+        speakSequence(exo.options.map((opt,i)=>"Réponse " + (i+1) + ". " + opt));
+      }
+    };
+    el.src = exo.qRecording;
+    el.play().catch(()=>{});
+  } else {
+    speak(spokenTextForExo(exo));
+  }
+}
+
+function openEditCours(){
+  pendingRecording = currentLesson.coursRecording;
+  editingField = "cours";
+  renderLessonScreen();
+}
+function openEditExo(){
+  pendingRecording = currentLesson.exos[exoIndex].qRecording;
+  editingField = "exo";
+  renderLessonScreen();
+}
+
 function renderLessonScreen(){
   const inner = document.getElementById("lesson-inner");
   if(exoIndex === -1){
     if(isAdmin && editingField === "cours"){
       inner.innerHTML = `
-        <button class="back-btn" onclick="editingField=null; renderLessonScreen();">← Annuler</button>
+        <button class="back-btn" onclick="pendingRecording=null; editingField=null; renderLessonScreen();">← Annuler</button>
         <div class="lesson-card pop-in">
           <div class="admin-field"><label>Titre de la leçon</label><input id="edit-title" value="${currentLesson.title}"></div>
           <div class="admin-field"><label>Cours (texte affiché)</label><textarea id="edit-cours">${currentLesson.cours}</textarea></div>
-          <div class="admin-field"><label>Cours (texte lu à voix haute, laisser vide si identique)</label><textarea id="edit-coursaudio">${currentLesson.coursAudio === currentLesson.cours ? "" : currentLesson.coursAudio}</textarea></div>
+          <div class="admin-field"><label>Cours (texte lu à voix haute par la synthèse, laisser vide si identique)</label><textarea id="edit-coursaudio">${currentLesson.coursAudio === currentLesson.cours ? "" : currentLesson.coursAudio}</textarea></div>
+          ${micBlockHtml()}
           <button class="btn btn-leaf btn-full" onclick="saveCoursEdit()">💾 Enregistrer</button>
         </div>
       `;
       return;
     }
+    replayCurrent = ()=> playAudioOrSpeak(currentLesson.coursRecording, currentLesson.coursAudio);
     inner.innerHTML = `
       <button class="back-btn" onclick="closeLesson()">← Retour</button>
       <div class="lesson-card pop-in">
         <h2>${currentLesson.icon} ${currentLesson.title}</h2>
-        <button class="speaker-btn" onclick="speak(lastSpokenText)">🔊 Réécouter</button>
-        ${isAdmin ? `<button class="speaker-btn" onclick="editingField='cours'; renderLessonScreen();">✏️ Modifier</button>` : ""}
+        <button class="speaker-btn" onclick="replayCurrent()">🔊 Réécouter</button>
+        ${isAdmin ? `<button class="speaker-btn" onclick="openEditCours()">✏️ Modifier</button>` : ""}
         <p>${currentLesson.cours}</p>
         <button class="btn btn-leaf btn-full" onclick="startExercises()">Je m'entraîne</button>
       </div>
     `;
-    speak(currentLesson.coursAudio);
+    playAudioOrSpeak(currentLesson.coursRecording, currentLesson.coursAudio);
     return;
   }
   if(exoIndex >= currentLesson.exos.length){
@@ -990,10 +1156,11 @@ function renderLessonScreen(){
 
   if(isAdmin && editingField === "exo"){
     inner.innerHTML = `
-      <button class="back-btn" onclick="editingField=null; renderLessonScreen();">← Annuler</button>
+      <button class="back-btn" onclick="pendingRecording=null; editingField=null; renderLessonScreen();">← Annuler</button>
       <div class="lesson-card pop-in">
         <div class="admin-field"><label>Question ${exoIndex+1} (texte affiché)</label><textarea id="edit-exoq">${exo.q}</textarea></div>
-        <div class="admin-field"><label>Question ${exoIndex+1} (texte lu à voix haute, laisser vide si identique)</label><textarea id="edit-exoqaudio">${exo.qAudio === exo.q ? "" : exo.qAudio}</textarea></div>
+        <div class="admin-field"><label>Question ${exoIndex+1} (texte lu à voix haute par la synthèse, laisser vide si identique)</label><textarea id="edit-exoqaudio">${exo.qAudio === exo.q ? "" : exo.qAudio}</textarea></div>
+        ${micBlockHtml()}
         ${exo.type === "qcm" ? `<div class="admin-field"><label>Réponses possibles (séparées par | )</label><input id="edit-exooptions" value="${exo.options.join(" | ")}"></div>` : ""}
         <div class="admin-field"><label>Bonne réponse</label><input id="edit-exoanswer" value="${exo.answer}"></div>
         <button class="btn btn-leaf btn-full" onclick="saveExoEdit()">💾 Enregistrer</button>
@@ -1027,18 +1194,19 @@ function renderLessonScreen(){
     `;
   }
 
+  replayCurrent = ()=> playExercise(exo);
   inner.innerHTML = `
     <button class="back-btn" onclick="closeLesson()">← Retour</button>
     <div class="lesson-card pop-in">
       <div class="exo-progress">${progressHtml}</div>
-      <button class="speaker-btn" onclick="speak(lastSpokenText)">🔊 Réécouter</button>
-      ${isAdmin ? `<button class="speaker-btn" onclick="editingField='exo'; renderLessonScreen();">✏️ Modifier</button>` : ""}
+      <button class="speaker-btn" onclick="replayCurrent()">🔊 Réécouter</button>
+      ${isAdmin ? `<button class="speaker-btn" onclick="openEditExo()">✏️ Modifier</button>` : ""}
       <div class="exo-question">${exo.q}</div>
       ${bodyHtml}
       <div class="feedback" id="feedback"></div>
     </div>
   `;
-  speak(spokenTextForExo(exo));
+  playExercise(exo);
   if(exo.type === "texte"){
     const input = document.getElementById("text-input");
     input.focus();
