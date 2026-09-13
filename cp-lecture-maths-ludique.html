@@ -99,8 +99,10 @@
   }
   .who{display:flex;align-items:center;gap:8px;font-weight:800;}
   .who .mascotte-mini{font-size:26px;}
-  .stats{display:flex;gap:14px;font-weight:800;font-size:14px;}
+  .stats{display:flex;gap:14px;font-weight:800;font-size:14px;align-items:center;}
   .stat{display:flex;align-items:center;gap:4px;}
+  .logout-btn{background:none;font-size:19px;opacity:.55;padding:2px;line-height:1;}
+  .logout-btn:active{opacity:.9;}
 
   .tabs{display:flex;gap:10px;margin-bottom:18px;}
   .tab{
@@ -160,6 +162,8 @@
   }
   .option-btn.correct{background:var(--leaf);color:white;border-color:var(--leaf);}
   .option-btn.wrong{background:var(--coral);color:white;border-color:var(--coral);}
+  .option-btn.selected{border-color:var(--lilac);background:#F1EFFF;}
+  #validate-btn:disabled{opacity:.35;box-shadow:none;}
   .text-answer input{
     width:100%;padding:14px 16px;border-radius:16px;border:2px solid var(--sky-deep);font-size:18px;
     background:var(--sky);text-align:center;font-weight:800;
@@ -168,6 +172,12 @@
   .feedback.ok{color:var(--leaf);}
   .feedback.ko{color:var(--coral);}
   .continue-wrap{margin-top:18px;text-align:right;}
+
+  .speaker-btn{
+    background:var(--sky);border:2px solid var(--sky-deep);border-radius:14px;
+    padding:8px 14px;font-weight:800;font-size:14px;color:var(--indigo);margin-bottom:12px;
+  }
+  .speaker-btn:active{background:var(--sky-deep);}
 
   .result-card{text-align:center;}
   .result-emoji{font-size:64px;margin-bottom:6px;}
@@ -190,6 +200,7 @@
     </div>
     <h1>Enfant de Dieu CP</h1>
     <p>Lecture, Maths &amp; Bible, en s'amusant !</p>
+    <button class="btn btn-lilac btn-full" id="btn-listen-login" style="margin-bottom:14px;" onclick="speak(loginInstructions)">🔊 Écouter les consignes</button>
     <div class="field">
       <label for="input-prenom">Ton prénom</label>
       <input id="input-prenom" type="text" placeholder="Ex : Léa" autocomplete="off">
@@ -213,6 +224,8 @@
     <div class="stats">
       <div class="stat">⭐ <span id="topbar-points">0</span></div>
       <div class="stat">🔥 <span id="topbar-streak">0</span></div>
+      <button class="logout-btn" id="audio-toggle-btn" onclick="toggleAudio()" title="Activer/couper le son">🔊</button>
+      <button class="logout-btn" onclick="logout()" title="Se déconnecter">🚪</button>
     </div>
   </header>
 
@@ -496,6 +509,52 @@ const CONTENT = {
 };
 
 /* =========================================================================
+   SYNTHÈSE VOCALE — les consignes sont toujours lues à voix haute,
+   car l'élève apprend encore à lire.
+   ========================================================================= */
+const loginInstructions = "Bonjour ! Écris ton prénom, puis ton code secret à quatre chiffres, et appuie sur le bouton c'est parti pour commencer à jouer.";
+let audioEnabled = true;
+let lastSpokenText = "";
+let frenchVoice = null;
+
+function loadFrenchVoice(){
+  if(!window.speechSynthesis) return;
+  const voices = window.speechSynthesis.getVoices();
+  frenchVoice = voices.find(v => v.lang && v.lang.toLowerCase().startsWith("fr")) || null;
+}
+if(window.speechSynthesis){
+  loadFrenchVoice();
+  window.speechSynthesis.onvoiceschanged = loadFrenchVoice;
+}
+
+function speak(text){
+  lastSpokenText = text || lastSpokenText;
+  if(!audioEnabled || !window.speechSynthesis || !text) return;
+  window.speechSynthesis.cancel();
+  const utter = new SpeechSynthesisUtterance(text);
+  utter.lang = "fr-FR";
+  utter.rate = 0.88;   // débit un peu plus lent, comme une maîtresse qui explique
+  utter.pitch = 1.05;
+  if(frenchVoice) utter.voice = frenchVoice;
+  window.speechSynthesis.speak(utter);
+}
+
+function toggleAudio(){
+  audioEnabled = !audioEnabled;
+  document.getElementById("audio-toggle-btn").textContent = audioEnabled ? "🔊" : "🔇";
+  if(!audioEnabled && window.speechSynthesis) window.speechSynthesis.cancel();
+}
+
+function spokenTextForExo(exo){
+  if(exo.type === "qcm"){
+    const parts = [exo.q];
+    exo.options.forEach((opt,i)=> parts.push("Réponse " + (i+1) + " : " + opt));
+    return parts.join(". ");
+  }
+  return exo.q;
+}
+
+/* =========================================================================
    ÉTAT DE L'ÉLÈVE
    ========================================================================= */
 let student = {
@@ -509,6 +568,7 @@ let currentLesson = null;
 let exoIndex = 0;
 let exoScore = 0;
 let waitingContinue = false;
+let selectedOptionIdx = null;
 
 /* =========================================================================
    OUTILS
@@ -595,8 +655,25 @@ async function saveToServer(){
 }
 
 /* =========================================================================
-   CONNEXION
+   DÉCONNEXION
    ========================================================================= */
+function logout(){
+  student = {
+    prenom:"", code:"",
+    points:0, streak:0, lastConnection:"",
+    completed:{lecture:[], maths:[], bible:[]},
+    badges:[]
+  };
+  currentTrack = "lecture";
+  document.getElementById("lesson-screen").classList.add("hidden");
+  document.getElementById("app-screen").classList.add("hidden");
+  document.getElementById("login-screen").classList.remove("hidden");
+  document.getElementById("input-prenom").value = "";
+  document.getElementById("input-code").value = "";
+  document.getElementById("login-msg").textContent = "";
+  switchTrack("lecture");
+}
+
 document.getElementById("btn-login").addEventListener("click", async ()=>{
   const prenom = document.getElementById("input-prenom").value.trim();
   const code = document.getElementById("input-code").value.trim();
@@ -697,10 +774,12 @@ function renderLessonScreen(){
       <button class="back-btn" onclick="closeLesson()">← Retour</button>
       <div class="lesson-card pop-in">
         <h2>${currentLesson.icon} ${currentLesson.title}</h2>
+        <button class="speaker-btn" onclick="speak(lastSpokenText)">🔊 Réécouter</button>
         <p>${currentLesson.cours}</p>
         <button class="btn btn-leaf btn-full" onclick="startExercises()">Je m'entraîne</button>
       </div>
     `;
+    speak(currentLesson.cours);
     return;
   }
   if(exoIndex >= currentLesson.exos.length){
@@ -709,6 +788,7 @@ function renderLessonScreen(){
   }
   const exo = currentLesson.exos[exoIndex];
   const total = currentLesson.exos.length;
+  selectedOptionIdx = null;
   let progressHtml = "";
   for(let i=0;i<total;i++){
     progressHtml += `<span class="${i < exoIndex ? 'filled' : ''}"></span>`;
@@ -717,8 +797,11 @@ function renderLessonScreen(){
   let bodyHtml = "";
   if(exo.type === "qcm"){
     bodyHtml = `<div class="options">` + exo.options.map((opt,idx)=>
-      `<button class="option-btn" data-idx="${idx}" onclick="answerQcm(${idx})">${opt}</button>`
-    ).join("") + `</div>`;
+      `<button class="option-btn" data-idx="${idx}" onclick="selectOption(${idx})">${opt}</button>`
+    ).join("") + `</div>
+    <div class="continue-wrap">
+      <button class="btn btn-lilac" id="validate-btn" onclick="validateQcm()" disabled>Valider</button>
+    </div>`;
   } else {
     bodyHtml = `
       <div class="text-answer">
@@ -734,11 +817,13 @@ function renderLessonScreen(){
     <button class="back-btn" onclick="closeLesson()">← Retour</button>
     <div class="lesson-card pop-in">
       <div class="exo-progress">${progressHtml}</div>
+      <button class="speaker-btn" onclick="speak(lastSpokenText)">🔊 Réécouter</button>
       <div class="exo-question">${exo.q}</div>
       ${bodyHtml}
       <div class="feedback" id="feedback"></div>
     </div>
   `;
+  speak(spokenTextForExo(exo));
   if(exo.type === "texte"){
     const input = document.getElementById("text-input");
     input.focus();
@@ -756,22 +841,37 @@ function showFeedback(isCorrect){
   const fb = document.getElementById("feedback");
   fb.className = "feedback " + (isCorrect ? "ok" : "ko");
   fb.textContent = isCorrect ? "Bravo, bonne réponse ! ⭐" : "Pas tout à fait, continue !";
+  speak(isCorrect ? "Bravo, bonne réponse !" : "Pas tout à fait, continue.");
   if(isCorrect) exoScore++;
   setTimeout(goToNextExo, 1100);
 }
 
-function answerQcm(idx){
+function selectOption(idx){
   if(waitingContinue) return;
+  selectedOptionIdx = idx;
+  const exo = currentLesson.exos[exoIndex];
+  document.querySelectorAll(".option-btn").forEach((b,i)=>{
+    b.classList.toggle("selected", i === idx);
+  });
+  const validateBtn = document.getElementById("validate-btn");
+  if(validateBtn) validateBtn.disabled = false;
+  speak("Tu as choisi : " + exo.options[idx]);
+}
+
+function validateQcm(){
+  if(waitingContinue || selectedOptionIdx === null) return;
   waitingContinue = true;
   const exo = currentLesson.exos[exoIndex];
   const buttons = document.querySelectorAll(".option-btn");
-  const chosen = normalize(exo.options[idx]);
+  const chosen = normalize(exo.options[selectedOptionIdx]);
   const correct = normalize(exo.answer);
   buttons.forEach((b,i)=>{
     b.disabled = true;
     if(normalize(exo.options[i]) === correct) b.classList.add("correct");
-    else if(i === idx) b.classList.add("wrong");
+    else if(i === selectedOptionIdx) b.classList.add("wrong");
   });
+  const validateBtn = document.getElementById("validate-btn");
+  if(validateBtn) validateBtn.disabled = true;
   showFeedback(chosen === correct);
 }
 
@@ -810,6 +910,7 @@ function renderResult(){
       <button class="btn btn-leaf btn-full" style="margin-top:18px;" onclick="closeLesson()">Continuer</button>
     </div>
   `;
+  speak("Bravo, tu as terminé la leçon ! Tu as gagné " + earned + " points.");
 }
 </script>
 </body>
