@@ -1,0 +1,698 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Pilou CP — Lecture &amp; Maths</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;700;800&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --sky:#EAF6FF;
+    --sky-deep:#D7EEFF;
+    --indigo:#2B2A4C;
+    --sun:#FFC93C;
+    --coral:#FF6F59;
+    --leaf:#4CB963;
+    --lilac:#A29BFE;
+    --white:#FFFFFF;
+    --shadow: 0 6px 0 rgba(43,42,76,0.15);
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:var(--sky);
+    background-image:
+      radial-gradient(circle at 10% 15%, var(--sky-deep) 0%, transparent 40%),
+      radial-gradient(circle at 90% 80%, var(--sky-deep) 0%, transparent 40%);
+    font-family:'Nunito', sans-serif;
+    color:var(--indigo);
+    min-height:100vh;
+  }
+  h1,h2,h3,.display{font-family:'Baloo 2', sans-serif;}
+  button{font-family:inherit;cursor:pointer;border:none;}
+  input{font-family:inherit;}
+  .hidden{display:none !important;}
+
+  /* ---------- Écran de connexion ---------- */
+  #login-screen{
+    min-height:100vh;display:flex;align-items:center;justify-content:center;
+    padding:24px;
+  }
+  .login-card{
+    background:var(--white);border-radius:28px;padding:32px 28px;max-width:380px;width:100%;
+    box-shadow:var(--shadow);text-align:center;
+  }
+  .mascotte{font-size:64px;line-height:1;margin-bottom:4px;}
+  .login-card h1{font-size:28px;margin:8px 0 4px;color:var(--indigo);}
+  .login-card p{margin:0 0 20px;font-size:15px;color:#5b5a7a;}
+  .field{text-align:left;margin-bottom:14px;}
+  .field label{display:block;font-weight:700;font-size:13px;margin-bottom:6px;color:var(--indigo);}
+  .field input{
+    width:100%;padding:12px 14px;border-radius:14px;border:2px solid var(--sky-deep);
+    font-size:16px;background:var(--sky);
+  }
+  .field input:focus{outline:none;border-color:var(--lilac);}
+  .btn{
+    display:inline-block;padding:14px 22px;border-radius:16px;font-weight:800;font-size:16px;
+    background:var(--sun);color:var(--indigo);box-shadow:0 5px 0 #E0A80E;transition:transform .08s;
+  }
+  .btn:active{transform:translateY(3px);box-shadow:0 2px 0 #E0A80E;}
+  .btn-full{width:100%;}
+  .btn-leaf{background:var(--leaf);color:white;box-shadow:0 5px 0 #348a45;}
+  .btn-leaf:active{box-shadow:0 2px 0 #348a45;}
+  .btn-lilac{background:var(--lilac);color:white;box-shadow:0 5px 0 #7b73e0;}
+  .btn-lilac:active{box-shadow:0 2px 0 #7b73e0;}
+  .sync-msg{font-size:13px;margin-top:10px;color:#5b5a7a;min-height:18px;}
+
+  /* ---------- App principale ---------- */
+  #app-screen{max-width:520px;margin:0 auto;padding:16px 16px 60px;}
+  header.topbar{
+    display:flex;align-items:center;justify-content:space-between;
+    background:var(--white);border-radius:20px;padding:10px 16px;box-shadow:var(--shadow);
+    margin-bottom:16px;
+  }
+  .who{display:flex;align-items:center;gap:8px;font-weight:800;}
+  .who .mascotte-mini{font-size:26px;}
+  .stats{display:flex;gap:14px;font-weight:800;font-size:14px;}
+  .stat{display:flex;align-items:center;gap:4px;}
+
+  .tabs{display:flex;gap:10px;margin-bottom:18px;}
+  .tab{
+    flex:1;text-align:center;padding:12px 8px;border-radius:16px;font-weight:800;font-size:16px;
+    background:var(--white);color:var(--indigo);box-shadow:var(--shadow);opacity:.6;
+  }
+  .tab.active{opacity:1;transform:translateY(-2px);}
+  .tab.tab-lecture.active{background:var(--leaf);color:white;box-shadow:0 5px 0 #348a45;}
+  .tab.tab-maths.active{background:var(--lilac);color:white;box-shadow:0 5px 0 #7b73e0;}
+
+  .path{position:relative;padding:10px 0 20px;}
+  .node-wrap{display:flex;margin-bottom:6px;}
+  .node-wrap.left{justify-content:flex-start;}
+  .node-wrap.right{justify-content:flex-end;}
+  .node-wrap.center{justify-content:center;}
+  .node{
+    width:88px;height:88px;border-radius:50%;background:var(--white);
+    box-shadow:var(--shadow);display:flex;flex-direction:column;align-items:center;justify-content:center;
+    font-weight:800;font-size:13px;text-align:center;gap:2px;position:relative;
+  }
+  .node .icon{font-size:26px;}
+  .node.locked{opacity:.45;}
+  .node.done{background:var(--leaf);color:white;box-shadow:0 5px 0 #348a45;}
+  .node.current{border:3px solid var(--sun);}
+  .badge-dot{
+    position:absolute;top:-6px;right:-6px;background:var(--sun);border-radius:50%;
+    width:26px;height:26px;display:flex;align-items:center;justify-content:center;font-size:14px;
+    box-shadow:0 2px 0 #E0A80E;
+  }
+
+  .badges-row{display:flex;gap:8px;flex-wrap:wrap;margin:14px 0 4px;}
+  .badge-chip{
+    background:var(--white);border-radius:14px;padding:6px 10px;font-size:12px;font-weight:800;
+    box-shadow:var(--shadow);display:flex;align-items:center;gap:6px;
+  }
+
+  /* ---------- Panneau leçon / exercices ---------- */
+  #lesson-screen{
+    position:fixed;inset:0;background:var(--sky);z-index:20;overflow-y:auto;
+  }
+  .lesson-inner{max-width:520px;margin:0 auto;padding:16px;}
+  .back-btn{background:none;color:var(--indigo);font-weight:800;font-size:15px;margin-bottom:10px;}
+  .lesson-card{
+    background:var(--white);border-radius:24px;padding:22px;box-shadow:var(--shadow);margin-bottom:16px;
+  }
+  .lesson-card h2{margin-top:0;font-size:22px;}
+  .lesson-card p{line-height:1.55;font-size:16px;}
+  .exo-progress{display:flex;gap:6px;margin-bottom:14px;}
+  .exo-progress span{flex:1;height:8px;border-radius:4px;background:var(--sky-deep);}
+  .exo-progress span.filled{background:var(--sun);}
+  .exo-question{font-size:19px;font-weight:800;margin-bottom:16px;}
+  .options{display:flex;flex-direction:column;gap:10px;}
+  .option-btn{
+    background:var(--white);border:2px solid var(--sky-deep);border-radius:16px;padding:14px 16px;
+    font-size:16px;font-weight:700;text-align:left;
+  }
+  .option-btn.correct{background:var(--leaf);color:white;border-color:var(--leaf);}
+  .option-btn.wrong{background:var(--coral);color:white;border-color:var(--coral);}
+  .text-answer input{
+    width:100%;padding:14px 16px;border-radius:16px;border:2px solid var(--sky-deep);font-size:18px;
+    background:var(--sky);text-align:center;font-weight:800;
+  }
+  .feedback{margin-top:14px;font-weight:800;font-size:16px;min-height:24px;}
+  .feedback.ok{color:var(--leaf);}
+  .feedback.ko{color:var(--coral);}
+  .continue-wrap{margin-top:18px;text-align:right;}
+
+  .result-card{text-align:center;}
+  .result-emoji{font-size:64px;margin-bottom:6px;}
+  .result-points{font-size:22px;font-weight:800;color:var(--sun);}
+
+  @keyframes pop{0%{transform:scale(.6);opacity:0;}70%{transform:scale(1.08);}100%{transform:scale(1);opacity:1;}}
+  .pop-in{animation:pop .35s ease-out;}
+
+  footer.credit{text-align:center;font-size:12px;color:#8b8aa8;margin-top:20px;}
+</style>
+</head>
+<body>
+
+<!-- ============ ÉCRAN DE CONNEXION ============ -->
+<div id="login-screen">
+  <div class="login-card">
+    <div class="mascotte">🦊</div>
+    <h1>Pilou CP</h1>
+    <p>Lecture &amp; Maths, en s'amusant !</p>
+    <div class="field">
+      <label for="input-prenom">Ton prénom</label>
+      <input id="input-prenom" type="text" placeholder="Ex : Léa" autocomplete="off">
+    </div>
+    <div class="field">
+      <label for="input-code">Ton code secret (4 chiffres)</label>
+      <input id="input-code" type="text" inputmode="numeric" maxlength="4" placeholder="Ex : 1234" autocomplete="off">
+    </div>
+    <button class="btn btn-leaf btn-full" id="btn-login">C'est parti !</button>
+    <div class="sync-msg" id="login-msg"></div>
+  </div>
+</div>
+
+<!-- ============ APP PRINCIPALE ============ -->
+<div id="app-screen" class="hidden">
+  <header class="topbar">
+    <div class="who">
+      <span class="mascotte-mini">🦊</span>
+      <span id="topbar-name">—</span>
+    </div>
+    <div class="stats">
+      <div class="stat">⭐ <span id="topbar-points">0</span></div>
+      <div class="stat">🔥 <span id="topbar-streak">0</span></div>
+    </div>
+  </header>
+
+  <div class="tabs">
+    <div class="tab tab-lecture active" id="tab-lecture" onclick="switchTrack('lecture')">📖 Lecture</div>
+    <div class="tab tab-maths" id="tab-maths" onclick="switchTrack('maths')">🔢 Maths</div>
+  </div>
+
+  <div class="badges-row" id="badges-row"></div>
+
+  <div class="path" id="path-container"></div>
+
+  <footer class="credit">Fait avec ❤️ pour apprendre à ton rythme.</footer>
+</div>
+
+<!-- ============ ÉCRAN LEÇON / EXERCICES ============ -->
+<div id="lesson-screen" class="hidden">
+  <div class="lesson-inner" id="lesson-inner"></div>
+</div>
+
+<script>
+/* =========================================================================
+   CONFIGURATION — colle ici l'URL de ton Web App Google Apps Script
+   (Déploiement du fichier Code.gs fourni séparément)
+   ========================================================================= */
+const CONFIG = {
+  SCRIPT_URL: "https://script.google.com/macros/s/AKfycbyL6vEmI_UHOyB7GEecRi03vD6HxkzmFCzk5LB9meD2en5mbvoK6Pn2LOsGGuNwLl0W/exec"
+};
+
+/* =========================================================================
+   CONTENU PÉDAGOGIQUE — Lecture (8 leçons) et Maths (8 leçons)
+   ========================================================================= */
+const CONTENT = {
+  lecture: [
+    {
+      id:"lec1", title:"Les voyelles", icon:"🔤",
+      cours:"Les voyelles sont des lettres qu'on peut chanter tout seul : a, e, i, o, u, y. Écoute bien le son de chaque voyelle en la disant à voix haute.",
+      exos:[
+        {type:"qcm", q:"Dans le mot AMI, quelle voyelle entends-tu au début ?", options:["a","e","i","o"], answer:"a"},
+        {type:"qcm", q:"Quel mot commence par la voyelle O ?", options:["orange","chat","souris","lune"], answer:"orange"},
+        {type:"texte", q:"Écris la voyelle que tu entends à la fin du mot LUNE.", answer:"u"},
+        {type:"qcm", q:"Combien de voyelles y a-t-il dans le mot AMI ?", options:["1","2","3","4"], answer:"2"}
+      ]
+    },
+    {
+      id:"lec2", title:"Premières syllabes", icon:"🧩",
+      cours:"Une consonne et une voyelle collées font une syllabe : M + A = MA. Essaie avec M, L, R, P, T.",
+      exos:[
+        {type:"qcm", q:"Comment se lit M + A ?", options:["ma","am","mi","ta"], answer:"ma"},
+        {type:"qcm", q:"Quelle syllabe entends-tu au début de MALIN ?", options:["ma","ta","la","ra"], answer:"ma"},
+        {type:"texte", q:"Écris la syllabe formée par L + O.", answer:"lo"},
+        {type:"qcm", q:"Quel mot est écrit avec les syllabes PA-PA ?", options:["papa","mama","tata","lala"], answer:"papa"}
+      ]
+    },
+    {
+      id:"lec3", title:"Autres consonnes", icon:"🔡",
+      cours:"D'autres consonnes forment aussi des syllabes : B, D, F, S, V, N, J. Par exemple B + A = BA comme dans BATEAU.",
+      exos:[
+        {type:"qcm", q:"Quelle syllabe entends-tu au début de BATEAU ?", options:["ba","da","fa","va"], answer:"ba"},
+        {type:"texte", q:"Écris la syllabe formée par D + O.", answer:"do"},
+        {type:"qcm", q:"Quel mot commence par le son 'f' ?", options:["fusée","vache","nid","sac"], answer:"fusée"},
+        {type:"qcm", q:"Dans NID, quelle est la première lettre ?", options:["n","m","d","b"], answer:"n"}
+      ]
+    },
+    {
+      id:"lec4", title:"Sons complexes : ch, ou, on, an", icon:"🌀",
+      cours:"Deux lettres peuvent faire un seul son : CH (chat), OU (loup), ON (ballon), AN/EN (maman).",
+      exos:[
+        {type:"qcm", q:"Quel son entends-tu au début de CHAT ?", options:["ch","k","s","t"], answer:"ch"},
+        {type:"qcm", q:"Quel mot contient le son 'ou' ?", options:["loup","lit","nez","ami"], answer:"loup"},
+        {type:"qcm", q:"Quel mot contient le son 'on' ?", options:["ballon","bébé","lune","ami"], answer:"ballon"},
+        {type:"texte", q:"Écris les deux lettres qui font le son entendu à la fin de BALLON.", answer:"on"}
+      ]
+    },
+    {
+      id:"lec5", title:"Sons complexes : oi, eau, gn, ill", icon:"✨",
+      cours:"D'autres sons à retenir : OI (roi), EAU (bateau), GN (montagne), ILL (abeille).",
+      exos:[
+        {type:"qcm", q:"Quel mot contient le son 'oi' ?", options:["roi","ami","lune","sac"], answer:"roi"},
+        {type:"qcm", q:"Quel mot contient le son 'eau' ?", options:["bateau","ballon","chat","nid"], answer:"bateau"},
+        {type:"qcm", q:"Quel mot contient le son 'gn' ?", options:["montagne","banane","tomate","robot"], answer:"montagne"},
+        {type:"texte", q:"Écris les trois lettres qui font le son entendu à la fin d'ABEILLE.", answer:"ill"}
+      ]
+    },
+    {
+      id:"lec6", title:"Les petits mots-outils", icon:"🧷",
+      cours:"Certains petits mots reviennent tout le temps : le, la, les, un, une, et, dans, sur. Ils t'aident à lire les phrases.",
+      exos:[
+        {type:"qcm", q:"Quel petit mot annonce plusieurs choses ? (___ pommes)", options:["les","un","et","sur"], answer:"les"},
+        {type:"qcm", q:"Complète : « Le chat est ___ la maison. »", options:["dans","et","un","la"], answer:"dans"},
+        {type:"qcm", q:"Quel mot utilise-t-on devant un mot masculin ? (___ chat)", options:["le","la","les","une"], answer:"le"},
+        {type:"texte", q:"Écris le petit mot qui relie deux choses, comme dans « le chat ET le chien ».", answer:"et"}
+      ]
+    },
+    {
+      id:"lec7", title:"Phrases courtes", icon:"📝",
+      cours:"Lis bien chaque mot puis toute la phrase : « Le chat dort sur le lit. » « Mona a un ballon rouge. »",
+      exos:[
+        {type:"qcm", q:"« Le chat dort sur le lit. » Que fait le chat ?", options:["il dort","il mange","il court","il chante"], answer:"il dort"},
+        {type:"qcm", q:"« Mona a un ballon rouge. » De quelle couleur est le ballon ?", options:["rouge","bleu","vert","jaune"], answer:"rouge"},
+        {type:"texte", q:"Complète : « Papa lit un ___. » (ça se lit, avec des pages)", answer:"livre"},
+        {type:"qcm", q:"Quelle phrase est bien écrite ?", options:["Le chien court vite.","chien Le court vite","vite court chien Le","Le vite chien court"], answer:"Le chien court vite."}
+      ]
+    },
+    {
+      id:"lec8", title:"Petite histoire", icon:"📚",
+      cours:"« Léo se réveille tôt. Il mange des céréales. Puis il part à l'école avec son sac bleu. » Lis bien l'histoire avant de répondre.",
+      exos:[
+        {type:"qcm", q:"Que mange Léo au petit-déjeuner ?", options:["des céréales","une pomme","du pain","un gâteau"], answer:"des céréales"},
+        {type:"qcm", q:"De quelle couleur est le sac de Léo ?", options:["bleu","rouge","vert","noir"], answer:"bleu"},
+        {type:"qcm", q:"Où part Léo ?", options:["à l'école","à la piscine","chez mamie","au parc"], answer:"à l'école"},
+        {type:"texte", q:"Écris le prénom du garçon de l'histoire.", answer:"leo"}
+      ]
+    }
+  ],
+  maths: [
+    {
+      id:"mat1", title:"Compter jusqu'à 10", icon:"🔟",
+      cours:"On compte : 1, 2, 3, 4, 5, 6, 7, 8, 9, 10. Entraîne-toi à dire les nombres dans l'ordre, et à les reconnaître.",
+      exos:[
+        {type:"qcm", q:"Quel nombre vient juste après 6 ?", options:["7","5","8","9"], answer:"7"},
+        {type:"texte", q:"Combien y a-t-il d'étoiles ? ⭐⭐⭐⭐", answer:"4"},
+        {type:"qcm", q:"Quel est le plus petit nombre ?", options:["3","7","2","9"], answer:"2"},
+        {type:"texte", q:"Écris en chiffre le nombre dix.", answer:"10"}
+      ]
+    },
+    {
+      id:"mat2", title:"Nombres jusqu'à 20", icon:"🎯",
+      cours:"Après 10 viennent 11, 12, 13... jusqu'à 20. Regarde bien l'ordre des nombres.",
+      exos:[
+        {type:"qcm", q:"Quel nombre vient juste avant 15 ?", options:["14","16","13","12"], answer:"14"},
+        {type:"texte", q:"Écris en chiffres : quinze.", answer:"15"},
+        {type:"qcm", q:"Quel nombre est entre 17 et 19 ?", options:["18","16","20","15"], answer:"18"},
+        {type:"texte", q:"Combien font 10 + 7 ?", answer:"17"}
+      ]
+    },
+    {
+      id:"mat3", title:"Dizaines et unités", icon:"🧮",
+      cours:"Dans un nombre à deux chiffres, le premier chiffre compte les dizaines (paquets de 10) et le second les unités. Dans 34, il y a 3 dizaines et 4 unités.",
+      exos:[
+        {type:"qcm", q:"Dans le nombre 34, combien y a-t-il de dizaines ?", options:["3","4","7","34"], answer:"3"},
+        {type:"texte", q:"Combien y a-t-il d'unités dans le nombre 52 ?", answer:"2"},
+        {type:"qcm", q:"Quel nombre s'écrit avec 5 dizaines et 6 unités ?", options:["56","65","506","15"], answer:"56"},
+        {type:"texte", q:"Écris en chiffres : quarante-deux.", answer:"42"}
+      ]
+    },
+    {
+      id:"mat4", title:"Comparer les nombres", icon:"⚖️",
+      cours:"Pour comparer deux nombres, on utilise < (plus petit que), > (plus grand que) et = (égal à).",
+      exos:[
+        {type:"qcm", q:"Quel signe faut-il entre 23 et 32 ? 23 ___ 32", options:["<",">","="], answer:"<"},
+        {type:"qcm", q:"Quel est le plus grand nombre ?", options:["47","74","17","41"], answer:"74"},
+        {type:"texte", q:"Parmi 12, 21, 9, 30 — écris le plus petit.", answer:"9"},
+        {type:"qcm", q:"45 ___ 45. Quel signe ?", options:["=","<",">"], answer:"="}
+      ]
+    },
+    {
+      id:"mat5", title:"Additions", icon:"➕",
+      cours:"Additionner, c'est réunir deux quantités. 12 + 5 : je pars de 12 et j'avance de 5.",
+      exos:[
+        {type:"texte", q:"Combien font 12 + 5 ?", answer:"17"},
+        {type:"texte", q:"Combien font 23 + 14 ?", answer:"37"},
+        {type:"qcm", q:"Quel est le résultat de 6 + 3 ?", options:["9","8","10","7"], answer:"9"},
+        {type:"texte", q:"Combien font 30 + 20 ?", answer:"50"}
+      ]
+    },
+    {
+      id:"mat6", title:"Soustractions", icon:"➖",
+      cours:"Soustraire, c'est enlever une quantité. 9 - 4 : je pars de 9 et j'enlève 4.",
+      exos:[
+        {type:"texte", q:"Combien font 9 - 4 ?", answer:"5"},
+        {type:"texte", q:"Combien font 18 - 6 ?", answer:"12"},
+        {type:"qcm", q:"Quel est le résultat de 10 - 3 ?", options:["7","8","6","9"], answer:"7"},
+        {type:"texte", q:"Combien font 25 - 5 ?", answer:"20"}
+      ]
+    },
+    {
+      id:"mat7", title:"Doubles et moitiés", icon:"👯",
+      cours:"Le double d'un nombre, c'est ce nombre additionné à lui-même (le double de 4 = 4+4 = 8). La moitié, c'est le partager en deux parts égales.",
+      exos:[
+        {type:"texte", q:"Quel est le double de 4 ?", answer:"8"},
+        {type:"texte", q:"Quel est le double de 6 ?", answer:"12"},
+        {type:"qcm", q:"Quelle est la moitié de 10 ?", options:["5","4","6","2"], answer:"5"},
+        {type:"texte", q:"Quel est le double de 9 ?", answer:"18"}
+      ]
+    },
+    {
+      id:"mat8", title:"Petits problèmes", icon:"🧠",
+      cours:"Lis bien l'histoire, cherche ce qu'on te demande, puis calcule.",
+      exos:[
+        {type:"texte", q:"Léa a 3 bonbons. Sa maman lui en donne 4 de plus. Combien Léa a-t-elle de bonbons ?", answer:"7"},
+        {type:"texte", q:"Il y avait 8 oiseaux sur une branche. 3 se sont envolés. Combien reste-t-il d'oiseaux ?", answer:"5"},
+        {type:"qcm", q:"Tom a 5 billes, il en gagne 2. Combien a-t-il de billes ?", options:["7","6","8","5"], answer:"7"},
+        {type:"texte", q:"Une classe a 12 filles et 9 garçons. Combien d'élèves y a-t-il en tout ?", answer:"21"}
+      ]
+    }
+  ]
+};
+
+/* =========================================================================
+   ÉTAT DE L'ÉLÈVE
+   ========================================================================= */
+let student = {
+  prenom:"", code:"",
+  points:0, streak:0, lastConnection:"",
+  completed:{lecture:[], maths:[]},
+  badges:[]
+};
+let currentTrack = "lecture";
+let currentLesson = null;
+let exoIndex = 0;
+let exoScore = 0;
+let waitingContinue = false;
+
+/* =========================================================================
+   OUTILS
+   ========================================================================= */
+function normalize(str){
+  return String(str).trim().toLowerCase()
+    .normalize("NFD").replace(/[\u0300-\u036f]/g,"")
+    .replace(/\s+/g," ");
+}
+function todayStr(){
+  const d = new Date();
+  return d.getFullYear()+"-"+(d.getMonth()+1)+"-"+d.getDate();
+}
+function updateStreak(){
+  const today = todayStr();
+  if(student.lastConnection === today) return;
+  const last = student.lastConnection ? new Date(student.lastConnection) : null;
+  const now = new Date();
+  if(last){
+    const diffDays = Math.round((now - last) / 86400000);
+    student.streak = (diffDays === 1) ? (student.streak + 1) : 1;
+  } else {
+    student.streak = 1;
+  }
+  student.lastConnection = today;
+}
+function checkBadges(){
+  const nbLec = student.completed.lecture.length;
+  const nbMat = student.completed.maths.length;
+  const want = [];
+  if(nbLec >= 4) want.push({id:"lec-4", icon:"📖", label:"4 leçons de lecture"});
+  if(nbLec >= 8) want.push({id:"lec-8", icon:"🏆", label:"Lecture terminée"});
+  if(nbMat >= 4) want.push({id:"mat-4", icon:"🔢", label:"4 leçons de maths"});
+  if(nbMat >= 8) want.push({id:"mat-8", icon:"🏆", label:"Maths terminées"});
+  if(student.points >= 100) want.push({id:"pts-100", icon:"⭐", label:"100 points"});
+  if(student.streak >= 3) want.push({id:"streak-3", icon:"🔥", label:"3 jours de suite"});
+  want.forEach(b=>{
+    if(!student.badges.find(x=>x.id===b.id)) student.badges.push(b);
+  });
+}
+
+/* =========================================================================
+   SYNCHRONISATION (Google Apps Script)
+   ========================================================================= */
+async function apiCall(action, extraParams){
+  if(!CONFIG.SCRIPT_URL || CONFIG.SCRIPT_URL.indexOf("COLLE_ICI") !== -1){
+    return {ok:false, offline:true};
+  }
+  const params = new URLSearchParams({action, prenom: student.prenom, code: student.code, ...(extraParams||{})});
+  try{
+    const res = await fetch(CONFIG.SCRIPT_URL + "?" + params.toString());
+    const data = await res.json();
+    return data;
+  }catch(e){
+    return {ok:false, error:String(e)};
+  }
+}
+async function loadFromServer(){
+  const data = await apiCall("load");
+  if(data && data.ok && data.found){
+    student.points = data.points || 0;
+    student.streak = data.streak || 0;
+    student.lastConnection = data.lastConnection || "";
+    student.completed.lecture = data.completedLecture || [];
+    student.completed.maths = data.completedMaths || [];
+    student.badges = data.badges || [];
+  }
+  return data;
+}
+async function saveToServer(){
+  await apiCall("save", {
+    points: student.points,
+    streak: student.streak,
+    lastConnection: student.lastConnection,
+    completedLecture: JSON.stringify(student.completed.lecture),
+    completedMaths: JSON.stringify(student.completed.maths),
+    badges: JSON.stringify(student.badges)
+  });
+}
+
+/* =========================================================================
+   CONNEXION
+   ========================================================================= */
+document.getElementById("btn-login").addEventListener("click", async ()=>{
+  const prenom = document.getElementById("input-prenom").value.trim();
+  const code = document.getElementById("input-code").value.trim();
+  const msg = document.getElementById("login-msg");
+  if(!prenom || !code){
+    msg.textContent = "Écris ton prénom et ton code pour continuer.";
+    return;
+  }
+  student.prenom = prenom;
+  student.code = code;
+  msg.textContent = "Connexion en cours...";
+  const result = await loadFromServer();
+  if(result && result.offline){
+    msg.textContent = "Mode hors-ligne : la progression ne sera pas sauvegardée tant que l'URL Apps Script n'est pas configurée.";
+  } else if(result && !result.ok){
+    msg.textContent = "Impossible de contacter le serveur, on continue quand même !";
+  } else {
+    msg.textContent = "";
+  }
+  updateStreak();
+  saveToServer();
+  document.getElementById("login-screen").classList.add("hidden");
+  document.getElementById("app-screen").classList.remove("hidden");
+  renderApp();
+});
+
+/* =========================================================================
+   NAVIGATION PRINCIPALE
+   ========================================================================= */
+function switchTrack(track){
+  currentTrack = track;
+  document.getElementById("tab-lecture").classList.toggle("active", track==="lecture");
+  document.getElementById("tab-maths").classList.toggle("active", track==="maths");
+  renderApp();
+}
+
+function renderApp(){
+  document.getElementById("topbar-name").textContent = student.prenom;
+  document.getElementById("topbar-points").textContent = student.points;
+  document.getElementById("topbar-streak").textContent = student.streak;
+
+  // Badges
+  const badgesRow = document.getElementById("badges-row");
+  badgesRow.innerHTML = "";
+  student.badges.forEach(b=>{
+    const chip = document.createElement("div");
+    chip.className = "badge-chip";
+    chip.innerHTML = `<span>${b.icon}</span><span>${b.label}</span>`;
+    badgesRow.appendChild(chip);
+  });
+
+  // Chemin de leçons
+  const container = document.getElementById("path-container");
+  container.innerHTML = "";
+  const lessons = CONTENT[currentTrack];
+  const done = student.completed[currentTrack];
+  const positions = ["left","center","right","center"];
+
+  lessons.forEach((lesson, i)=>{
+    const isDone = done.includes(lesson.id);
+    const isUnlocked = i === 0 || done.includes(lessons[i-1].id);
+    const isCurrent = isUnlocked && !isDone;
+
+    const wrap = document.createElement("div");
+    wrap.className = "node-wrap " + positions[i % positions.length];
+
+    const node = document.createElement("div");
+    node.className = "node" + (isDone ? " done" : "") + (!isUnlocked ? " locked" : "") + (isCurrent ? " current" : "");
+    node.innerHTML = `<span class="icon">${isDone ? "✅" : lesson.icon}</span><span>${lesson.title}</span>`;
+    if(isUnlocked){
+      node.addEventListener("click", ()=> openLesson(lesson));
+    }
+    wrap.appendChild(node);
+    container.appendChild(wrap);
+  });
+}
+
+/* =========================================================================
+   LEÇON + EXERCICES
+   ========================================================================= */
+function openLesson(lesson){
+  currentLesson = lesson;
+  exoIndex = -1; // -1 = écran de cours
+  exoScore = 0;
+  document.getElementById("lesson-screen").classList.remove("hidden");
+  renderLessonScreen();
+}
+function closeLesson(){
+  document.getElementById("lesson-screen").classList.add("hidden");
+  renderApp();
+}
+
+function renderLessonScreen(){
+  const inner = document.getElementById("lesson-inner");
+  if(exoIndex === -1){
+    inner.innerHTML = `
+      <button class="back-btn" onclick="closeLesson()">← Retour</button>
+      <div class="lesson-card pop-in">
+        <h2>${currentLesson.icon} ${currentLesson.title}</h2>
+        <p>${currentLesson.cours}</p>
+        <button class="btn btn-leaf btn-full" onclick="startExercises()">Je m'entraîne</button>
+      </div>
+    `;
+    return;
+  }
+  if(exoIndex >= currentLesson.exos.length){
+    renderResult();
+    return;
+  }
+  const exo = currentLesson.exos[exoIndex];
+  const total = currentLesson.exos.length;
+  let progressHtml = "";
+  for(let i=0;i<total;i++){
+    progressHtml += `<span class="${i < exoIndex ? 'filled' : ''}"></span>`;
+  }
+
+  let bodyHtml = "";
+  if(exo.type === "qcm"){
+    bodyHtml = `<div class="options">` + exo.options.map((opt,idx)=>
+      `<button class="option-btn" data-idx="${idx}" onclick="answerQcm(${idx})">${opt}</button>`
+    ).join("") + `</div>`;
+  } else {
+    bodyHtml = `
+      <div class="text-answer">
+        <input type="text" id="text-input" placeholder="Ta réponse">
+      </div>
+      <div class="continue-wrap">
+        <button class="btn btn-lilac" onclick="answerTexte()">Valider</button>
+      </div>
+    `;
+  }
+
+  inner.innerHTML = `
+    <button class="back-btn" onclick="closeLesson()">← Retour</button>
+    <div class="lesson-card pop-in">
+      <div class="exo-progress">${progressHtml}</div>
+      <div class="exo-question">${exo.q}</div>
+      ${bodyHtml}
+      <div class="feedback" id="feedback"></div>
+    </div>
+  `;
+  if(exo.type === "texte"){
+    const input = document.getElementById("text-input");
+    input.focus();
+    input.addEventListener("keydown", e=>{ if(e.key === "Enter") answerTexte(); });
+  }
+  waitingContinue = false;
+}
+
+function goToNextExo(){
+  exoIndex++;
+  renderLessonScreen();
+}
+
+function showFeedback(isCorrect){
+  const fb = document.getElementById("feedback");
+  fb.className = "feedback " + (isCorrect ? "ok" : "ko");
+  fb.textContent = isCorrect ? "Bravo, bonne réponse ! ⭐" : "Pas tout à fait, continue !";
+  if(isCorrect) exoScore++;
+  setTimeout(goToNextExo, 1100);
+}
+
+function answerQcm(idx){
+  if(waitingContinue) return;
+  waitingContinue = true;
+  const exo = currentLesson.exos[exoIndex];
+  const buttons = document.querySelectorAll(".option-btn");
+  const chosen = normalize(exo.options[idx]);
+  const correct = normalize(exo.answer);
+  buttons.forEach((b,i)=>{
+    b.disabled = true;
+    if(normalize(exo.options[i]) === correct) b.classList.add("correct");
+    else if(i === idx) b.classList.add("wrong");
+  });
+  showFeedback(chosen === correct);
+}
+
+function answerTexte(){
+  if(waitingContinue) return;
+  waitingContinue = true;
+  const exo = currentLesson.exos[exoIndex];
+  const val = document.getElementById("text-input").value;
+  const isCorrect = normalize(val) === normalize(exo.answer);
+  showFeedback(isCorrect);
+}
+
+function startExercises(){
+  exoIndex = 0;
+  renderLessonScreen();
+}
+
+function renderResult(){
+  const total = currentLesson.exos.length;
+  const earned = exoScore * 10 + (total - exoScore) * 3;
+  student.points += earned;
+
+  const list = student.completed[currentTrack];
+  if(!list.includes(currentLesson.id)) list.push(currentLesson.id);
+
+  checkBadges();
+  saveToServer();
+
+  const inner = document.getElementById("lesson-inner");
+  inner.innerHTML = `
+    <div class="lesson-card result-card pop-in">
+      <div class="result-emoji">${exoScore === total ? "🏆" : "🎉"}</div>
+      <h2>Leçon terminée !</h2>
+      <p>${exoScore} / ${total} bonnes réponses</p>
+      <div class="result-points">+ ${earned} points ⭐</div>
+      <button class="btn btn-leaf btn-full" style="margin-top:18px;" onclick="closeLesson()">Continuer</button>
+    </div>
+  `;
+}
+</script>
+</body>
+</html>
