@@ -275,11 +275,6 @@
   <div class="lesson-inner" id="lesson-inner"></div>
 </div>
 
-<!-- ============ ÉCRAN ADMIN ============ -->
-<div id="admin-screen" class="hidden">
-  <div class="lesson-inner" id="admin-inner"></div>
-</div>
-
 <script>
 /* =========================================================================
    CONFIGURATION — colle ici l'URL de ton Web App Google Apps Script
@@ -651,8 +646,8 @@ let exoScore = 0;
 let waitingContinue = false;
 let selectedOptionIdx = null;
 let contentOverrides = {}; // { lessonId: { title, cours, coursAudio, exos:[{q,qAudio,options,answer}] } }
-let adminTrack = "lecture";
-let adminLessonId = null;
+let isAdmin = false;
+let editingField = null; // null | "cours" | "exo"
 
 /* =========================================================================
    OUTILS
@@ -785,140 +780,67 @@ function openAdminLogin(){
     alert("Mot de passe incorrect.");
     return;
   }
-  document.getElementById("login-screen").classList.add("hidden");
-  document.getElementById("admin-screen").classList.remove("hidden");
-  adminLessonId = null;
-  renderAdminScreen();
-}
-function closeAdmin(){
-  document.getElementById("admin-screen").classList.add("hidden");
-  document.getElementById("login-screen").classList.remove("hidden");
-}
-
-function renderAdminScreen(){
-  if(adminLessonId){
-    renderAdminEditor();
-  } else {
-    renderAdminList();
-  }
-}
-
-function adminSwitchTrack(track){
-  adminTrack = track;
-  adminLessonId = null;
-  renderAdminList();
-}
-
-function renderAdminList(){
-  const inner = document.getElementById("admin-inner");
-  const lessons = CONTENT[adminTrack];
-  let rows = lessons.map(l=>{
-    const merged = getLessonData(adminTrack, l.id);
-    return `<div class="admin-lesson-row">
-      <span>${l.icon} ${merged.title}</span>
-      <button class="btn btn-lilac" onclick="openAdminLesson('${l.id}')">Modifier</button>
-    </div>`;
-  }).join("");
-  inner.innerHTML = `
-    <button class="back-btn" onclick="closeAdmin()">← Quitter l'admin</button>
-    <div class="lesson-card pop-in">
-      <h2>🔧 Espace admin</h2>
-      <p>Choisis un parcours puis une leçon à modifier. Tu peux changer le texte affiché et, séparément, le texte utilisé pour la voix (utile si la synthèse vocale prononce mal un mot).</p>
-      <div class="admin-track-tabs">
-        <button class="${adminTrack==='lecture'?'active':''}" onclick="adminSwitchTrack('lecture')">📖 Lecture</button>
-        <button class="${adminTrack==='maths'?'active':''}" onclick="adminSwitchTrack('maths')">🔢 Maths</button>
-        <button class="${adminTrack==='bible'?'active':''}" onclick="adminSwitchTrack('bible')">📖 Bible</button>
-      </div>
-      ${rows}
-    </div>
-  `;
-}
-
-function openAdminLesson(lessonId){
-  adminLessonId = lessonId;
-  renderAdminEditor();
-}
-
-function renderAdminEditor(){
-  const merged = getLessonData(adminTrack, adminLessonId);
-  const inner = document.getElementById("admin-inner");
-
-  const exoBlocks = merged.exos.map((exo, i)=>`
-    <div class="admin-exo-block">
-      <div class="admin-field">
-        <label>Question ${i+1} (texte affiché)</label>
-        <textarea id="exo-q-${i}">${exo.q}</textarea>
-      </div>
-      <div class="admin-field">
-        <label>Question ${i+1} (texte lu à voix haute, laisser vide si identique)</label>
-        <textarea id="exo-qaudio-${i}">${exo.qAudio === exo.q ? "" : exo.qAudio}</textarea>
-      </div>
-      ${exo.type === "qcm" ? `
-      <div class="admin-field">
-        <label>Réponses possibles (séparées par des | )</label>
-        <input type="text" id="exo-options-${i}" value="${exo.options.join(" | ")}">
-      </div>` : ""}
-      <div class="admin-field">
-        <label>Bonne réponse</label>
-        <input type="text" id="exo-answer-${i}" value="${exo.answer}">
-      </div>
-    </div>
-  `).join("");
-
-  inner.innerHTML = `
-    <button class="back-btn" onclick="adminLessonId=null; renderAdminScreen();">← Retour à la liste</button>
-    <div class="lesson-card pop-in">
-      <h2>${merged.icon} ${merged.title}</h2>
-      <div class="admin-field">
-        <label>Titre de la leçon</label>
-        <input type="text" id="admin-title" value="${merged.title}">
-      </div>
-      <div class="admin-field">
-        <label>Texte du cours (affiché)</label>
-        <textarea id="admin-cours">${merged.cours}</textarea>
-      </div>
-      <div class="admin-field">
-        <label>Texte du cours (lu à voix haute, laisser vide si identique)</label>
-        <textarea id="admin-coursaudio">${merged.coursAudio === merged.cours ? "" : merged.coursAudio}</textarea>
-      </div>
-      <h3>Exercices</h3>
-      ${exoBlocks}
-      <button class="btn btn-leaf btn-full" onclick="saveAdminLesson()">Enregistrer les modifications</button>
-      <div class="admin-save-msg" id="admin-save-msg"></div>
-    </div>
-  `;
-}
-
-async function saveAdminLesson(){
-  const base = CONTENT[adminTrack].find(l=>l.id===adminLessonId);
-  const data = {
-    title: document.getElementById("admin-title").value.trim(),
-    cours: document.getElementById("admin-cours").value.trim(),
-    coursAudio: document.getElementById("admin-coursaudio").value.trim(),
-    exos: base.exos.map((exo,i)=>{
-      const entry = {
-        q: document.getElementById("exo-q-"+i).value.trim(),
-        qAudio: document.getElementById("exo-qaudio-"+i).value.trim(),
-        answer: document.getElementById("exo-answer-"+i).value.trim()
-      };
-      if(exo.type === "qcm"){
-        const raw = document.getElementById("exo-options-"+i).value;
-        entry.options = raw.split("|").map(s=>s.trim()).filter(Boolean);
-      }
-      return entry;
-    })
+  isAdmin = true;
+  student = {
+    prenom:"Admin", code:"",
+    points:0, streak:0, lastConnection:"",
+    completed:{lecture:[], maths:[], bible:[]},
+    badges:[]
   };
-  contentOverrides[adminLessonId] = data;
-  const msg = document.getElementById("admin-save-msg");
-  msg.textContent = "Enregistrement...";
-  const result = await apiCall("saveContent", {lessonId: adminLessonId, data: JSON.stringify(data)});
-  msg.textContent = (result && result.ok) ? "✅ Enregistré." : "⚠️ Non sauvegardé (vérifie la connexion), mais visible pour toi tant que la page reste ouverte.";
+  document.getElementById("login-screen").classList.add("hidden");
+  document.getElementById("app-screen").classList.remove("hidden");
+  switchTrack("lecture");
+}
+
+/**
+ * En mode admin : on ouvre la même leçon/exercice que l'élève verrait
+ * (toutes les leçons sont déverrouillées), avec des boutons ✏️ Modifier
+ * qui remplacent le texte par un formulaire, sauvegardé directement.
+ */
+async function saveCoursEdit(){
+  const lessonId = currentLesson.id;
+  const ov = contentOverrides[lessonId]
+    ? Object.assign({}, contentOverrides[lessonId])
+    : {exos: currentLesson.exos.map(()=>({}))};
+  ov.title = document.getElementById("edit-title").value.trim();
+  ov.cours = document.getElementById("edit-cours").value.trim();
+  ov.coursAudio = document.getElementById("edit-coursaudio").value.trim();
+  contentOverrides[lessonId] = ov;
+  await apiCall("saveContent", {lessonId, data: JSON.stringify(ov)});
+  currentLesson = getLessonData(currentTrack, lessonId);
+  editingField = null;
+  renderLessonScreen();
+}
+
+async function saveExoEdit(){
+  const lessonId = currentLesson.id;
+  const exo = currentLesson.exos[exoIndex];
+  const ov = contentOverrides[lessonId]
+    ? Object.assign({}, contentOverrides[lessonId])
+    : {};
+  if(!ov.exos) ov.exos = currentLesson.exos.map(()=>({}));
+  const entry = {
+    q: document.getElementById("edit-exoq").value.trim(),
+    qAudio: document.getElementById("edit-exoqaudio").value.trim(),
+    answer: document.getElementById("edit-exoanswer").value.trim()
+  };
+  if(exo.type === "qcm"){
+    entry.options = document.getElementById("edit-exooptions").value.split("|").map(s=>s.trim()).filter(Boolean);
+  }
+  ov.exos[exoIndex] = entry;
+  contentOverrides[lessonId] = ov;
+  await apiCall("saveContent", {lessonId, data: JSON.stringify(ov)});
+  currentLesson = getLessonData(currentTrack, lessonId);
+  editingField = null;
+  renderLessonScreen();
 }
 
 /* =========================================================================
    DÉCONNEXION
    ========================================================================= */
 function logout(){
+  isAdmin = false;
+  editingField = null;
   student = {
     prenom:"", code:"",
     points:0, streak:0, lastConnection:"",
@@ -973,7 +895,7 @@ function switchTrack(track){
 }
 
 function renderApp(){
-  document.getElementById("topbar-name").textContent = student.prenom;
+  document.getElementById("topbar-name").textContent = student.prenom + (isAdmin ? " (mode admin)" : "");
   document.getElementById("topbar-points").textContent = student.points;
   document.getElementById("topbar-streak").textContent = student.streak;
 
@@ -997,7 +919,7 @@ function renderApp(){
   lessons.forEach((lesson, i)=>{
     const merged = getLessonData(currentTrack, lesson.id);
     const isDone = done.includes(lesson.id);
-    const isUnlocked = i === 0 || done.includes(lessons[i-1].id);
+    const isUnlocked = isAdmin || i === 0 || done.includes(lessons[i-1].id);
     const isCurrent = isUnlocked && !isDone;
 
     const wrap = document.createElement("div");
@@ -1022,6 +944,7 @@ function openLesson(lesson, lessonId){
   currentLesson._id = lessonId || lesson.id;
   exoIndex = -1; // -1 = écran de cours
   exoScore = 0;
+  editingField = null;
   document.getElementById("lesson-screen").classList.remove("hidden");
   renderLessonScreen();
 }
@@ -1033,11 +956,24 @@ function closeLesson(){
 function renderLessonScreen(){
   const inner = document.getElementById("lesson-inner");
   if(exoIndex === -1){
+    if(isAdmin && editingField === "cours"){
+      inner.innerHTML = `
+        <button class="back-btn" onclick="editingField=null; renderLessonScreen();">← Annuler</button>
+        <div class="lesson-card pop-in">
+          <div class="admin-field"><label>Titre de la leçon</label><input id="edit-title" value="${currentLesson.title}"></div>
+          <div class="admin-field"><label>Cours (texte affiché)</label><textarea id="edit-cours">${currentLesson.cours}</textarea></div>
+          <div class="admin-field"><label>Cours (texte lu à voix haute, laisser vide si identique)</label><textarea id="edit-coursaudio">${currentLesson.coursAudio === currentLesson.cours ? "" : currentLesson.coursAudio}</textarea></div>
+          <button class="btn btn-leaf btn-full" onclick="saveCoursEdit()">💾 Enregistrer</button>
+        </div>
+      `;
+      return;
+    }
     inner.innerHTML = `
       <button class="back-btn" onclick="closeLesson()">← Retour</button>
       <div class="lesson-card pop-in">
         <h2>${currentLesson.icon} ${currentLesson.title}</h2>
         <button class="speaker-btn" onclick="speak(lastSpokenText)">🔊 Réécouter</button>
+        ${isAdmin ? `<button class="speaker-btn" onclick="editingField='cours'; renderLessonScreen();">✏️ Modifier</button>` : ""}
         <p>${currentLesson.cours}</p>
         <button class="btn btn-leaf btn-full" onclick="startExercises()">Je m'entraîne</button>
       </div>
@@ -1051,6 +987,21 @@ function renderLessonScreen(){
   }
   const exo = currentLesson.exos[exoIndex];
   const total = currentLesson.exos.length;
+
+  if(isAdmin && editingField === "exo"){
+    inner.innerHTML = `
+      <button class="back-btn" onclick="editingField=null; renderLessonScreen();">← Annuler</button>
+      <div class="lesson-card pop-in">
+        <div class="admin-field"><label>Question ${exoIndex+1} (texte affiché)</label><textarea id="edit-exoq">${exo.q}</textarea></div>
+        <div class="admin-field"><label>Question ${exoIndex+1} (texte lu à voix haute, laisser vide si identique)</label><textarea id="edit-exoqaudio">${exo.qAudio === exo.q ? "" : exo.qAudio}</textarea></div>
+        ${exo.type === "qcm" ? `<div class="admin-field"><label>Réponses possibles (séparées par | )</label><input id="edit-exooptions" value="${exo.options.join(" | ")}"></div>` : ""}
+        <div class="admin-field"><label>Bonne réponse</label><input id="edit-exoanswer" value="${exo.answer}"></div>
+        <button class="btn btn-leaf btn-full" onclick="saveExoEdit()">💾 Enregistrer</button>
+      </div>
+    `;
+    return;
+  }
+
   selectedOptionIdx = null;
   let progressHtml = "";
   for(let i=0;i<total;i++){
@@ -1081,6 +1032,7 @@ function renderLessonScreen(){
     <div class="lesson-card pop-in">
       <div class="exo-progress">${progressHtml}</div>
       <button class="speaker-btn" onclick="speak(lastSpokenText)">🔊 Réécouter</button>
+      ${isAdmin ? `<button class="speaker-btn" onclick="editingField='exo'; renderLessonScreen();">✏️ Modifier</button>` : ""}
       <div class="exo-question">${exo.q}</div>
       ${bodyHtml}
       <div class="feedback" id="feedback"></div>
@@ -1097,6 +1049,7 @@ function renderLessonScreen(){
 
 function goToNextExo(){
   exoIndex++;
+  editingField = null;
   renderLessonScreen();
 }
 
@@ -1149,6 +1102,7 @@ function answerTexte(){
 
 function startExercises(){
   exoIndex = 0;
+  editingField = null;
   renderLessonScreen();
 }
 
@@ -1161,7 +1115,7 @@ function renderResult(){
   if(!list.includes(currentLesson.id)) list.push(currentLesson.id);
 
   checkBadges();
-  saveToServer();
+  if(!isAdmin) saveToServer();
 
   const inner = document.getElementById("lesson-inner");
   inner.innerHTML = `
