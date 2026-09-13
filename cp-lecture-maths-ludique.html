@@ -73,11 +73,11 @@
   .login-card p{margin:0 0 20px;font-size:15px;color:#5b5a7a;}
   .field{text-align:left;margin-bottom:14px;}
   .field label{display:block;font-weight:700;font-size:13px;margin-bottom:6px;color:var(--indigo);}
-  .field input{
+  .field input, .field select{
     width:100%;padding:12px 14px;border-radius:14px;border:2px solid var(--sky-deep);
     font-size:16px;background:var(--sky);
   }
-  .field input:focus{outline:none;border-color:var(--lilac);}
+  .field input:focus, .field select:focus{outline:none;border-color:var(--lilac);}
   .btn{
     display:inline-block;padding:14px 22px;border-radius:16px;font-weight:800;font-size:16px;
     background:var(--sun);color:var(--indigo);box-shadow:0 5px 0 #E0A80E;transition:transform .08s;
@@ -223,7 +223,11 @@
     </div>
     <h1>Enfant de Dieu CP</h1>
     <p>Lecture, Maths &amp; Bible, en s'amusant !</p>
-    <button class="btn btn-lilac btn-full" id="btn-listen-login" style="margin-bottom:14px;" onclick="speak(loginInstructions)">🔊 Écouter les consignes</button>
+    <button class="btn btn-lilac btn-full" id="btn-listen-login" style="margin-bottom:10px;" onclick="speak(loginInstructions)">🔊 Écouter les consignes</button>
+    <div class="field">
+      <label for="voice-select">Voix (si plusieurs sont disponibles)</label>
+      <select id="voice-select"></select>
+    </div>
     <div class="field">
       <label for="input-prenom">Ton prénom</label>
       <input id="input-prenom" type="text" placeholder="Ex : Léa" autocomplete="off">
@@ -547,17 +551,42 @@ let audioEnabled = true;
 let lastSpokenText = "";
 let frenchVoice = null;
 
+function pickBestVoice(voices){
+  const priority = ["google", "neural", "enhanced", "premium", "natural", "siri", "audrey", "amelie", "thomas"];
+  for(const key of priority){
+    const found = voices.find(v => v.name.toLowerCase().includes(key));
+    if(found) return found;
+  }
+  return voices[0] || null;
+}
+
 function loadFrenchVoice(){
   if(!window.speechSynthesis) return;
-  const voices = window.speechSynthesis.getVoices();
-  frenchVoice = voices.find(v => v.lang && v.lang.toLowerCase().startsWith("fr")) || null;
+  const voices = window.speechSynthesis.getVoices().filter(v => v.lang && v.lang.toLowerCase().startsWith("fr"));
+  frenchVoice = pickBestVoice(voices);
+  populateVoiceSelector(voices);
+}
+
+function populateVoiceSelector(voices){
+  const sel = document.getElementById("voice-select");
+  if(!sel) return;
+  if(!voices.length){ sel.innerHTML = `<option>Aucune voix française trouvée</option>`; return; }
+  sel.innerHTML = voices.map((v,i)=>`<option value="${i}">${v.name}</option>`).join("");
+  const idx = frenchVoice ? voices.indexOf(frenchVoice) : 0;
+  sel.value = idx >= 0 ? idx : 0;
+  sel.onchange = ()=>{
+    frenchVoice = voices[Number(sel.value)];
+    speak("Voici comment je sonne maintenant.");
+  };
 }
 if(window.speechSynthesis){
   loadFrenchVoice();
   window.speechSynthesis.onvoiceschanged = loadFrenchVoice;
 }
 
-function speak(text){
+function speak(textOrParts){
+  if(Array.isArray(textOrParts)) return speakSequence(textOrParts);
+  const text = textOrParts;
   lastSpokenText = text || lastSpokenText;
   if(!audioEnabled || !window.speechSynthesis || !text) return;
   window.speechSynthesis.cancel();
@@ -572,6 +601,25 @@ function speak(text){
   }, 180);
 }
 
+function speakSequence(parts){
+  lastSpokenText = parts.join(". ");
+  if(!audioEnabled || !window.speechSynthesis) return;
+  window.speechSynthesis.cancel();
+  const clean = parts.filter(p => p && p.trim());
+  let i = 0;
+  const speakNext = ()=>{
+    if(i >= clean.length) return;
+    const utter = new SpeechSynthesisUtterance(clean[i]);
+    utter.lang = "fr-FR";
+    utter.rate = 0.78;   // encore plus lent pour les listes de réponses
+    utter.pitch = 1.05;
+    if(frenchVoice) utter.voice = frenchVoice;
+    utter.onend = ()=>{ i++; setTimeout(speakNext, 450); }; // vraie pause entre chaque réponse
+    window.speechSynthesis.speak(utter);
+  };
+  setTimeout(speakNext, 180);
+}
+
 function toggleAudio(){
   audioEnabled = !audioEnabled;
   document.getElementById("audio-toggle-btn").textContent = audioEnabled ? "🔊" : "🔇";
@@ -580,9 +628,9 @@ function toggleAudio(){
 
 function spokenTextForExo(exo){
   if(exo.type === "qcm"){
-    const parts = [exo.qAudio + "."];
-    exo.options.forEach((opt,i)=> parts.push("Réponse " + (i+1) + ". " + opt + "."));
-    return parts.join("  ");
+    const parts = [exo.qAudio];
+    exo.options.forEach((opt,i)=> parts.push("Réponse " + (i+1) + ". " + opt));
+    return parts;
   }
   return exo.qAudio;
 }
