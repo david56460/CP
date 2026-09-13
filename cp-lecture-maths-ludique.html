@@ -125,6 +125,25 @@
   .rec-indicator{color:var(--coral);font-weight:800;font-size:13px;}
   audio.preview-audio{height:36px;}
 
+  /* ---------- Atelier Montessori (cartes à pince) ---------- */
+  .lesson-card.montessori{
+    background:#FBF3E6;
+    border:3px solid #C8935B;
+    background-image: repeating-linear-gradient(0deg, rgba(200,147,91,0.06) 0px, rgba(200,147,91,0.06) 2px, transparent 2px, transparent 22px);
+  }
+  .lesson-card.montessori h2{color:#7A4A25;}
+  .montessori-badge{
+    display:inline-block;background:#C8935B;color:white;font-weight:800;font-size:12px;
+    padding:4px 10px;border-radius:10px;margin-bottom:10px;
+  }
+  .lesson-card.montessori .option-btn{
+    background:#FFFDF8;border:2px dashed #C8935B;font-weight:800;
+  }
+  .lesson-card.montessori .option-btn.correct{background:var(--leaf);border-color:var(--leaf);color:white;}
+  .lesson-card.montessori .option-btn.wrong{background:var(--coral);border-color:var(--coral);color:white;}
+  .lesson-card.montessori .option-btn.selected{background:#F3E3CB;border-color:#7A4A25;}
+  .lesson-card.montessori #validate-btn{background:#C8935B;box-shadow:0 5px 0 #96683a;color:white;}
+
   /* ---------- App principale ---------- */
   #app-screen{max-width:520px;margin:0 auto;padding:16px 16px 60px;}
   header.topbar{
@@ -185,7 +204,65 @@
     background:var(--white);border-radius:24px;padding:22px;box-shadow:var(--shadow);margin-bottom:16px;
   }
   .lesson-card h2{margin-top:0;font-size:22px;}
-  .lesson-card p{line-height:1.55;font-size:16px;}
+  .lesson-card p, .lesson-card .cours-text{line-height:1.55;font-size:16px;}
+
+  /* ---------- Fleur des nombres ---------- */
+  .flower-wrap{position:relative;width:210px;height:210px;margin:14px auto;}
+  .flower-petal{
+    position:absolute;width:86px;height:64px;border-radius:50%;
+    display:flex;align-items:center;justify-content:center;text-align:center;
+    font-weight:800;font-size:13px;color:#5b3a1a;padding:4px;line-height:1.2;
+  }
+  .flower-petal.top{top:-8px;left:50%;transform:translateX(-50%);}
+  .flower-petal.left{top:50%;left:-14px;transform:translateY(-50%);}
+  .flower-petal.right{top:50%;right:-14px;transform:translateY(-50%);}
+  .flower-petal.bl{bottom:4px;left:6px;}
+  .flower-petal.br{bottom:4px;right:6px;}
+  .flower-center{
+    position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
+    width:76px;height:76px;border-radius:50%;background:white;border:3px solid #C8935B;
+    display:flex;align-items:center;justify-content:center;font-weight:900;font-size:26px;
+    color:#5b3a1a;z-index:2;
+  }
+
+  /* ---------- Glisser-déposer ---------- */
+  .glisser-equations{background:#F7F9FC;border-radius:14px;padding:14px 16px;margin-bottom:14px;font-size:18px;font-weight:800;line-height:1.9;text-align:center;}
+  .glisser-zones{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;margin-bottom:18px;}
+  .glisser-zone{
+    width:70px;height:70px;border-radius:16px;border:3px dashed var(--sky-deep);
+    display:flex;flex-direction:column;align-items:center;justify-content:center;
+    font-weight:800;background:var(--white);position:relative;
+  }
+  .glisser-zone .zone-symbol{font-size:22px;}
+  .glisser-zone .zone-value{font-size:20px;color:var(--indigo);}
+  .glisser-zone.filled{border-style:solid;border-color:var(--leaf);background:#EAFBEF;}
+  .glisser-tray{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;min-height:60px;padding:10px;}
+  .glisser-piece{
+    width:52px;height:52px;border-radius:14px;background:var(--sun);color:var(--indigo);
+    display:flex;align-items:center;justify-content:center;font-weight:900;font-size:18px;
+    box-shadow:0 4px 0 #E0A80E;touch-action:none;user-select:none;cursor:grab;
+  }
+  .glisser-piece.dragging{position:fixed;z-index:50;box-shadow:0 8px 16px rgba(0,0,0,.25);opacity:.95;pointer-events:none;}
+  .glisser-piece.placed{visibility:hidden;}
+
+  /* ---------- Mots mêlés ---------- */
+  .mm-wordlist{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px;}
+  .mm-word-chip{
+    background:var(--white);border:2px solid var(--sky-deep);border-radius:12px;
+    padding:6px 12px;font-weight:800;font-size:13px;color:var(--indigo);
+  }
+  .mm-word-chip.found{background:var(--leaf);border-color:var(--leaf);color:white;text-decoration:line-through;}
+  .mm-grid{
+    display:grid;gap:3px;margin:0 auto;user-select:none;touch-action:none;
+    background:var(--sky-deep);border-radius:14px;padding:8px;max-width:100%;
+  }
+  .mm-cell{
+    aspect-ratio:1/1;background:var(--white);border-radius:6px;
+    display:flex;align-items:center;justify-content:center;font-weight:800;
+    font-size:clamp(11px,3.2vw,16px);color:var(--indigo);
+  }
+  .mm-cell.selecting{background:#F3E3CB;}
+  .mm-cell.found{background:var(--leaf);color:white;}
   .exo-progress{display:flex;gap:6px;margin-bottom:14px;}
   .exo-progress span{flex:1;height:8px;border-radius:4px;background:var(--sky-deep);}
   .exo-progress span.filled{background:var(--sun);}
@@ -383,6 +460,133 @@ const CONTENT = {
         {type:"qcm", q:"Où part Léo ?", options:["à l'école","à la piscine","chez mamie","au parc"], answer:"à l'école"},
         {type:"texte", q:"Écris le prénom du garçon de l'histoire.", answer:"leo"}
       ]
+    },
+    {
+      id:"lec9", title:"Conjugaison : venir, aller, dire, faire", icon:"🦁",
+      cours:"Ces verbes changent beaucoup selon la personne qui parle. Regarde bien qui fait l'action avant de choisir la bonne terminaison.",
+      exos:[
+        {type:"texte", q:"Complète avec le verbe VENIR conjugué : « Le lion ... d'arriver sur son rocher. »", answer:"vient"},
+        {type:"texte", q:"Complète avec le verbe DIRE conjugué : « Il ... à son fils : suis-moi. »", answer:"dit"},
+        {type:"texte", q:"Complète avec le verbe FAIRE conjugué : « Les lionnes ... attention à ne pas faire de bruit. »", answer:"font"},
+        {type:"texte", q:"Complète avec le verbe ALLER conjugué : « Les zèbres ... boire dans le lac. »", answer:"vont"}
+      ]
+    },
+    {
+      id:"lec10", title:"Et ou Est ?", icon:"🐝",
+      cours:"« Et » relie deux mots ou deux idées (comme dans « le chat et le chien »). « Est » veut dire « il/elle est » (le verbe être). Écoute bien le sens de la phrase pour choisir.",
+      exos:[
+        {type:"qcm", q:"« L'abeille ..... dans la ruche »", options:["et","est"], answer:"est"},
+        {type:"qcm", q:"« L'abeille butine des marguerites ..... de la lavande »", options:["et","est"], answer:"et"},
+        {type:"qcm", q:"« La reine ..... la maman de toutes les abeilles »", options:["et","est"], answer:"est"},
+        {type:"qcm", q:"« Les gardiennes .... les nourrices ne sortent pas de la ruche »", options:["et","est"], answer:"et"}
+      ]
+    },
+    {
+      id:"lec11", title:"Retrouver l'infinitif", icon:"🔎",
+      cours:"L'infinitif, c'est le nom du verbe « tout seul », avant qu'on le conjugue. Astuce : essaie la formule « il faut ... ». Par exemple, pour « il joue », on dit « il faut jouer », donc l'infinitif est JOUER.",
+      exos:[
+        {type:"texte", q:"Quel est l'infinitif du verbe dans : « Je joue au football » ?", answer:"jouer"},
+        {type:"texte", q:"Quel est l'infinitif du verbe dans : « Nous faisons un gâteau » ?", answer:"faire"},
+        {type:"texte", q:"Quel est l'infinitif du verbe dans : « Le chat boit du lait » ?", answer:"boire"},
+        {type:"texte", q:"Quel est l'infinitif du verbe dans : « Les joueurs ont gagné la coupe » ?", answer:"gagner"}
+      ]
+    },
+    {
+      id:"lec12", title:"Orthographe : a ou à ?", icon:"✍️",
+      cours:"« a » (sans accent) vient du verbe avoir : on peut le remplacer par « avait ». « à » (avec accent) indique un lieu, une direction ou un moment : on ne peut pas le remplacer par « avait ».",
+      exos:[
+        {type:"qcm", q:"« Cet ours ...... un pelage tout blanc »", options:["a","à"], answer:"a"},
+        {type:"qcm", q:"« Les bébés manchots se jettent ....... l'eau »", options:["a","à"], answer:"à"},
+        {type:"qcm", q:"« Nous partons en vacances ...... la montagne »", options:["a","à"], answer:"à"},
+        {type:"qcm", q:"« La neige ..... fondu ce matin »", options:["a","à"], answer:"a"}
+      ]
+    },
+    {
+      id:"lec13", title:"Être ou Avoir au présent", icon:"🧩",
+      cours:"« Être » sert à décrire un état (je suis, tu es, il est...). « Avoir » sert à posséder quelque chose (j'ai, tu as, il a...). Regarde bien le sens de la phrase.",
+      exos:[
+        {type:"qcm", q:"« Vous ….... en vacances »", options:["êtes","ai","a"], answer:"êtes"},
+        {type:"qcm", q:"« J'….. des chaussures »", options:["ai","es","est"], answer:"ai"},
+        {type:"qcm", q:"« Je …....... un garçon »", options:["suis","ai","es"], answer:"suis"},
+        {type:"qcm", q:"« Elle …...... un joli pull »", options:["a","est","ai"], answer:"a"}
+      ]
+    },
+    {
+      id:"lec14", title:"Le temps et le sujet d'une phrase", icon:"⏳",
+      cours:"Le sujet, c'est qui fait l'action. Le temps, c'est quand ça se passe : au passé (c'est déjà arrivé), au présent (ça arrive maintenant), ou au futur (ça va arriver plus tard).",
+      exos:[
+        {type:"qcm", q:"Dans la phrase « Le chat court dans le jardin », quel est le sujet ?", options:["le chat","court","le jardin"], answer:"le chat"},
+        {type:"qcm", q:"« Le chat court dans le jardin » est à quel temps ?", options:["passé","présent","futur"], answer:"présent"},
+        {type:"qcm", q:"« Hier, j'ai été dans la piscine » est à quel temps ?", options:["passé","présent","futur"], answer:"passé"},
+        {type:"qcm", q:"« Demain, nous ferons un gâteau » est à quel temps ?", options:["passé","présent","futur"], answer:"futur"}
+      ]
+    },
+    {
+      id:"lec15", title:"Nature des mots : la lune", icon:"🌙", montessori:true,
+      cours:"En grammaire Montessori, chaque nature de mot a une forme et une couleur : ▲ petit bleu clair = article, ▲ noir = nom, ▲ bleu = adjectif, ● rouge = verbe, ⌒ vert = préposition, ▲ violet (grand) = pronom, ▬ rose = conjonction. Lis bien chaque phrase avant de répondre.",
+      exos:[
+        {type:"qcm", q:"Dans « La pleine lune brille dans la nuit noire », quelle est la nature du mot LUNE ?", options:["nom","adjectif","verbe","article"], answer:"nom"},
+        {type:"qcm", q:"Dans « Ils regardent la lune rousse », quelle est la nature du mot ILS ?", options:["pronom","nom","verbe","article"], answer:"pronom"},
+        {type:"qcm", q:"Dans « La fusée spatiale s'envole vers la lune », quelle est la nature du mot SPATIALE ?", options:["adjectif","nom","verbe","préposition"], answer:"adjectif"},
+        {type:"qcm", q:"Dans « Les courageux astronautes montent dans la fusée », quelle est la nature du mot DANS ?", options:["préposition","verbe","nom","adjectif"], answer:"préposition"}
+      ]
+    },
+    {
+      id:"lec16", title:"Nature des mots : la ferme", icon:"🐄", montessori:true,
+      cours:"On continue avec le même code couleur : ▲ petit bleu clair = article, ▲ noir = nom, ▲ bleu = adjectif, ● rouge = verbe, ⌒ vert = préposition. Lis bien chaque phrase de la ferme avant de répondre.",
+      exos:[
+        {type:"qcm", q:"Dans « La jolie vache brune broute dans le pré », quelle est la nature du mot JOLIE ?", options:["adjectif","nom","verbe","article"], answer:"adjectif"},
+        {type:"qcm", q:"Dans « La chèvre agile grimpe dans l'arbre fruitier », quelle est la nature du mot GRIMPE ?", options:["verbe","nom","adjectif","préposition"], answer:"verbe"},
+        {type:"qcm", q:"Dans « Les trois petits chats coquins jouent dans l'herbe », quelle est la nature du mot CHATS ?", options:["nom","adjectif","verbe","article"], answer:"nom"},
+        {type:"qcm", q:"Dans « Le fermier a démarré son vieux tracteur », quelle est la nature du mot LE ?", options:["article","nom","adjectif","pronom"], answer:"article"}
+      ]
+    },
+    {
+      id:"lec17", title:"Vocabulaire : le monde des transports", icon:"🚀",
+      cours:"Il existe plein de familles de véhicules : dans les airs, sur l'eau, à 2 roues, les camions, les voitures, en ville, et sur les rails. À toi de ranger chaque véhicule dans la bonne famille !",
+      exos:[
+        {type:"qcm", q:"Dans quelle famille ranges-tu L'HÉLICOPTÈRE ?", options:["Dans les airs","Sur l'eau","Sur les rails","En ville"], answer:"Dans les airs"},
+        {type:"qcm", q:"Dans quelle famille ranges-tu LE TGV ?", options:["Sur les rails","Dans les airs","Camions","À 2 roues"], answer:"Sur les rails"},
+        {type:"qcm", q:"Dans quelle famille ranges-tu LE SOUS-MARIN ?", options:["Sur l'eau","Dans les airs","Voitures","En ville"], answer:"Sur l'eau"},
+        {type:"qcm", q:"Dans quelle famille ranges-tu LE CAMION CITERNE ?", options:["Camions","Voitures","En ville","Sur les rails"], answer:"Camions"}
+      ]
+    },
+    {
+      id:"lec18", title:"La lettre C : son [s] ou son [k] ?", icon:"🔤",
+      cours:"La lettre C se prononce [k] devant A, O, U (comme dans CAMION). Elle se prononce [s] devant E, I, Y (comme dans CITRON). Avec une cédille (Ç) devant A, O, U, elle fait aussi le son [s] (comme dans GARÇON).",
+      exos:[
+        {type:"qcm", q:"Quel son fait la lettre C dans CAMION ?", options:["son k","son s"], answer:"son k"},
+        {type:"qcm", q:"Quel son fait la lettre C dans CITRON ?", options:["son k","son s"], answer:"son s"},
+        {type:"qcm", q:"Quel son fait la lettre C dans CURIEUX ?", options:["son k","son s"], answer:"son k"},
+        {type:"qcm", q:"Quel son fait la lettre C dans CYCLE ?", options:["son k","son s"], answer:"son s"}
+      ]
+    },
+    {
+      id:"lec19", title:"La lettre G : son [g] ou son [j] ?", icon:"🔤",
+      cours:"La lettre G se prononce [g] devant A, O, U (comme dans GÂTEAU). Elle se prononce [j] devant E, I, Y (comme dans GIRAFE). Avec un U placé entre G et E/I, elle garde le son [g] (comme dans GUÊPE).",
+      exos:[
+        {type:"qcm", q:"Quel son fait la lettre G dans GÂTEAU ?", options:["son g","son j"], answer:"son g"},
+        {type:"qcm", q:"Quel son fait la lettre G dans GIRAFE ?", options:["son g","son j"], answer:"son j"},
+        {type:"qcm", q:"Quel son fait la lettre G dans GUÊPE ?", options:["son g","son j"], answer:"son g"},
+        {type:"qcm", q:"Quel son fait la lettre G dans GENTIL ?", options:["son g","son j"], answer:"son j"}
+      ]
+    },
+    {
+      id:"lec20", title:"Les marques de voitures", icon:"🚗",
+      cours:"Chaque marque de voiture a son propre logo. Devine la marque à partir de la description de son logo !",
+      exos:[
+        {type:"qcm", q:"Quelle marque a pour logo quatre anneaux argentés entrelacés ?", options:["Audi","BMW","Toyota","Renault"], answer:"Audi"},
+        {type:"qcm", q:"Quelle marque a pour logo un cheval noir cabré sur un écusson jaune ?", options:["Ferrari","Lamborghini","Porsche","Peugeot"], answer:"Ferrari"},
+        {type:"qcm", q:"Quelle marque a pour logo un losange gris ?", options:["Renault","Citroën","Peugeot","Seat"], answer:"Renault"},
+        {type:"qcm", q:"Quelle marque a pour logo un lion qui marche sur ses pattes arrière ?", options:["Peugeot","Jaguar","Ferrari","Lamborghini"], answer:"Peugeot"}
+      ]
+    },
+    {
+      id:"lec21", title:"Jeu : Mots mêlés", icon:"🔎",
+      cours:"Trouve tous les mots cachés dans la grille de lettres ! Un mot peut être écrit à l'horizontale, à la verticale, en diagonale, et même à l'envers. Glisse ton doigt (ou ta souris) d'une lettre à l'autre pour le sélectionner.",
+      game:"motsmeles",
+      words:["SAC","AMI","BOA","SUMO","DOMINO","TAPIS","PUMA"],
+      exos:[]
     }
   ],
   maths: [
@@ -464,6 +668,110 @@ const CONTENT = {
         {type:"texte", q:"Il y avait 8 oiseaux sur une branche. 3 se sont envolés. Combien reste-t-il d'oiseaux ?", answer:"5"},
         {type:"qcm", q:"Tom a 5 billes, il en gagne 2. Combien a-t-il de billes ?", options:["7","6","8","5"], answer:"7"},
         {type:"texte", q:"Une classe a 12 filles et 9 garçons. Combien d'élèves y a-t-il en tout ?", answer:"21"}
+      ]
+    },
+    {
+      id:"mat9", title:"Atelier Montessori : Divisions", icon:"🪵", montessori:true,
+      cours:"Comme sur les cartes à pince Montessori : choisis la bonne réponse parmi celles proposées, comme si tu pinçais la bonne pince sur la carte.",
+      exos:[
+        {type:"qcm", q:"15 ➗ 3 = ?", options:["5","6","7"], answer:"5"},
+        {type:"qcm", q:"20 ➗ 5 = ?", options:["2","4","6"], answer:"4"},
+        {type:"qcm", q:"36 ➗ 6 = ?", options:["6","8","5"], answer:"6"},
+        {type:"qcm", q:"48 ➗ 6 = ?", options:["6","8","10"], answer:"8"}
+      ]
+    },
+    {
+      id:"mat10", title:"Atelier Montessori : Additions à trous", icon:"🪵", montessori:true,
+      cours:"Trouve le nombre caché qui manque pour compléter l'addition, comme sur les cartes à pince.",
+      exos:[
+        {type:"qcm", q:"8 + ... = 15", options:["6","7","8"], answer:"7"},
+        {type:"qcm", q:"4 + ... = 9", options:["4","5","6"], answer:"5"},
+        {type:"qcm", q:"12 + ... = 21", options:["8","9","10"], answer:"9"},
+        {type:"qcm", q:"15 + ... = 22", options:["6","7","8"], answer:"7"}
+      ]
+    },
+    {
+      id:"mat11", title:"Atelier Montessori : Additions de dizaines", icon:"🪵", montessori:true,
+      cours:"Additionne les dizaines entières, comme sur les cartes à pince.",
+      exos:[
+        {type:"qcm", q:"80 + 50 = ?", options:["110","120","130"], answer:"130"},
+        {type:"qcm", q:"10 + 40 = ?", options:["40","50","60"], answer:"50"},
+        {type:"qcm", q:"120 + 80 = ?", options:["190","200","210"], answer:"200"},
+        {type:"qcm", q:"60 + 60 = ?", options:["110","120","130"], answer:"120"}
+      ]
+    },
+    {
+      id:"mat12", title:"Atelier Montessori : Doubles et moitiés", icon:"🪵", montessori:true,
+      cours:"Le double, c'est deux fois plus. La moitié, c'est deux fois moins. Choisis la bonne pince.",
+      exos:[
+        {type:"qcm", q:"Quel est le double de 7 ?", options:["12","14","16"], answer:"14"},
+        {type:"qcm", q:"Quelle est la moitié de 12 ?", options:["3","6","24"], answer:"6"},
+        {type:"qcm", q:"Quel est le double de 9 ?", options:["16","18","20"], answer:"18"},
+        {type:"qcm", q:"Quelle est la moitié de 16 ?", options:["4","6","8"], answer:"8"}
+      ]
+    },
+    {
+      id:"mat13", title:"Atelier Montessori : Multiplications (les abeilles)", icon:"🐝", montessori:true,
+      cours:"Place le nombre d'abeilles indiqué dans le nombre de ruches indiqué, et calcule le résultat.",
+      exos:[
+        {type:"qcm", q:"2 x 4 = ?", options:["6","8","10"], answer:"8"},
+        {type:"qcm", q:"3 x 5 = ?", options:["12","15","18"], answer:"15"},
+        {type:"qcm", q:"6 x 3 = ?", options:["16","18","21"], answer:"18"},
+        {type:"qcm", q:"4 x 3 = ?", options:["10","12","14"], answer:"12"}
+      ]
+    },
+    {
+      id:"mat14", title:"Atelier Montessori : Petits problèmes (la ruche)", icon:"🐝", montessori:true,
+      cours:"Lis bien chaque petite histoire d'abeilles avant de choisir la bonne réponse.",
+      exos:[
+        {type:"qcm", q:"L'abeille Lippie transporte 70mg de pollen maximum et récolte 10mg par fleur. Combien de fleurs peut-elle butiner avant de retourner à la ruche ?", options:["5","7","9","11"], answer:"7"},
+        {type:"qcm", q:"Dans la ruche, il y a 1 reine, 22 nourrices et 34 butineuses. Combien y a-t-il d'abeilles en tout ?", options:["54","57","47","67"], answer:"57"},
+        {type:"qcm", q:"Les abeilles produisent 50g de miel par jour. Combien en ont-elles produit en 10 jours ?", options:["500","5000","50","550"], answer:"500"},
+        {type:"texte", q:"La ruche a produit 240g de miel. L'apiculteur en prend 120g. Combien reste-t-il de miel pour les abeilles ?", answer:"120"}
+      ]
+    },
+    {
+      id:"mat15", title:"Atelier Montessori : Calcul en chaîne (fusées)", icon:"🚀", montessori:true,
+      cours:"Pars du nombre affiché sur la Terre, applique chaque opération dans l'ordre des fusées, et trouve le nombre final sur la Lune.",
+      exos:[
+        {type:"texte", q:"Pars de 350. Ajoute 50, puis ajoute 150, puis enlève 200, puis ajoute 250, puis ajoute 400. Quel est le résultat final ?", answer:"1000"},
+        {type:"texte", q:"Pars de 290. Ajoute 30, puis ajoute 40, puis enlève 20, puis ajoute 60, puis ajoute 80. Quel est le résultat final ?", answer:"480"},
+        {type:"texte", q:"Pars de 128. Ajoute 35, puis ajoute 15, puis enlève 18, puis ajoute 45, puis ajoute 95. Quel est le résultat final ?", answer:"300"},
+        {type:"texte", q:"Pars de 332. Ajoute 18, puis ajoute 44, puis enlève 74, puis ajoute 25, puis ajoute 115. Quel est le résultat final ?", answer:"460"}
+      ]
+    },
+    {
+      id:"mat16", title:"Atelier Montessori : La fleur des nombres", icon:"🌸", montessori:true,
+      cours:`Regarde bien la fleur modèle : au centre, le nombre. Sur les pétales autour : sa décomposition (dizaines + unités), le nombre juste avant et le nombre juste après, et le compte des dizaines et des unités.
+        <div class="flower-wrap">
+          <div class="flower-petal top" style="background:#F3E3CB;">10 + 2</div>
+          <div class="flower-petal left" style="background:#F3E3CB;">11 &lt;</div>
+          <div class="flower-petal right" style="background:#F3E3CB;">&lt; 13</div>
+          <div class="flower-petal bl" style="background:#F3E3CB;">1 dizaine</div>
+          <div class="flower-petal br" style="background:#F3E3CB;">2 unités</div>
+          <div class="flower-center">12</div>
+        </div>
+        Maintenant, à toi de compléter la fleur du nombre 36 !`,
+      exos:[
+        {type:"texte", q:"Combien de dizaines y a-t-il dans le nombre 36 ?", answer:"3"},
+        {type:"texte", q:"Combien d'unités y a-t-il dans le nombre 36 ?", answer:"6"},
+        {type:"texte", q:"Quel nombre vient juste avant 36 ?", answer:"35"},
+        {type:"texte", q:"Quel nombre vient juste après 36 ?", answer:"37"}
+      ]
+    },
+    {
+      id:"mat17", title:"Atelier Montessori : Le soleil, la lune et l'arc-en-ciel", icon:"🌈", montessori:true,
+      cours:"Résous les égalités les unes après les autres pour trouver la valeur de chaque symbole. Puis fais glisser le bon nombre sur chaque symbole avec ton doigt (ou ta souris).",
+      exos:[
+        {
+          type:"glisser",
+          q:"🧩 Résous les énigmes ci-dessous, puis fais glisser le bon nombre sur chaque symbole.",
+          qAudio:["Résous les énigmes.","Soleil plus 4 égale 10.","Soleil plus lune égale 15.","Lune moins arc-en-ciel égale 5.","Fais glisser le bon nombre sur chaque symbole."],
+          equations:["☀ + 4 = 10","☀ + 🌙 = 15","🌙 − 🌈 = 5"],
+          zones:[{id:"soleil",symbol:"☀"},{id:"lune",symbol:"🌙"},{id:"arc",symbol:"🌈"}],
+          pieces:[{id:"p1",value:"6"},{id:"p2",value:"9"},{id:"p3",value:"4"},{id:"p4",value:"7"}],
+          answer:{"soleil":"6","lune":"9","arc":"4"}
+        }
       ]
     }
   ],
@@ -781,11 +1089,11 @@ function checkBadges(){
   const nbBib = student.completed.bible.length;
   const want = [];
   if(nbLec >= 4) want.push({id:"lec-4", icon:"📖", label:"4 leçons de lecture"});
-  if(nbLec >= 8) want.push({id:"lec-8", icon:"🏆", label:"Lecture terminée"});
+  if(nbLec >= CONTENT.lecture.length) want.push({id:"lec-8", icon:"🏆", label:"Lecture terminée"});
   if(nbMat >= 4) want.push({id:"mat-4", icon:"🔢", label:"4 leçons de maths"});
-  if(nbMat >= 8) want.push({id:"mat-8", icon:"🏆", label:"Maths terminées"});
+  if(nbMat >= CONTENT.maths.length) want.push({id:"mat-8", icon:"🏆", label:"Maths terminées"});
   if(nbBib >= 4) want.push({id:"bib-4", icon:"⭐", label:"4 histoires bibliques"});
-  if(nbBib >= 8) want.push({id:"bib-8", icon:"🕊️", label:"Étude biblique terminée"});
+  if(nbBib >= CONTENT.bible.length) want.push({id:"bib-8", icon:"🕊️", label:"Étude biblique terminée"});
   if(student.points >= 100) want.push({id:"pts-100", icon:"⭐", label:"100 points"});
   if(student.streak >= 3) want.push({id:"streak-3", icon:"🔥", label:"3 jours de suite"});
   want.forEach(b=>{
@@ -807,6 +1115,9 @@ function getLessonData(track, lessonId){
   return {
     id: base.id,
     icon: base.icon,
+    montessori: base.montessori || false,
+    game: base.game || null,
+    words: base.words || null,
     title: ov.title || base.title,
     cours: ov.cours || base.cours,
     coursAudio: ov.coursAudio || ov.cours || base.cours,
@@ -1168,12 +1479,13 @@ function renderLessonScreen(){
     replayCurrent = ()=> playAudioOrSpeak(currentLesson.coursRecording, currentLesson.coursAudio);
     inner.innerHTML = `
       <button class="back-btn" onclick="closeLesson()">← Retour</button>
-      <div class="lesson-card pop-in">
+      <div class="lesson-card pop-in${currentLesson.montessori ? ' montessori' : ''}">
+        ${currentLesson.montessori ? '<div class="montessori-badge">🪵 Atelier Montessori</div><br>' : ''}
         <h2>${currentLesson.icon} ${currentLesson.title}</h2>
         <button class="speaker-btn" onclick="replayCurrent()">🔊 Réécouter</button>
         ${isAdmin ? `<button class="speaker-btn" onclick="openEditCours()">✏️ Modifier</button>` : ""}
-        <p>${currentLesson.cours}</p>
-        <button class="btn btn-leaf btn-full" onclick="startExercises()">Je m'entraîne</button>
+        <div class="cours-text">${currentLesson.cours}</div>
+        <button class="btn btn-leaf btn-full" onclick="${currentLesson.game === 'motsmeles' ? 'startMotsMeles()' : 'startExercises()'}">Je m'entraîne</button>
       </div>
     `;
     playAudioOrSpeak(currentLesson.coursRecording, currentLesson.coursAudio);
@@ -1209,12 +1521,15 @@ function renderLessonScreen(){
 
   let bodyHtml = "";
   if(exo.type === "qcm"){
+    const clip = currentLesson.montessori ? "📎 " : "";
     bodyHtml = `<div class="options">` + exo.options.map((opt,idx)=>
-      `<button class="option-btn" data-idx="${idx}" onclick="selectOption(${idx})">${opt}</button>`
+      `<button class="option-btn" data-idx="${idx}" onclick="selectOption(${idx})">${clip}${opt}</button>`
     ).join("") + `</div>
     <div class="continue-wrap">
       <button class="btn btn-lilac" id="validate-btn" onclick="validateQcm()" disabled>Valider</button>
     </div>`;
+  } else if(exo.type === "glisser"){
+    bodyHtml = renderGlisserBody(exo);
   } else {
     bodyHtml = `
       <div class="text-answer">
@@ -1229,7 +1544,8 @@ function renderLessonScreen(){
   replayCurrent = ()=> playExercise(exo);
   inner.innerHTML = `
     <button class="back-btn" onclick="closeLesson()">← Retour</button>
-    <div class="lesson-card pop-in">
+    <div class="lesson-card pop-in${currentLesson.montessori ? ' montessori' : ''}">
+      ${currentLesson.montessori ? '<div class="montessori-badge">🪵 Atelier Montessori</div><br>' : ''}
       <div class="exo-progress">${progressHtml}</div>
       <button class="speaker-btn" onclick="replayCurrent()">🔊 Réécouter</button>
       ${isAdmin ? `<button class="speaker-btn" onclick="openEditExo()">✏️ Modifier</button>` : ""}
@@ -1244,7 +1560,260 @@ function renderLessonScreen(){
     input.focus();
     input.addEventListener("keydown", e=>{ if(e.key === "Enter") answerTexte(); });
   }
+  if(exo.type === "glisser"){
+    initGlisserDrag(exo);
+  }
   waitingContinue = false;
+}
+
+/* =========================================================================
+   GLISSER-DÉPOSER (vrai jeu tactile, pointer events)
+   ========================================================================= */
+let glisserFilled = {};
+
+function renderGlisserBody(exo){
+  const eqHtml = exo.equations.map(e=>`<div>${e}</div>`).join("");
+  const zonesHtml = exo.zones.map(z=>`
+    <div class="glisser-zone" id="zone-${z.id}" data-zone="${z.id}">
+      <span class="zone-symbol">${z.symbol}</span>
+      <span class="zone-value" id="zone-value-${z.id}"></span>
+    </div>
+  `).join("");
+  const piecesHtml = exo.pieces.map(p=>`
+    <div class="glisser-piece" id="piece-${p.id}" data-piece="${p.id}" data-value="${p.value}">${p.value}</div>
+  `).join("");
+  return `
+    <div class="glisser-equations">${eqHtml}</div>
+    <div class="glisser-zones">${zonesHtml}</div>
+    <div class="glisser-tray" id="glisser-tray">${piecesHtml}</div>
+    <div class="continue-wrap">
+      <button class="btn btn-lilac" id="validate-btn" onclick="validateGlisser()" disabled>Valider</button>
+    </div>
+  `;
+}
+
+function initGlisserDrag(exo){
+  glisserFilled = {};
+  document.querySelectorAll(".glisser-piece").forEach(pieceEl=>{
+    pieceEl.addEventListener("pointerdown", (e)=> onGlisserPointerDown(e, pieceEl, exo));
+  });
+}
+
+function onGlisserPointerDown(e, pieceEl, exo){
+  if(pieceEl.classList.contains("placed")) return;
+  e.preventDefault();
+  const startRect = pieceEl.getBoundingClientRect();
+  const offsetX = e.clientX - startRect.left;
+  const offsetY = e.clientY - startRect.top;
+  pieceEl.style.left = startRect.left + "px";
+  pieceEl.style.top = startRect.top + "px";
+  pieceEl.style.width = startRect.width + "px";
+  pieceEl.style.height = startRect.height + "px";
+  pieceEl.classList.add("dragging");
+  try{ pieceEl.setPointerCapture(e.pointerId); }catch(err){}
+
+  const move = (ev)=>{
+    pieceEl.style.left = (ev.clientX - offsetX) + "px";
+    pieceEl.style.top = (ev.clientY - offsetY) + "px";
+  };
+  const up = (ev)=>{
+    pieceEl.removeEventListener("pointermove", move);
+    pieceEl.removeEventListener("pointerup", up);
+    pieceEl.classList.remove("dragging");
+    pieceEl.style.left = ""; pieceEl.style.top = ""; pieceEl.style.width = ""; pieceEl.style.height = "";
+    const dropEl = document.elementFromPoint(ev.clientX, ev.clientY);
+    const zoneEl = dropEl ? dropEl.closest(".glisser-zone") : null;
+    if(zoneEl){
+      const zoneId = zoneEl.dataset.zone;
+      const value = pieceEl.dataset.value;
+      if(!glisserFilled[zoneId] && String(exo.answer[zoneId]) === String(value)){
+        glisserFilled[zoneId] = pieceEl.dataset.piece;
+        zoneEl.classList.add("filled");
+        const zv = document.getElementById("zone-value-"+zoneId);
+        if(zv) zv.textContent = value;
+        pieceEl.classList.add("placed");
+        speak("Bravo, " + value + " va à cet endroit.");
+        checkGlisserDone(exo);
+      } else {
+        speak("Ce n'est pas la bonne case, essaie encore.");
+      }
+    }
+  };
+  pieceEl.addEventListener("pointermove", move);
+  pieceEl.addEventListener("pointerup", up);
+}
+
+function checkGlisserDone(exo){
+  const btn = document.getElementById("validate-btn");
+  if(btn) btn.disabled = Object.keys(glisserFilled).length < exo.zones.length;
+}
+
+function validateGlisser(){
+  if(waitingContinue) return;
+  waitingContinue = true;
+  const btn = document.getElementById("validate-btn");
+  if(btn) btn.disabled = true;
+  showFeedback(true);
+}
+
+/* =========================================================================
+   MOTS MÊLÉS (vraie grille interactive)
+   ========================================================================= */
+let mmGrid = [], mmSize = 0, mmFound = {}, mmSelecting = false, mmStart = null, mmCurrent = null;
+
+function generateWordSearch(words){
+  const upperWords = words.map(w=>w.toUpperCase());
+  const maxLen = Math.max(...upperWords.map(w=>w.length));
+  const size = Math.max(10, maxLen + 2);
+  const grid = Array.from({length:size}, ()=>Array(size).fill(null));
+  const dirs = [[0,1],[1,0],[1,1],[1,-1],[0,-1],[-1,0],[-1,-1],[-1,1]];
+  const sorted = upperWords.slice().sort((a,b)=>b.length-a.length);
+  sorted.forEach(word=>{
+    let placed = false;
+    for(let attempt=0; attempt<300 && !placed; attempt++){
+      const dir = dirs[Math.floor(Math.random()*dirs.length)];
+      const row0 = Math.floor(Math.random()*size);
+      const col0 = Math.floor(Math.random()*size);
+      const endRow = row0 + dir[0]*(word.length-1);
+      const endCol = col0 + dir[1]*(word.length-1);
+      if(endRow<0||endRow>=size||endCol<0||endCol>=size) continue;
+      let ok = true;
+      for(let i=0;i<word.length;i++){
+        const r=row0+dir[0]*i, c=col0+dir[1]*i;
+        if(grid[r][c] !== null && grid[r][c] !== word[i]){ ok=false; break; }
+      }
+      if(!ok) continue;
+      for(let i=0;i<word.length;i++){
+        const r=row0+dir[0]*i, c=col0+dir[1]*i;
+        grid[r][c]=word[i];
+      }
+      placed = true;
+    }
+  });
+  const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+  for(let r=0;r<size;r++) for(let c=0;c<size;c++){
+    if(grid[r][c]===null) grid[r][c] = letters[Math.floor(Math.random()*letters.length)];
+  }
+  return {grid, size};
+}
+
+function startMotsMeles(){
+  const gen = generateWordSearch(currentLesson.words);
+  mmGrid = gen.grid; mmSize = gen.size; mmFound = {};
+  document.getElementById("lesson-inner").innerHTML = renderMotsMelesHtml();
+  attachMotsMelesEvents();
+  speak(["Trouve tous les mots de la liste dans la grille.", "Glisse ton doigt en ligne droite d'une lettre à l'autre."]);
+}
+
+function renderMotsMelesHtml(){
+  const wordsHtml = currentLesson.words.map(w=>
+    `<span class="mm-word-chip" id="mm-chip-${w}">${w}</span>`
+  ).join("");
+  let cellsHtml = "";
+  for(let r=0;r<mmSize;r++){
+    for(let c=0;c<mmSize;c++){
+      cellsHtml += `<div class="mm-cell" data-r="${r}" data-c="${c}" id="mm-cell-${r}-${c}">${mmGrid[r][c]}</div>`;
+    }
+  }
+  return `
+    <button class="back-btn" onclick="closeLesson()">← Retour</button>
+    <div class="lesson-card pop-in">
+      <h2>${currentLesson.icon} ${currentLesson.title}</h2>
+      <div class="mm-wordlist" id="mm-wordlist">${wordsHtml}</div>
+      <div class="mm-grid" id="mm-grid" style="grid-template-columns:repeat(${mmSize}, 1fr); max-width:${mmSize*34}px;">${cellsHtml}</div>
+    </div>
+  `;
+}
+
+function attachMotsMelesEvents(){
+  const gridEl = document.getElementById("mm-grid");
+  gridEl.addEventListener("pointerdown", (e)=>{
+    const cell = e.target.closest(".mm-cell");
+    if(!cell) return;
+    mmSelecting = true;
+    mmStart = {r:+cell.dataset.r, c:+cell.dataset.c};
+    mmCurrent = mmStart;
+    updateMmSelectionVisual();
+    try{ gridEl.setPointerCapture(e.pointerId); }catch(err){}
+  });
+  gridEl.addEventListener("pointermove", (e)=>{
+    if(!mmSelecting) return;
+    const el = document.elementFromPoint(e.clientX, e.clientY);
+    const cell = el ? el.closest(".mm-cell") : null;
+    if(!cell) return;
+    const r = +cell.dataset.r, c = +cell.dataset.c;
+    const dr = r - mmStart.r, dc = c - mmStart.c;
+    if(dr===0 || dc===0 || Math.abs(dr)===Math.abs(dc)){
+      mmCurrent = {r,c};
+      updateMmSelectionVisual();
+    }
+  });
+  gridEl.addEventListener("pointerup", ()=>{
+    if(!mmSelecting) return;
+    mmSelecting = false;
+    finalizeMmSelection();
+  });
+}
+
+function getMmSelectedCells(){
+  const cells = [];
+  const dr = Math.sign(mmCurrent.r - mmStart.r);
+  const dc = Math.sign(mmCurrent.c - mmStart.c);
+  const len = Math.max(Math.abs(mmCurrent.r-mmStart.r), Math.abs(mmCurrent.c-mmStart.c)) + 1;
+  for(let i=0;i<len;i++) cells.push({r:mmStart.r+dr*i, c:mmStart.c+dc*i});
+  return cells;
+}
+
+function updateMmSelectionVisual(){
+  document.querySelectorAll(".mm-cell.selecting").forEach(el=>el.classList.remove("selecting"));
+  getMmSelectedCells().forEach(({r,c})=>{
+    const el = document.getElementById("mm-cell-"+r+"-"+c);
+    if(el && !el.classList.contains("found")) el.classList.add("selecting");
+  });
+}
+
+function finalizeMmSelection(){
+  const cells = getMmSelectedCells();
+  document.querySelectorAll(".mm-cell.selecting").forEach(el=>el.classList.remove("selecting"));
+  const letters = cells.map(({r,c})=>mmGrid[r][c]).join("");
+  const reversed = letters.split("").reverse().join("");
+  const target = currentLesson.words.find(w=>{
+    const W = w.toUpperCase();
+    return (W===letters || W===reversed) && !mmFound[W];
+  });
+  if(target){
+    const W = target.toUpperCase();
+    mmFound[W] = true;
+    cells.forEach(({r,c})=>{
+      const el = document.getElementById("mm-cell-"+r+"-"+c);
+      if(el) el.classList.add("found");
+    });
+    const chip = document.getElementById("mm-chip-"+target);
+    if(chip) chip.classList.add("found");
+    speak("Bravo, tu as trouvé " + target + " !");
+    if(Object.keys(mmFound).length === currentLesson.words.length){
+      setTimeout(finishMotsMeles, 900);
+    }
+  }
+}
+
+function finishMotsMeles(){
+  const earned = currentLesson.words.length * 10;
+  student.points += earned;
+  const list = student.completed[currentTrack];
+  if(!list.includes(currentLesson.id)) list.push(currentLesson.id);
+  checkBadges();
+  if(!isAdmin) saveToServer();
+  document.getElementById("lesson-inner").innerHTML = `
+    <div class="lesson-card result-card pop-in">
+      <div class="result-emoji">🏆</div>
+      <h2>Bravo, grille terminée !</h2>
+      <p>Tu as trouvé tous les mots.</p>
+      <div class="result-points">+ ${earned} points ⭐</div>
+      <button class="btn btn-leaf btn-full" style="margin-top:18px;" onclick="closeLesson()">Continuer</button>
+    </div>
+  `;
+  speak("Bravo, tu as terminé la grille de mots mêlés !");
 }
 
 function goToNextExo(){
