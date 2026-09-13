@@ -867,6 +867,22 @@ async function saveContentPost(lessonId, data){
     return {ok:false, error:String(e)};
   }
 }
+
+async function uploadAudio(lessonId, fieldKey, dataUri){
+  if(!CONFIG.SCRIPT_URL || CONFIG.SCRIPT_URL.indexOf("COLLE_ICI") !== -1){
+    return {ok:false, offline:true};
+  }
+  try{
+    const res = await fetch(CONFIG.SCRIPT_URL, {
+      method:"POST",
+      headers:{"Content-Type":"text/plain;charset=utf-8"},
+      body: JSON.stringify({action:"saveAudio", lessonId, fieldKey, dataUri})
+    });
+    return await res.json();
+  }catch(e){
+    return {ok:false, error:String(e)};
+  }
+}
 async function loadFromServer(){
   const data = await apiCall("load");
   if(data && data.ok && data.found){
@@ -905,14 +921,22 @@ async function saveCoursEdit(){
   ov.title = document.getElementById("edit-title").value.trim();
   ov.cours = document.getElementById("edit-cours").value.trim();
   ov.coursAudio = document.getElementById("edit-coursaudio").value.trim();
-  ov.coursRecording = pendingRecording || "";
+
+  if(pendingRecording && pendingRecording.startsWith("data:")){
+    const up = await uploadAudio(lessonId, "cours", pendingRecording);
+    if(up && up.ok){ ov.coursRecording = up.url; }
+    else { alert("L'envoi de l'enregistrement audio a échoué, mais le texte a bien été sauvegardé."); }
+  } else {
+    ov.coursRecording = pendingRecording || "";
+  }
+
   contentOverrides[lessonId] = ov;
   const msg = await saveContentPost(lessonId, JSON.stringify(ov));
   pendingRecording = null;
   currentLesson = getLessonData(currentTrack, lessonId);
   editingField = null;
   renderLessonScreen();
-  if(msg && msg.error) alert("L'enregistrement audio est peut-être trop long pour être sauvegardé (limite du Google Sheet). Essaie une phrase plus courte.");
+  if(msg && msg.error) alert(msg.error);
 }
 
 async function saveExoEdit(){
@@ -925,12 +949,20 @@ async function saveExoEdit(){
   const entry = {
     q: document.getElementById("edit-exoq").value.trim(),
     qAudio: document.getElementById("edit-exoqaudio").value.trim(),
-    qRecording: pendingRecording || "",
     answer: document.getElementById("edit-exoanswer").value.trim()
   };
   if(exo.type === "qcm"){
     entry.options = document.getElementById("edit-exooptions").value.split("|").map(s=>s.trim()).filter(Boolean);
   }
+
+  if(pendingRecording && pendingRecording.startsWith("data:")){
+    const up = await uploadAudio(lessonId, "exo" + exoIndex, pendingRecording);
+    if(up && up.ok){ entry.qRecording = up.url; }
+    else { alert("L'envoi de l'enregistrement audio a échoué, mais le texte a bien été sauvegardé."); entry.qRecording = ""; }
+  } else {
+    entry.qRecording = pendingRecording || "";
+  }
+
   ov.exos[exoIndex] = entry;
   contentOverrides[lessonId] = ov;
   const msg = await saveContentPost(lessonId, JSON.stringify(ov));
@@ -938,7 +970,7 @@ async function saveExoEdit(){
   currentLesson = getLessonData(currentTrack, lessonId);
   editingField = null;
   renderLessonScreen();
-  if(msg && msg.error) alert("L'enregistrement audio est peut-être trop long pour être sauvegardé (limite du Google Sheet). Essaie une phrase plus courte.");
+  if(msg && msg.error) alert(msg.error);
 }
 
 /* =========================================================================
