@@ -89,6 +89,29 @@
   .btn-lilac{background:var(--lilac);color:white;box-shadow:0 5px 0 #7b73e0;}
   .btn-lilac:active{box-shadow:0 2px 0 #7b73e0;}
   .sync-msg{font-size:13px;margin-top:10px;color:#5b5a7a;min-height:18px;}
+  .admin-link{margin-top:16px;font-size:12px;color:#a8a6c4;cursor:pointer;text-decoration:underline;}
+
+  .admin-track-tabs{display:flex;gap:8px;margin-bottom:14px;}
+  .admin-track-tabs button{
+    flex:1;padding:10px;border-radius:12px;background:var(--white);font-weight:800;font-size:13px;
+    box-shadow:var(--shadow);opacity:.6;
+  }
+  .admin-track-tabs button.active{opacity:1;background:var(--sun);}
+  .admin-lesson-row{
+    background:var(--white);border-radius:14px;padding:12px 16px;margin-bottom:8px;font-weight:700;
+    display:flex;justify-content:space-between;align-items:center;box-shadow:var(--shadow);
+  }
+  .admin-field{margin-bottom:14px;text-align:left;}
+  .admin-field label{display:block;font-weight:800;font-size:12px;margin-bottom:4px;color:#5b5a7a;}
+  .admin-field textarea, .admin-field input{
+    width:100%;padding:10px 12px;border-radius:12px;border:2px solid var(--sky-deep);
+    font-size:14px;background:var(--sky);font-family:inherit;
+  }
+  .admin-field textarea{min-height:56px;resize:vertical;}
+  .admin-exo-block{
+    background:#F7F9FC;border-radius:14px;padding:12px;margin-bottom:12px;border:2px dashed var(--sky-deep);
+  }
+  .admin-save-msg{font-size:13px;font-weight:800;color:var(--leaf);min-height:18px;}
 
   /* ---------- App principale ---------- */
   #app-screen{max-width:520px;margin:0 auto;padding:16px 16px 60px;}
@@ -211,6 +234,7 @@
     </div>
     <button class="btn btn-leaf btn-full" id="btn-login">C'est parti !</button>
     <div class="sync-msg" id="login-msg"></div>
+    <div class="admin-link" onclick="openAdminLogin()">🔧 Espace admin</div>
   </div>
 </div>
 
@@ -247,13 +271,19 @@
   <div class="lesson-inner" id="lesson-inner"></div>
 </div>
 
+<!-- ============ ÉCRAN ADMIN ============ -->
+<div id="admin-screen" class="hidden">
+  <div class="lesson-inner" id="admin-inner"></div>
+</div>
+
 <script>
 /* =========================================================================
    CONFIGURATION — colle ici l'URL de ton Web App Google Apps Script
    (Déploiement du fichier Code.gs fourni séparément)
    ========================================================================= */
 const CONFIG = {
-  SCRIPT_URL: "https://script.google.com/macros/s/AKfycbyL6vEmI_UHOyB7GEecRi03vD6HxkzmFCzk5LB9meD2en5mbvoK6Pn2LOsGGuNwLl0W/exec"
+  SCRIPT_URL: "https://script.google.com/macros/s/AKfycbyL6vEmI_UHOyB7GEecRi03vD6HxkzmFCzk5LB9meD2en5mbvoK6Pn2LOsGGuNwLl0W/exec",
+  ADMIN_PASSWORD: "ChangeMoi2026"
 };
 
 /* =========================================================================
@@ -263,7 +293,7 @@ const CONTENT = {
   lecture: [
     {
       id:"lec1", title:"Les voyelles", icon:"🔤",
-      cours:"Les voyelles sont des lettres qu'on peut chanter tout seul : a, e, i, o, u, y. Écoute bien le son de chaque voyelle en la disant à voix haute.",
+      cours:"Les voyelles sont des lettres qu'on peut chanter tout seul : a, e, i, o, u, et y, qu'on appelle aussi le i grec. Écoute bien le son de chaque voyelle en la disant à voix haute.",
       exos:[
         {type:"qcm", q:"Dans le mot AMI, quelle voyelle entends-tu au début ?", options:["a","e","i","o"], answer:"a"},
         {type:"qcm", q:"Quel mot commence par la voyelle O ?", options:["orange","chat","souris","lune"], answer:"orange"},
@@ -531,12 +561,15 @@ function speak(text){
   lastSpokenText = text || lastSpokenText;
   if(!audioEnabled || !window.speechSynthesis || !text) return;
   window.speechSynthesis.cancel();
-  const utter = new SpeechSynthesisUtterance(text);
-  utter.lang = "fr-FR";
-  utter.rate = 0.88;   // débit un peu plus lent, comme une maîtresse qui explique
-  utter.pitch = 1.05;
-  if(frenchVoice) utter.voice = frenchVoice;
-  window.speechSynthesis.speak(utter);
+  setTimeout(()=>{
+    window.speechSynthesis.cancel(); // sécurité anti-bavure (bug connu de Chrome)
+    const utter = new SpeechSynthesisUtterance(text);
+    utter.lang = "fr-FR";
+    utter.rate = 0.85;   // débit un peu plus lent, comme une maîtresse qui explique
+    utter.pitch = 1.05;
+    if(frenchVoice) utter.voice = frenchVoice;
+    window.speechSynthesis.speak(utter);
+  }, 180);
 }
 
 function toggleAudio(){
@@ -547,11 +580,11 @@ function toggleAudio(){
 
 function spokenTextForExo(exo){
   if(exo.type === "qcm"){
-    const parts = [exo.q];
-    exo.options.forEach((opt,i)=> parts.push("Réponse " + (i+1) + " : " + opt));
-    return parts.join(". ");
+    const parts = [exo.qAudio + "."];
+    exo.options.forEach((opt,i)=> parts.push("Réponse " + (i+1) + ". " + opt + "."));
+    return parts.join("  ");
   }
-  return exo.q;
+  return exo.qAudio;
 }
 
 /* =========================================================================
@@ -569,6 +602,9 @@ let exoIndex = 0;
 let exoScore = 0;
 let waitingContinue = false;
 let selectedOptionIdx = null;
+let contentOverrides = {}; // { lessonId: { title, cours, coursAudio, exos:[{q,qAudio,options,answer}] } }
+let adminTrack = "lecture";
+let adminLessonId = null;
 
 /* =========================================================================
    OUTILS
@@ -614,6 +650,43 @@ function checkBadges(){
 }
 
 /* =========================================================================
+   CONTENU MODIFIABLE (fusion CONTENT + overrides admin)
+   ========================================================================= */
+function getLessonData(track, lessonId){
+  const base = CONTENT[track].find(l => l.id === lessonId);
+  if(!base) return null;
+  const ov = contentOverrides[lessonId];
+  if(!ov) return Object.assign({}, base, {coursAudio: base.cours, exos: base.exos.map(e=>Object.assign({}, e, {qAudio:e.q}))});
+  return {
+    id: base.id,
+    icon: base.icon,
+    title: ov.title || base.title,
+    cours: ov.cours || base.cours,
+    coursAudio: ov.coursAudio || ov.cours || base.cours,
+    exos: base.exos.map((exo, i)=>{
+      const oe = (ov.exos && ov.exos[i]) || {};
+      return {
+        type: exo.type,
+        q: oe.q || exo.q,
+        qAudio: oe.qAudio || oe.q || exo.q,
+        options: oe.options || exo.options,
+        answer: oe.answer || exo.answer
+      };
+    })
+  };
+}
+
+async function loadContentOverrides(){
+  if(!CONFIG.SCRIPT_URL || CONFIG.SCRIPT_URL.indexOf("COLLE_ICI") !== -1) return;
+  try{
+    const res = await fetch(CONFIG.SCRIPT_URL + "?" + new URLSearchParams({action:"loadContent"}).toString());
+    const data = await res.json();
+    if(data && data.ok && data.content) contentOverrides = data.content;
+  }catch(e){ /* silencieux : on garde le contenu par défaut */ }
+}
+loadContentOverrides();
+
+/* =========================================================================
    SYNCHRONISATION (Google Apps Script)
    ========================================================================= */
 async function apiCall(action, extraParams){
@@ -652,6 +725,146 @@ async function saveToServer(){
     completedBible: JSON.stringify(student.completed.bible),
     badges: JSON.stringify(student.badges)
   });
+}
+
+/* =========================================================================
+   ESPACE ADMIN — modifier les textes et les audios des leçons
+   ========================================================================= */
+function openAdminLogin(){
+  const pwd = prompt("Mot de passe admin :");
+  if(pwd === null) return;
+  if(pwd !== CONFIG.ADMIN_PASSWORD){
+    alert("Mot de passe incorrect.");
+    return;
+  }
+  document.getElementById("login-screen").classList.add("hidden");
+  document.getElementById("admin-screen").classList.remove("hidden");
+  adminLessonId = null;
+  renderAdminScreen();
+}
+function closeAdmin(){
+  document.getElementById("admin-screen").classList.add("hidden");
+  document.getElementById("login-screen").classList.remove("hidden");
+}
+
+function renderAdminScreen(){
+  if(adminLessonId){
+    renderAdminEditor();
+  } else {
+    renderAdminList();
+  }
+}
+
+function adminSwitchTrack(track){
+  adminTrack = track;
+  adminLessonId = null;
+  renderAdminList();
+}
+
+function renderAdminList(){
+  const inner = document.getElementById("admin-inner");
+  const lessons = CONTENT[adminTrack];
+  let rows = lessons.map(l=>{
+    const merged = getLessonData(adminTrack, l.id);
+    return `<div class="admin-lesson-row">
+      <span>${l.icon} ${merged.title}</span>
+      <button class="btn btn-lilac" onclick="openAdminLesson('${l.id}')">Modifier</button>
+    </div>`;
+  }).join("");
+  inner.innerHTML = `
+    <button class="back-btn" onclick="closeAdmin()">← Quitter l'admin</button>
+    <div class="lesson-card pop-in">
+      <h2>🔧 Espace admin</h2>
+      <p>Choisis un parcours puis une leçon à modifier. Tu peux changer le texte affiché et, séparément, le texte utilisé pour la voix (utile si la synthèse vocale prononce mal un mot).</p>
+      <div class="admin-track-tabs">
+        <button class="${adminTrack==='lecture'?'active':''}" onclick="adminSwitchTrack('lecture')">📖 Lecture</button>
+        <button class="${adminTrack==='maths'?'active':''}" onclick="adminSwitchTrack('maths')">🔢 Maths</button>
+        <button class="${adminTrack==='bible'?'active':''}" onclick="adminSwitchTrack('bible')">📖 Bible</button>
+      </div>
+      ${rows}
+    </div>
+  `;
+}
+
+function openAdminLesson(lessonId){
+  adminLessonId = lessonId;
+  renderAdminEditor();
+}
+
+function renderAdminEditor(){
+  const merged = getLessonData(adminTrack, adminLessonId);
+  const inner = document.getElementById("admin-inner");
+
+  const exoBlocks = merged.exos.map((exo, i)=>`
+    <div class="admin-exo-block">
+      <div class="admin-field">
+        <label>Question ${i+1} (texte affiché)</label>
+        <textarea id="exo-q-${i}">${exo.q}</textarea>
+      </div>
+      <div class="admin-field">
+        <label>Question ${i+1} (texte lu à voix haute, laisser vide si identique)</label>
+        <textarea id="exo-qaudio-${i}">${exo.qAudio === exo.q ? "" : exo.qAudio}</textarea>
+      </div>
+      ${exo.type === "qcm" ? `
+      <div class="admin-field">
+        <label>Réponses possibles (séparées par des | )</label>
+        <input type="text" id="exo-options-${i}" value="${exo.options.join(" | ")}">
+      </div>` : ""}
+      <div class="admin-field">
+        <label>Bonne réponse</label>
+        <input type="text" id="exo-answer-${i}" value="${exo.answer}">
+      </div>
+    </div>
+  `).join("");
+
+  inner.innerHTML = `
+    <button class="back-btn" onclick="adminLessonId=null; renderAdminScreen();">← Retour à la liste</button>
+    <div class="lesson-card pop-in">
+      <h2>${merged.icon} ${merged.title}</h2>
+      <div class="admin-field">
+        <label>Titre de la leçon</label>
+        <input type="text" id="admin-title" value="${merged.title}">
+      </div>
+      <div class="admin-field">
+        <label>Texte du cours (affiché)</label>
+        <textarea id="admin-cours">${merged.cours}</textarea>
+      </div>
+      <div class="admin-field">
+        <label>Texte du cours (lu à voix haute, laisser vide si identique)</label>
+        <textarea id="admin-coursaudio">${merged.coursAudio === merged.cours ? "" : merged.coursAudio}</textarea>
+      </div>
+      <h3>Exercices</h3>
+      ${exoBlocks}
+      <button class="btn btn-leaf btn-full" onclick="saveAdminLesson()">Enregistrer les modifications</button>
+      <div class="admin-save-msg" id="admin-save-msg"></div>
+    </div>
+  `;
+}
+
+async function saveAdminLesson(){
+  const base = CONTENT[adminTrack].find(l=>l.id===adminLessonId);
+  const data = {
+    title: document.getElementById("admin-title").value.trim(),
+    cours: document.getElementById("admin-cours").value.trim(),
+    coursAudio: document.getElementById("admin-coursaudio").value.trim(),
+    exos: base.exos.map((exo,i)=>{
+      const entry = {
+        q: document.getElementById("exo-q-"+i).value.trim(),
+        qAudio: document.getElementById("exo-qaudio-"+i).value.trim(),
+        answer: document.getElementById("exo-answer-"+i).value.trim()
+      };
+      if(exo.type === "qcm"){
+        const raw = document.getElementById("exo-options-"+i).value;
+        entry.options = raw.split("|").map(s=>s.trim()).filter(Boolean);
+      }
+      return entry;
+    })
+  };
+  contentOverrides[adminLessonId] = data;
+  const msg = document.getElementById("admin-save-msg");
+  msg.textContent = "Enregistrement...";
+  const result = await apiCall("saveContent", {lessonId: adminLessonId, data: JSON.stringify(data)});
+  msg.textContent = (result && result.ok) ? "✅ Enregistré." : "⚠️ Non sauvegardé (vérifie la connexion), mais visible pour toi tant que la page reste ouverte.";
 }
 
 /* =========================================================================
@@ -734,6 +947,7 @@ function renderApp(){
   const positions = ["left","center","right","center"];
 
   lessons.forEach((lesson, i)=>{
+    const merged = getLessonData(currentTrack, lesson.id);
     const isDone = done.includes(lesson.id);
     const isUnlocked = i === 0 || done.includes(lessons[i-1].id);
     const isCurrent = isUnlocked && !isDone;
@@ -743,9 +957,9 @@ function renderApp(){
 
     const node = document.createElement("div");
     node.className = "node" + (isDone ? " done" : "") + (!isUnlocked ? " locked" : "") + (isCurrent ? " current" : "");
-    node.innerHTML = `<span class="icon">${isDone ? "✅" : lesson.icon}</span><span>${lesson.title}</span>`;
+    node.innerHTML = `<span class="icon">${isDone ? "✅" : lesson.icon}</span><span>${merged.title}</span>`;
     if(isUnlocked){
-      node.addEventListener("click", ()=> openLesson(lesson));
+      node.addEventListener("click", ()=> openLesson(merged, lesson.id));
     }
     wrap.appendChild(node);
     container.appendChild(wrap);
@@ -755,8 +969,9 @@ function renderApp(){
 /* =========================================================================
    LEÇON + EXERCICES
    ========================================================================= */
-function openLesson(lesson){
+function openLesson(lesson, lessonId){
   currentLesson = lesson;
+  currentLesson._id = lessonId || lesson.id;
   exoIndex = -1; // -1 = écran de cours
   exoScore = 0;
   document.getElementById("lesson-screen").classList.remove("hidden");
@@ -779,7 +994,7 @@ function renderLessonScreen(){
         <button class="btn btn-leaf btn-full" onclick="startExercises()">Je m'entraîne</button>
       </div>
     `;
-    speak(currentLesson.cours);
+    speak(currentLesson.coursAudio);
     return;
   }
   if(exoIndex >= currentLesson.exos.length){
