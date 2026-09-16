@@ -16,6 +16,7 @@
     --leaf:#4CB963;
     --lilac:#A29BFE;
     --gold:#D8A234;
+    --game:#FF5D8F;
     --white:#FFFFFF;
     --shadow: 0 6px 0 rgba(43,42,76,0.15);
   }
@@ -167,6 +168,7 @@
   .tab.tab-lecture.active{background:var(--leaf);color:white;box-shadow:0 5px 0 #348a45;}
   .tab.tab-maths.active{background:var(--lilac);color:white;box-shadow:0 5px 0 #7b73e0;}
   .tab.tab-bible.active{background:var(--gold);color:white;box-shadow:0 5px 0 #a87a1c;}
+  .tab.tab-jeux.active{background:var(--game);color:white;box-shadow:0 5px 0 #c73764;}
 
   .path{position:relative;padding:10px 0 20px;}
   .node-wrap{display:flex;margin-bottom:6px;}
@@ -349,6 +351,7 @@
     <div class="tab tab-lecture active" id="tab-lecture" onclick="switchTrack('lecture')">📖 Lecture</div>
     <div class="tab tab-maths" id="tab-maths" onclick="switchTrack('maths')">🔢 Maths</div>
     <div class="tab tab-bible" id="tab-bible" onclick="switchTrack('bible')">📖 Bible</div>
+    <div class="tab tab-jeux" id="tab-jeux" onclick="switchTrack('jeux')">🎮 Jeux</div>
   </div>
 
   <div class="badges-row" id="badges-row"></div>
@@ -1353,7 +1356,7 @@ document.getElementById("btn-login").addEventListener("click", async ()=>{
    ========================================================================= */
 function switchTrack(track){
   currentTrack = track;
-  ["lecture","maths","bible"].forEach(t=>{
+  ["lecture","maths","bible","jeux"].forEach(t=>{
     document.getElementById("tab-"+t).classList.toggle("active", track===t);
   });
   renderApp();
@@ -1374,7 +1377,11 @@ function renderApp(){
     badgesRow.appendChild(chip);
   });
 
-  // Chemin de leçons
+  // Chemin de leçons (ou écran spécial pour l'onglet Jeux)
+  if(currentTrack === "jeux"){
+    renderJeuxTab();
+    return;
+  }
   const container = document.getElementById("path-container");
   container.innerHTML = "";
   const lessons = CONTENT[currentTrack];
@@ -1404,6 +1411,67 @@ function renderApp(){
 /* =========================================================================
    LEÇON + EXERCICES
    ========================================================================= */
+/* =========================================================================
+   ONGLET JEUX — jeux liés au contenu déjà appris dans les leçons
+   ========================================================================= */
+function renderJeuxTab(){
+  const container = document.getElementById("path-container");
+  const nbCompleted = student.completed.lecture.length + student.completed.maths.length + student.completed.bible.length;
+  const ready = nbCompleted >= 3;
+  container.innerHTML = `
+    <div class="lesson-card pop-in" style="text-align:center;">
+      <h2>⚡ Révision éclair</h2>
+      <p>Un mini-quiz avec des questions piochées au hasard parmi toutes les leçons que tu as déjà terminées (lecture, maths et Bible confondues).</p>
+      <button class="btn btn-full" style="background:var(--game);color:white;box-shadow:0 5px 0 #c73764;" onclick="startRevisionGame()" ${ready ? "" : "disabled"}>
+        ${ready ? "Jouer !" : "Termine encore quelques leçons pour débloquer ce jeu"}
+      </button>
+    </div>
+  `;
+}
+
+function buildRevisionPool(){
+  const pool = [];
+  ["lecture","maths","bible"].forEach(track=>{
+    student.completed[track].forEach(lessonId=>{
+      const lesson = getLessonData(track, lessonId);
+      if(!lesson || !lesson.exos) return;
+      lesson.exos.forEach(exo=>{
+        if(exo.type === "qcm" || exo.type === "texte") pool.push(exo);
+      });
+    });
+  });
+  return pool;
+}
+
+function shuffleArray(arr){
+  const a = arr.slice();
+  for(let i=a.length-1; i>0; i--){
+    const j = Math.floor(Math.random()*(i+1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+function startRevisionGame(){
+  const pool = buildRevisionPool();
+  if(pool.length < 3){
+    alert("Termine encore quelques leçons avant de pouvoir jouer à la révision éclair !");
+    return;
+  }
+  const picked = shuffleArray(pool).slice(0, Math.min(10, pool.length));
+  const revisionLesson = {
+    id: "revision-" + Date.now(),
+    icon: "⚡",
+    montessori: false,
+    title: "Révision éclair",
+    cours: "Réponds aux questions le plus vite possible ! Elles viennent de tes leçons déjà terminées.",
+    coursAudio: "Réponds aux questions le plus vite possible ! Elles viennent de tes leçons déjà terminées.",
+    coursRecording: null,
+    exos: picked.map(e => Object.assign({}, e))
+  };
+  openLesson(revisionLesson, revisionLesson.id);
+}
+
 function openLesson(lesson, lessonId){
   currentLesson = lesson;
   currentLesson._id = lessonId || lesson.id;
@@ -1801,7 +1869,7 @@ function finishMotsMeles(){
   const earned = currentLesson.words.length * 10;
   student.points += earned;
   const list = student.completed[currentTrack];
-  if(!list.includes(currentLesson.id)) list.push(currentLesson.id);
+  if(list && !list.includes(currentLesson.id)) list.push(currentLesson.id);
   checkBadges();
   if(!isAdmin) saveToServer();
   document.getElementById("lesson-inner").innerHTML = `
@@ -1881,7 +1949,7 @@ function renderResult(){
   student.points += earned;
 
   const list = student.completed[currentTrack];
-  if(!list.includes(currentLesson.id)) list.push(currentLesson.id);
+  if(list && !list.includes(currentLesson.id)) list.push(currentLesson.id);
 
   checkBadges();
   if(!isAdmin) saveToServer();
