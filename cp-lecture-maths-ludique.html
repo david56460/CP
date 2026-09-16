@@ -207,6 +207,11 @@
   }
   .lesson-card h2{margin-top:0;font-size:22px;}
   .lesson-card p, .lesson-card .cours-text{line-height:1.55;font-size:16px;}
+  .syll-table{width:100%;border-collapse:collapse;margin:14px 0;font-size:15px;}
+  .syll-table th, .syll-table td{border:1px solid var(--sky-deep);padding:8px 4px;text-align:center;}
+  .syll-table th{background:var(--sun);color:var(--indigo);font-weight:800;}
+  .syll-table td b{color:var(--leaf);}
+  .syll-table tr:nth-child(even){background:var(--sky);}
 
   /* ---------- Fleur des nombres ---------- */
   .flower-wrap{position:relative;width:210px;height:210px;margin:14px auto;}
@@ -392,6 +397,53 @@ const CONTENT = {
         {type:"qcm", q:"Quel mot commence par la voyelle O ?", options:["orange","chat","souris","lune"], answer:"orange"},
         {type:"texte", q:"Écris la voyelle que tu entends à la fin du mot LUNE.", answer:"u"},
         {type:"qcm", q:"Combien de voyelles y a-t-il dans le mot AMI ?", options:["1","2","3","4"], answer:"2"}
+      ]
+    },
+    {
+      id:"lec-syllabaire", title:"Le syllabaire complet", icon:"📐",
+      cours:`Avant de lire des mots, il faut connaître toutes les syllabes ! Une syllabe, c'est une consonne collée à une voyelle. Regarde bien ce tableau et lis chaque syllabe à voix haute, ligne par ligne.
+        <table class="syll-table">
+          <tr><th></th><th>A</th><th>E</th><th>I</th><th>O</th><th>U</th></tr>
+          <tr><td><b>M</b></td><td>ma</td><td>me</td><td>mi</td><td>mo</td><td>mu</td></tr>
+          <tr><td><b>L</b></td><td>la</td><td>le</td><td>li</td><td>lo</td><td>lu</td></tr>
+          <tr><td><b>R</b></td><td>ra</td><td>re</td><td>ri</td><td>ro</td><td>ru</td></tr>
+          <tr><td><b>P</b></td><td>pa</td><td>pe</td><td>pi</td><td>po</td><td>pu</td></tr>
+          <tr><td><b>T</b></td><td>ta</td><td>te</td><td>ti</td><td>to</td><td>tu</td></tr>
+          <tr><td><b>B</b></td><td>ba</td><td>be</td><td>bi</td><td>bo</td><td>bu</td></tr>
+          <tr><td><b>D</b></td><td>da</td><td>de</td><td>di</td><td>do</td><td>du</td></tr>
+          <tr><td><b>F</b></td><td>fa</td><td>fe</td><td>fi</td><td>fo</td><td>fu</td></tr>
+          <tr><td><b>V</b></td><td>va</td><td>ve</td><td>vi</td><td>vo</td><td>vu</td></tr>
+          <tr><td><b>N</b></td><td>na</td><td>ne</td><td>ni</td><td>no</td><td>nu</td></tr>
+          <tr><td><b>S</b></td><td>sa</td><td>se</td><td>si</td><td>so</td><td>su</td></tr>
+          <tr><td><b>J</b></td><td>ja</td><td>je</td><td>ji</td><td>jo</td><td>ju</td></tr>
+        </table>`,
+      exos:[
+        {type:"qcm", q:"Comment se lit S + O ?", options:["so","os","co","no"], answer:"so"},
+        {type:"qcm", q:"Comment se lit V + I ?", options:["vi","iv","ni","ti"], answer:"vi"},
+        {type:"qcm", q:"Comment se lit G + A ?", options:["ga","ag","ca","ja"], answer:"ga"},
+        {type:"qcm", q:"Comment se lit J + U ?", options:["ju","uj","du","tu"], answer:"ju"},
+        {type:"qcm", q:"Comment se lit F + E ?", options:["fe","ef","ve","le"], answer:"fe"},
+        {type:"texte", q:"Écris la syllabe formée par B + O.", answer:"bo"}
+      ]
+    },
+    {
+      id:"lec-mots-simples", title:"Les mots simples", icon:"📗",
+      cours:"Maintenant que tu connais bien les syllabes, assemble-les pour lire des mots ! Un mot simple est composé de deux courtes syllabes, comme VÉ-LO ou DO-MI-NO.",
+      exos:[
+        {type:"qcm", q:"Quel mot correspond aux syllabes VÉ-LO ?", options:["vélo","valise","ville","vase"], answer:"vélo"},
+        {type:"qcm", q:"Quel mot correspond aux syllabes MA-MI ?", options:["mami","papi","tati","doudou"], answer:"mami"},
+        {type:"qcm", q:"Combien de syllabes y a-t-il dans le mot BANANE ?", options:["2","3","4"], answer:"3"},
+        {type:"texte", q:"Écris le mot formé par les syllabes DO-MI-NO.", answer:"domino"}
+      ]
+    },
+    {
+      id:"lec-mots-complexes", title:"Les mots plus complexes", icon:"📕",
+      cours:"Certains mots sont plus longs ou contiennent des sons plus difficiles (ch, gn, ill...). Prends ton temps pour bien les découper en syllabes avant de les lire.",
+      exos:[
+        {type:"qcm", q:"Combien de syllabes y a-t-il dans le mot ÉLÉPHANT ?", options:["2","3","4"], answer:"3"},
+        {type:"qcm", q:"Quel mot contient le son CH ?", options:["château","tomate","robot","ami"], answer:"château"},
+        {type:"qcm", q:"Quel mot contient le son GN ?", options:["montagne","banane","tomate","robot"], answer:"montagne"},
+        {type:"texte", q:"Écris le mot formé par PA-PI-LLON (le dernier son s'écrit ILL).", answer:"papillon"}
       ]
     },
     {
@@ -971,6 +1023,7 @@ let exoIndex = 0;
 let exoScore = 0;
 let waitingContinue = false;
 let selectedOptionIdx = null;
+let oralAttempts = 0;
 let contentOverrides = {}; // { lessonId: { title, cours, coursAudio, exos:[{q,qAudio,options,answer}] } }
 let isAdmin = false;
 let editingField = null; // null | "cours" | "exo"
@@ -1582,6 +1635,7 @@ function renderLessonScreen(){
   }
 
   selectedOptionIdx = null;
+  oralAttempts = 0;
   let progressHtml = "";
   for(let i=0;i<total;i++){
     progressHtml += `<span class="${i < exoIndex ? 'filled' : ''}"></span>`;
@@ -1616,6 +1670,7 @@ function renderLessonScreen(){
       ${currentLesson.montessori ? '<div class="montessori-badge">🪵 Atelier Montessori</div><br>' : ''}
       <div class="exo-progress">${progressHtml}</div>
       <button class="speaker-btn" onclick="replayCurrent()">🔊 Réécouter</button>
+      ${(exo.type === "qcm" || exo.type === "texte") ? `<button class="speaker-btn" id="oral-btn" onclick="startOralAnswer()">🎤 Répondre à l'oral</button>` : ""}
       ${isAdmin ? `<button class="speaker-btn" onclick="openEditExo()">✏️ Modifier</button>` : ""}
       <div class="exo-question">${exo.q}</div>
       ${bodyHtml}
@@ -1882,6 +1937,101 @@ function finishMotsMeles(){
     </div>
   `;
   speak("Bravo, tu as terminé la grille de mots mêlés !");
+}
+
+/* =========================================================================
+   RÉPONSE ORALE — reconnaissance vocale, jusqu'à 3 tentatives
+   ========================================================================= */
+function startOralAnswer(){
+  if(waitingContinue) return;
+  const SRClass = window.SpeechRecognition || window.webkitSpeechRecognition;
+  if(!SRClass){
+    alert("La reconnaissance vocale n'est pas disponible sur ce navigateur. Réponds en cliquant ou en tapant.");
+    return;
+  }
+  const exo = currentLesson.exos[exoIndex];
+  const micBtn = document.getElementById("oral-btn");
+  if(micBtn){ micBtn.textContent = "🎙️ Je t'écoute..."; micBtn.disabled = true; }
+
+  const rec = new SRClass();
+  rec.lang = "fr-FR";
+  rec.interimResults = false;
+  rec.maxAlternatives = 3;
+
+  rec.onresult = (event)=>{
+    const alternatives = [];
+    for(let i=0; i<event.results[0].length; i++) alternatives.push(event.results[0][i].transcript);
+    handleOralAnswer(exo, alternatives);
+  };
+  rec.onerror = ()=>{
+    if(micBtn){ micBtn.textContent = "🎤 Répondre à l'oral"; micBtn.disabled = false; }
+    speak("Je n'ai pas bien entendu, réessaie.");
+  };
+  rec.onend = ()=>{
+    if(micBtn){ micBtn.textContent = "🎤 Répondre à l'oral"; micBtn.disabled = false; }
+  };
+  rec.start();
+}
+
+function handleOralAnswer(exo, alternatives){
+  if(waitingContinue) return;
+  const correctNorm = normalize(exo.answer);
+  const isCorrect = alternatives.some(t => {
+    const n = normalize(t);
+    return n === correctNorm || n.includes(correctNorm) || correctNorm.includes(n);
+  });
+
+  if(isCorrect){
+    oralAttempts = 0;
+    if(exo.type === "qcm"){
+      const idx = exo.options.findIndex(o => normalize(o) === correctNorm);
+      if(idx >= 0){
+        selectedOptionIdx = idx;
+        document.querySelectorAll(".option-btn").forEach((b,i)=> b.classList.toggle("selected", i === idx));
+        const vb = document.getElementById("validate-btn");
+        if(vb) vb.disabled = false;
+        validateQcm();
+      }
+    } else {
+      const input = document.getElementById("text-input");
+      if(input) input.value = exo.answer;
+      answerTexte();
+    }
+    return;
+  }
+
+  oralAttempts++;
+  if(oralAttempts >= 3){
+    oralAttempts = 0;
+    revealCorrectAnswer(exo);
+  } else {
+    const restant = 3 - oralAttempts;
+    speak("Ce n'est pas tout à fait ça, réessaie. Il te reste " + restant + (restant === 1 ? " essai." : " essais."));
+  }
+}
+
+function revealCorrectAnswer(exo){
+  if(waitingContinue) return;
+  waitingContinue = true;
+  if(exo.type === "qcm"){
+    const buttons = document.querySelectorAll(".option-btn");
+    const correctNorm = normalize(exo.answer);
+    buttons.forEach((b,i)=>{
+      b.disabled = true;
+      if(normalize(exo.options[i]) === correctNorm) b.classList.add("correct");
+    });
+    const vb = document.getElementById("validate-btn");
+    if(vb) vb.disabled = true;
+  } else {
+    const input = document.getElementById("text-input");
+    if(input){ input.value = exo.answer; input.disabled = true; }
+  }
+  const micBtn = document.getElementById("oral-btn");
+  if(micBtn) micBtn.disabled = true;
+  const fb = document.getElementById("feedback");
+  if(fb){ fb.className = "feedback ko"; fb.textContent = "La bonne réponse était : " + exo.answer; }
+  speak("La bonne réponse était : " + exo.answer + ".");
+  setTimeout(goToNextExo, 2200);
 }
 
 function goToNextExo(){
