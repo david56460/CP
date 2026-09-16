@@ -1,0 +1,1971 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Enfant de Dieu CP</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;700;800&family=Nunito:wght@400;600;700;800&family=Cinzel:wght@600;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --sky:#EAF6FF;
+    --sky-deep:#D7EEFF;
+    --indigo:#2B2A4C;
+    --sun:#FFC93C;
+    --coral:#FF6F59;
+    --leaf:#4CB963;
+    --lilac:#A29BFE;
+    --gold:#D8A234;
+    --game:#FF5D8F;
+    --white:#FFFFFF;
+    --shadow: 0 6px 0 rgba(43,42,76,0.15);
+  }
+  *{box-sizing:border-box;}
+  html,body{margin:0;padding:0;}
+  body{
+    background:var(--sky);
+    background-image:
+      radial-gradient(circle at 10% 15%, var(--sky-deep) 0%, transparent 40%),
+      radial-gradient(circle at 90% 80%, var(--sky-deep) 0%, transparent 40%);
+    font-family:'Nunito', sans-serif;
+    color:var(--indigo);
+    min-height:100vh;
+  }
+  h1,h2,h3,.display{font-family:'Baloo 2', sans-serif;}
+  button{font-family:inherit;cursor:pointer;border:none;}
+  input{font-family:inherit;}
+  .hidden{display:none !important;}
+
+  /* ---------- Écran de connexion ---------- */
+  #login-screen{
+    min-height:100vh;display:flex;align-items:center;justify-content:center;
+    padding:24px;
+  }
+  .login-card{
+    background:var(--white);border-radius:28px;padding:32px 28px;max-width:380px;width:100%;
+    box-shadow:var(--shadow);text-align:center;
+  }
+  .mascotte{
+    position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;
+    padding:16px 0 4px;
+  }
+  .mascotte::before{
+    content:"";position:absolute;top:-6px;left:50%;transform:translateX(-50%);
+    width:200px;height:110px;
+    background:radial-gradient(ellipse at center, rgba(255,215,0,0.38) 0%, rgba(255,215,0,0) 72%);
+    filter:blur(4px);z-index:0;
+  }
+  .logo-yeshua{
+    position:relative;z-index:1;font-family:'Cinzel', serif;font-weight:700;font-size:38px;
+    letter-spacing:3px;
+    background:linear-gradient(135deg, #F7DE93 0%, #D8A234 45%, #FFF7DD 70%, #C8901E 100%);
+    -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent;
+    text-shadow:0 0 22px rgba(216,162,52,.45);
+  }
+  .logo-yeshua-heb{
+    position:relative;z-index:1;font-size:16px;letter-spacing:2px;color:#B8860B;margin-top:2px;
+  }
+  .logo-yeshua-mini{
+    font-family:'Cinzel', serif;font-weight:700;font-size:17px;letter-spacing:1px;
+    background:linear-gradient(135deg, #F7DE93 0%, #D8A234 60%, #C8901E 100%);
+    -webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;color:transparent;
+  }
+  .login-card h1{font-size:28px;margin:8px 0 4px;color:var(--indigo);}
+  .login-card p{margin:0 0 20px;font-size:15px;color:#5b5a7a;}
+  .field{text-align:left;margin-bottom:14px;}
+  .field label{display:block;font-weight:700;font-size:13px;margin-bottom:6px;color:var(--indigo);}
+  .field input, .field select{
+    width:100%;padding:12px 14px;border-radius:14px;border:2px solid var(--sky-deep);
+    font-size:16px;background:var(--sky);
+  }
+  .field input:focus, .field select:focus{outline:none;border-color:var(--lilac);}
+  .btn{
+    display:inline-block;padding:14px 22px;border-radius:16px;font-weight:800;font-size:16px;
+    background:var(--sun);color:var(--indigo);box-shadow:0 5px 0 #E0A80E;transition:transform .08s;
+  }
+  .btn:active{transform:translateY(3px);box-shadow:0 2px 0 #E0A80E;}
+  .btn-full{width:100%;}
+  .btn-leaf{background:var(--leaf);color:white;box-shadow:0 5px 0 #348a45;}
+  .btn-leaf:active{box-shadow:0 2px 0 #348a45;}
+  .btn-lilac{background:var(--lilac);color:white;box-shadow:0 5px 0 #7b73e0;}
+  .btn-lilac:active{box-shadow:0 2px 0 #7b73e0;}
+  .sync-msg{font-size:13px;margin-top:10px;color:#5b5a7a;min-height:18px;}
+  .admin-link{margin-top:16px;font-size:12px;color:#a8a6c4;cursor:pointer;text-decoration:underline;}
+
+  .admin-track-tabs{display:flex;gap:8px;margin-bottom:14px;}
+  .admin-track-tabs button{
+    flex:1;padding:10px;border-radius:12px;background:var(--white);font-weight:800;font-size:13px;
+    box-shadow:var(--shadow);opacity:.6;
+  }
+  .admin-track-tabs button.active{opacity:1;background:var(--sun);}
+  .admin-lesson-row{
+    background:var(--white);border-radius:14px;padding:12px 16px;margin-bottom:8px;font-weight:700;
+    display:flex;justify-content:space-between;align-items:center;box-shadow:var(--shadow);
+  }
+  .admin-field{margin-bottom:14px;text-align:left;}
+  .admin-field label{display:block;font-weight:800;font-size:12px;margin-bottom:4px;color:#5b5a7a;}
+  .admin-field textarea, .admin-field input{
+    width:100%;padding:10px 12px;border-radius:12px;border:2px solid var(--sky-deep);
+    font-size:14px;background:var(--sky);font-family:inherit;
+  }
+  .admin-field textarea{min-height:56px;resize:vertical;}
+  .admin-exo-block{
+    background:#F7F9FC;border-radius:14px;padding:12px;margin-bottom:12px;border:2px dashed var(--sky-deep);
+  }
+  .admin-save-msg{font-size:13px;font-weight:800;color:var(--leaf);min-height:18px;}
+  .mic-block{
+    background:#FFF6E5;border:2px dashed var(--gold);border-radius:14px;padding:12px;margin-bottom:14px;
+  }
+  .mic-block .mic-row{display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-top:8px;}
+  .mic-btn{
+    border-radius:14px;padding:10px 16px;font-weight:800;font-size:14px;color:white;
+  }
+  .mic-btn.record{background:var(--coral);box-shadow:0 4px 0 #c0473a;}
+  .mic-btn.stop{background:var(--indigo);box-shadow:0 4px 0 #17162a;}
+  .mic-btn.delete{background:#9a98b5;box-shadow:0 4px 0 #6f6d8c;}
+  .rec-indicator{color:var(--coral);font-weight:800;font-size:13px;}
+  audio.preview-audio{height:36px;}
+
+  /* ---------- Atelier Montessori (cartes à pince) ---------- */
+  .lesson-card.montessori{
+    background:#FBF3E6;
+    border:3px solid #C8935B;
+    background-image: repeating-linear-gradient(0deg, rgba(200,147,91,0.06) 0px, rgba(200,147,91,0.06) 2px, transparent 2px, transparent 22px);
+  }
+  .lesson-card.montessori h2{color:#7A4A25;}
+  .montessori-badge{
+    display:inline-block;background:#C8935B;color:white;font-weight:800;font-size:12px;
+    padding:4px 10px;border-radius:10px;margin-bottom:10px;
+  }
+  .lesson-card.montessori .option-btn{
+    background:#FFFDF8;border:2px dashed #C8935B;font-weight:800;
+  }
+  .lesson-card.montessori .option-btn.correct{background:var(--leaf);border-color:var(--leaf);color:white;}
+  .lesson-card.montessori .option-btn.wrong{background:var(--coral);border-color:var(--coral);color:white;}
+  .lesson-card.montessori .option-btn.selected{background:#F3E3CB;border-color:#7A4A25;}
+  .lesson-card.montessori #validate-btn{background:#C8935B;box-shadow:0 5px 0 #96683a;color:white;}
+
+  /* ---------- App principale ---------- */
+  #app-screen{max-width:520px;margin:0 auto;padding:16px 16px 60px;}
+  header.topbar{
+    display:flex;align-items:center;justify-content:space-between;
+    background:var(--white);border-radius:20px;padding:10px 16px;box-shadow:var(--shadow);
+    margin-bottom:16px;
+  }
+  .who{display:flex;align-items:center;gap:8px;font-weight:800;}
+  .who .mascotte-mini{font-size:26px;}
+  .stats{display:flex;gap:14px;font-weight:800;font-size:14px;align-items:center;}
+  .stat{display:flex;align-items:center;gap:4px;}
+  .logout-btn{background:none;font-size:19px;opacity:.55;padding:2px;line-height:1;}
+  .logout-btn:active{opacity:.9;}
+
+  .tabs{display:flex;gap:10px;margin-bottom:18px;}
+  .tab{
+    flex:1;text-align:center;padding:12px 8px;border-radius:16px;font-weight:800;font-size:16px;
+    background:var(--white);color:var(--indigo);box-shadow:var(--shadow);opacity:.6;
+  }
+  .tab.active{opacity:1;transform:translateY(-2px);}
+  .tab.tab-lecture.active{background:var(--leaf);color:white;box-shadow:0 5px 0 #348a45;}
+  .tab.tab-maths.active{background:var(--lilac);color:white;box-shadow:0 5px 0 #7b73e0;}
+  .tab.tab-bible.active{background:var(--gold);color:white;box-shadow:0 5px 0 #a87a1c;}
+  .tab.tab-jeux.active{background:var(--game);color:white;box-shadow:0 5px 0 #c73764;}
+
+  .path{position:relative;padding:10px 0 20px;}
+  .node-wrap{display:flex;margin-bottom:6px;}
+  .node-wrap.left{justify-content:flex-start;}
+  .node-wrap.right{justify-content:flex-end;}
+  .node-wrap.center{justify-content:center;}
+  .node{
+    width:88px;height:88px;border-radius:50%;background:var(--white);
+    box-shadow:var(--shadow);display:flex;flex-direction:column;align-items:center;justify-content:center;
+    font-weight:800;font-size:13px;text-align:center;gap:2px;position:relative;
+  }
+  .node .icon{font-size:26px;}
+  .node.locked{opacity:.45;}
+  .node.done{background:var(--leaf);color:white;box-shadow:0 5px 0 #348a45;}
+  .node.current{border:3px solid var(--sun);}
+  .badge-dot{
+    position:absolute;top:-6px;right:-6px;background:var(--sun);border-radius:50%;
+    width:26px;height:26px;display:flex;align-items:center;justify-content:center;font-size:14px;
+    box-shadow:0 2px 0 #E0A80E;
+  }
+
+  .badges-row{display:flex;gap:8px;flex-wrap:wrap;margin:14px 0 4px;}
+  .badge-chip{
+    background:var(--white);border-radius:14px;padding:6px 10px;font-size:12px;font-weight:800;
+    box-shadow:var(--shadow);display:flex;align-items:center;gap:6px;
+  }
+
+  /* ---------- Panneau leçon / exercices ---------- */
+  #lesson-screen{
+    position:fixed;inset:0;background:var(--sky);z-index:20;overflow-y:auto;
+  }
+  .lesson-inner{max-width:520px;margin:0 auto;padding:16px;}
+  .back-btn{background:none;color:var(--indigo);font-weight:800;font-size:15px;margin-bottom:10px;}
+  .lesson-card{
+    background:var(--white);border-radius:24px;padding:22px;box-shadow:var(--shadow);margin-bottom:16px;
+  }
+  .lesson-card h2{margin-top:0;font-size:22px;}
+  .lesson-card p, .lesson-card .cours-text{line-height:1.55;font-size:16px;}
+
+  /* ---------- Fleur des nombres ---------- */
+  .flower-wrap{position:relative;width:210px;height:210px;margin:14px auto;}
+  .flower-petal{
+    position:absolute;width:86px;height:64px;border-radius:50%;
+    display:flex;align-items:center;justify-content:center;text-align:center;
+    font-weight:800;font-size:13px;color:#5b3a1a;padding:4px;line-height:1.2;
+  }
+  .flower-petal.top{top:-8px;left:50%;transform:translateX(-50%);}
+  .flower-petal.left{top:50%;left:-14px;transform:translateY(-50%);}
+  .flower-petal.right{top:50%;right:-14px;transform:translateY(-50%);}
+  .flower-petal.bl{bottom:4px;left:6px;}
+  .flower-petal.br{bottom:4px;right:6px;}
+  .flower-center{
+    position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);
+    width:76px;height:76px;border-radius:50%;background:white;border:3px solid #C8935B;
+    display:flex;align-items:center;justify-content:center;font-weight:900;font-size:26px;
+    color:#5b3a1a;z-index:2;
+  }
+
+  /* ---------- Glisser-déposer ---------- */
+  .glisser-equations{background:#F7F9FC;border-radius:14px;padding:14px 16px;margin-bottom:14px;font-size:18px;font-weight:800;line-height:1.9;text-align:center;}
+  .glisser-zones{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;margin-bottom:18px;}
+  .glisser-zone{
+    width:70px;height:70px;border-radius:16px;border:3px dashed var(--sky-deep);
+    display:flex;flex-direction:column;align-items:center;justify-content:center;
+    font-weight:800;background:var(--white);position:relative;
+  }
+  .glisser-zone .zone-symbol{font-size:22px;}
+  .glisser-zone .zone-value{font-size:20px;color:var(--indigo);}
+  .glisser-zone.filled{border-style:solid;border-color:var(--leaf);background:#EAFBEF;}
+  .glisser-tray{display:flex;gap:10px;justify-content:center;flex-wrap:wrap;min-height:60px;padding:10px;}
+  .glisser-piece{
+    width:52px;height:52px;border-radius:14px;background:var(--sun);color:var(--indigo);
+    display:flex;align-items:center;justify-content:center;font-weight:900;font-size:18px;
+    box-shadow:0 4px 0 #E0A80E;touch-action:none;user-select:none;cursor:grab;
+  }
+  .glisser-piece.dragging{position:fixed;z-index:50;box-shadow:0 8px 16px rgba(0,0,0,.25);opacity:.95;pointer-events:none;}
+  .glisser-piece.placed{visibility:hidden;}
+
+  /* ---------- Mots mêlés ---------- */
+  .mm-wordlist{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:14px;}
+  .mm-word-chip{
+    background:var(--white);border:2px solid var(--sky-deep);border-radius:12px;
+    padding:6px 12px;font-weight:800;font-size:13px;color:var(--indigo);
+  }
+  .mm-word-chip.found{background:var(--leaf);border-color:var(--leaf);color:white;text-decoration:line-through;}
+  .mm-grid{
+    display:grid;gap:3px;margin:0 auto;user-select:none;touch-action:none;
+    background:var(--sky-deep);border-radius:14px;padding:8px;max-width:100%;
+  }
+  .mm-cell{
+    aspect-ratio:1/1;background:var(--white);border-radius:6px;
+    display:flex;align-items:center;justify-content:center;font-weight:800;
+    font-size:clamp(11px,3.2vw,16px);color:var(--indigo);
+  }
+  .mm-cell.selecting{background:#F3E3CB;}
+  .mm-cell.found{background:var(--leaf);color:white;}
+  .exo-progress{display:flex;gap:6px;margin-bottom:14px;}
+  .exo-progress span{flex:1;height:8px;border-radius:4px;background:var(--sky-deep);}
+  .exo-progress span.filled{background:var(--sun);}
+  .exo-question{font-size:19px;font-weight:800;margin-bottom:16px;}
+  .options{display:flex;flex-direction:column;gap:10px;}
+  .option-btn{
+    background:var(--white);border:2px solid var(--sky-deep);border-radius:16px;padding:14px 16px;
+    font-size:16px;font-weight:700;text-align:left;
+  }
+  .option-btn.correct{background:var(--leaf);color:white;border-color:var(--leaf);}
+  .option-btn.wrong{background:var(--coral);color:white;border-color:var(--coral);}
+  .option-btn.selected{border-color:var(--lilac);background:#F1EFFF;}
+  #validate-btn:disabled{opacity:.35;box-shadow:none;}
+  .text-answer input{
+    width:100%;padding:14px 16px;border-radius:16px;border:2px solid var(--sky-deep);font-size:18px;
+    background:var(--sky);text-align:center;font-weight:800;
+  }
+  .feedback{margin-top:14px;font-weight:800;font-size:16px;min-height:24px;}
+  .feedback.ok{color:var(--leaf);}
+  .feedback.ko{color:var(--coral);}
+  .continue-wrap{margin-top:18px;text-align:right;}
+
+  .speaker-btn{
+    background:var(--sky);border:2px solid var(--sky-deep);border-radius:14px;
+    padding:8px 14px;font-weight:800;font-size:14px;color:var(--indigo);margin-bottom:12px;
+  }
+  .speaker-btn:active{background:var(--sky-deep);}
+
+  .result-card{text-align:center;}
+  .result-emoji{font-size:64px;margin-bottom:6px;}
+  .result-points{font-size:22px;font-weight:800;color:var(--sun);}
+
+  @keyframes pop{0%{transform:scale(.6);opacity:0;}70%{transform:scale(1.08);}100%{transform:scale(1);opacity:1;}}
+  .pop-in{animation:pop .35s ease-out;}
+
+  footer.credit{text-align:center;font-size:12px;color:#8b8aa8;margin-top:20px;}
+</style>
+</head>
+<body>
+
+<!-- ============ ÉCRAN DE CONNEXION ============ -->
+<div id="login-screen">
+  <div class="login-card">
+    <div class="mascotte">
+      <div class="logo-yeshua">Yeshua</div>
+      <div class="logo-yeshua-heb">ישוע</div>
+    </div>
+    <h1>Enfant de Dieu CP</h1>
+    <p>Lecture, Maths &amp; Bible, en s'amusant !</p>
+    <button class="btn btn-lilac btn-full" id="btn-listen-login" style="margin-bottom:10px;" onclick="speak(loginInstructions)">🔊 Écouter les consignes</button>
+    <div class="field">
+      <label for="voice-select">Voix (si plusieurs sont disponibles)</label>
+      <select id="voice-select"></select>
+    </div>
+    <div class="field">
+      <label for="input-prenom">Ton prénom</label>
+      <input id="input-prenom" type="text" placeholder="Ex : Léa" autocomplete="off">
+    </div>
+    <div class="field">
+      <label for="input-code">Ton code secret (4 chiffres)</label>
+      <input id="input-code" type="text" placeholder="Ex : 1234" autocomplete="off">
+    </div>
+    <button class="btn btn-leaf btn-full" id="btn-login">C'est parti !</button>
+    <div class="sync-msg" id="login-msg"></div>
+  </div>
+</div>
+
+<!-- ============ APP PRINCIPALE ============ -->
+<div id="app-screen" class="hidden">
+  <header class="topbar">
+    <div class="who">
+      <span class="mascotte-mini logo-yeshua-mini">Yeshua</span>
+      <span id="topbar-name">—</span>
+    </div>
+    <div class="stats">
+      <div class="stat">⭐ <span id="topbar-points">0</span></div>
+      <div class="stat">🔥 <span id="topbar-streak">0</span></div>
+      <button class="logout-btn" id="audio-toggle-btn" onclick="toggleAudio()" title="Activer/couper le son">🔊</button>
+      <button class="logout-btn" onclick="logout()" title="Se déconnecter">🚪</button>
+    </div>
+  </header>
+
+  <div class="tabs">
+    <div class="tab tab-lecture active" id="tab-lecture" onclick="switchTrack('lecture')">📖 Lecture</div>
+    <div class="tab tab-maths" id="tab-maths" onclick="switchTrack('maths')">🔢 Maths</div>
+    <div class="tab tab-bible" id="tab-bible" onclick="switchTrack('bible')">📖 Bible</div>
+    <div class="tab tab-jeux" id="tab-jeux" onclick="switchTrack('jeux')">🎮 Jeux</div>
+  </div>
+
+  <div class="badges-row" id="badges-row"></div>
+
+  <div class="path" id="path-container"></div>
+
+  <footer class="credit">Fait avec ❤️ pour apprendre à ton rythme.</footer>
+</div>
+
+<!-- ============ ÉCRAN LEÇON / EXERCICES ============ -->
+<div id="lesson-screen" class="hidden">
+  <div class="lesson-inner" id="lesson-inner"></div>
+</div>
+
+<audio id="tts-audio-player" style="display:none;"></audio>
+
+<script>
+/* =========================================================================
+   CONFIGURATION — colle ici l'URL de ton Web App Google Apps Script
+   (Déploiement du fichier Code.gs fourni séparément)
+   ========================================================================= */
+const CONFIG = {
+  SCRIPT_URL: "https://script.google.com/macros/s/AKfycbyL6vEmI_UHOyB7GEecRi03vD6HxkzmFCzk5LB9meD2en5mbvoK6Pn2LOsGGuNwLl0W/exec",
+  ADMIN_ID: "admin",
+  ADMIN_PASSWORD: "ChangeMoi2026"
+};
+
+/* =========================================================================
+   CONTENU PÉDAGOGIQUE — Lecture (8 leçons) et Maths (8 leçons)
+   ========================================================================= */
+const CONTENT = {
+  lecture: [
+    {
+      id:"lec1", title:"Les voyelles", icon:"🔤",
+      cours:"Les voyelles sont des lettres qu'on peut chanter tout seul : a, e, i, o, u, et y, qu'on appelle aussi le i grec. Écoute bien le son de chaque voyelle en la disant à voix haute.",
+      exos:[
+        {type:"qcm", q:"Dans le mot AMI, quelle voyelle entends-tu au début ?", options:["a","e","i","o"], answer:"a"},
+        {type:"qcm", q:"Quel mot commence par la voyelle O ?", options:["orange","chat","souris","lune"], answer:"orange"},
+        {type:"texte", q:"Écris la voyelle que tu entends à la fin du mot LUNE.", answer:"u"},
+        {type:"qcm", q:"Combien de voyelles y a-t-il dans le mot AMI ?", options:["1","2","3","4"], answer:"2"}
+      ]
+    },
+    {
+      id:"lec2", title:"Premières syllabes", icon:"🧩",
+      cours:"Une consonne et une voyelle collées font une syllabe : M + A = MA. Essaie avec M, L, R, P, T.",
+      exos:[
+        {type:"qcm", q:"Comment se lit M + A ?", options:["ma","am","mi","ta"], answer:"ma"},
+        {type:"qcm", q:"Quelle syllabe entends-tu au début de MALIN ?", options:["ma","ta","la","ra"], answer:"ma"},
+        {type:"texte", q:"Écris la syllabe formée par L + O.", answer:"lo"},
+        {type:"qcm", q:"Quel mot est écrit avec les syllabes PA-PA ?", options:["papa","mama","tata","lala"], answer:"papa"}
+      ]
+    },
+    {
+      id:"lec3", title:"Autres consonnes", icon:"🔡",
+      cours:"D'autres consonnes forment aussi des syllabes : B, D, F, S, V, N, J. Par exemple B + A = BA comme dans BATEAU.",
+      exos:[
+        {type:"qcm", q:"Quelle syllabe entends-tu au début de BATEAU ?", options:["ba","da","fa","va"], answer:"ba"},
+        {type:"texte", q:"Écris la syllabe formée par D + O.", answer:"do"},
+        {type:"qcm", q:"Quel mot commence par le son 'f' ?", options:["fusée","vache","nid","sac"], answer:"fusée"},
+        {type:"qcm", q:"Dans NID, quelle est la première lettre ?", options:["n","m","d","b"], answer:"n"}
+      ]
+    },
+    {
+      id:"lec4", title:"Sons complexes : ch, ou, on, an", icon:"🌀",
+      cours:"Deux lettres peuvent faire un seul son : CH (chat), OU (loup), ON (ballon), AN/EN (maman).",
+      exos:[
+        {type:"qcm", q:"Quel son entends-tu au début de CHAT ?", options:["ch","k","s","t"], answer:"ch"},
+        {type:"qcm", q:"Quel mot contient le son 'ou' ?", options:["loup","lit","nez","ami"], answer:"loup"},
+        {type:"qcm", q:"Quel mot contient le son 'on' ?", options:["ballon","bébé","lune","ami"], answer:"ballon"},
+        {type:"texte", q:"Écris les deux lettres qui font le son entendu à la fin de BALLON.", answer:"on"}
+      ]
+    },
+    {
+      id:"lec5", title:"Sons complexes : oi, eau, gn, ill", icon:"✨",
+      cours:"D'autres sons à retenir : OI (roi), EAU (bateau), GN (montagne), ILL (abeille).",
+      exos:[
+        {type:"qcm", q:"Quel mot contient le son 'oi' ?", options:["roi","ami","lune","sac"], answer:"roi"},
+        {type:"qcm", q:"Quel mot contient le son 'eau' ?", options:["bateau","ballon","chat","nid"], answer:"bateau"},
+        {type:"qcm", q:"Quel mot contient le son 'gn' ?", options:["montagne","banane","tomate","robot"], answer:"montagne"},
+        {type:"texte", q:"Écris les trois lettres qui font le son entendu à la fin d'ABEILLE.", answer:"ill"}
+      ]
+    },
+    {
+      id:"lec6", title:"Les petits mots-outils", icon:"🧷",
+      cours:"Certains petits mots reviennent tout le temps : le, la, les, un, une, et, dans, sur. Ils t'aident à lire les phrases.",
+      exos:[
+        {type:"qcm", q:"Quel petit mot annonce plusieurs choses ? (___ pommes)", options:["les","un","et","sur"], answer:"les"},
+        {type:"qcm", q:"Complète : « Le chat est ___ la maison. »", options:["dans","et","un","la"], answer:"dans"},
+        {type:"qcm", q:"Quel mot utilise-t-on devant un mot masculin ? (___ chat)", options:["le","la","les","une"], answer:"le"},
+        {type:"texte", q:"Écris le petit mot qui relie deux choses, comme dans « le chat ET le chien ».", answer:"et"}
+      ]
+    },
+    {
+      id:"lec7", title:"Phrases courtes", icon:"📝",
+      cours:"Lis bien chaque mot puis toute la phrase : « Le chat dort sur le lit. » « Mona a un ballon rouge. »",
+      exos:[
+        {type:"qcm", q:"« Le chat dort sur le lit. » Que fait le chat ?", options:["il dort","il mange","il court","il chante"], answer:"il dort"},
+        {type:"qcm", q:"« Mona a un ballon rouge. » De quelle couleur est le ballon ?", options:["rouge","bleu","vert","jaune"], answer:"rouge"},
+        {type:"texte", q:"Complète : « Papa lit un ___. » (ça se lit, avec des pages)", answer:"livre"},
+        {type:"qcm", q:"Quelle phrase est bien écrite ?", options:["Le chien court vite.","chien Le court vite","vite court chien Le","Le vite chien court"], answer:"Le chien court vite."}
+      ]
+    },
+    {
+      id:"lec8", title:"Petite histoire", icon:"📚",
+      cours:"« Léo se réveille tôt. Il mange des céréales. Puis il part à l'école avec son sac bleu. » Lis bien l'histoire avant de répondre.",
+      exos:[
+        {type:"qcm", q:"Que mange Léo au petit-déjeuner ?", options:["des céréales","une pomme","du pain","un gâteau"], answer:"des céréales"},
+        {type:"qcm", q:"De quelle couleur est le sac de Léo ?", options:["bleu","rouge","vert","noir"], answer:"bleu"},
+        {type:"qcm", q:"Où part Léo ?", options:["à l'école","à la piscine","chez mamie","au parc"], answer:"à l'école"},
+        {type:"texte", q:"Écris le prénom du garçon de l'histoire.", answer:"leo"}
+      ]
+    },
+    {
+      id:"lec9", title:"Conjugaison : venir, aller, dire, faire", icon:"🦁",
+      cours:"Ces verbes changent beaucoup selon la personne qui parle. Regarde bien qui fait l'action avant de choisir la bonne terminaison.",
+      exos:[
+        {type:"texte", q:"Complète avec le verbe VENIR conjugué : « Le lion ... d'arriver sur son rocher. »", answer:"vient"},
+        {type:"texte", q:"Complète avec le verbe DIRE conjugué : « Il ... à son fils : suis-moi. »", answer:"dit"},
+        {type:"texte", q:"Complète avec le verbe FAIRE conjugué : « Les lionnes ... attention à ne pas faire de bruit. »", answer:"font"},
+        {type:"texte", q:"Complète avec le verbe ALLER conjugué : « Les zèbres ... boire dans le lac. »", answer:"vont"}
+      ]
+    },
+    {
+      id:"lec10", title:"Et ou Est ?", icon:"🐝",
+      cours:"« Et » relie deux mots ou deux idées (comme dans « le chat et le chien »). « Est » veut dire « il/elle est » (le verbe être). Écoute bien le sens de la phrase pour choisir.",
+      exos:[
+        {type:"qcm", q:"« L'abeille ..... dans la ruche »", options:["et","est"], answer:"est"},
+        {type:"qcm", q:"« L'abeille butine des marguerites ..... de la lavande »", options:["et","est"], answer:"et"},
+        {type:"qcm", q:"« La reine ..... la maman de toutes les abeilles »", options:["et","est"], answer:"est"},
+        {type:"qcm", q:"« Les gardiennes .... les nourrices ne sortent pas de la ruche »", options:["et","est"], answer:"et"}
+      ]
+    },
+    {
+      id:"lec11", title:"Retrouver l'infinitif", icon:"🔎",
+      cours:"L'infinitif, c'est le nom du verbe « tout seul », avant qu'on le conjugue. Astuce : essaie la formule « il faut ... ». Par exemple, pour « il joue », on dit « il faut jouer », donc l'infinitif est JOUER.",
+      exos:[
+        {type:"texte", q:"Quel est l'infinitif du verbe dans : « Je joue au football » ?", answer:"jouer"},
+        {type:"texte", q:"Quel est l'infinitif du verbe dans : « Nous faisons un gâteau » ?", answer:"faire"},
+        {type:"texte", q:"Quel est l'infinitif du verbe dans : « Le chat boit du lait » ?", answer:"boire"},
+        {type:"texte", q:"Quel est l'infinitif du verbe dans : « Les joueurs ont gagné la coupe » ?", answer:"gagner"}
+      ]
+    },
+    {
+      id:"lec12", title:"Orthographe : a ou à ?", icon:"✍️",
+      cours:"« a » (sans accent) vient du verbe avoir : on peut le remplacer par « avait ». « à » (avec accent) indique un lieu, une direction ou un moment : on ne peut pas le remplacer par « avait ».",
+      exos:[
+        {type:"qcm", q:"« Cet ours ...... un pelage tout blanc »", options:["a","à"], answer:"a"},
+        {type:"qcm", q:"« Les bébés manchots se jettent ....... l'eau »", options:["a","à"], answer:"à"},
+        {type:"qcm", q:"« Nous partons en vacances ...... la montagne »", options:["a","à"], answer:"à"},
+        {type:"qcm", q:"« La neige ..... fondu ce matin »", options:["a","à"], answer:"a"}
+      ]
+    },
+    {
+      id:"lec13", title:"Être ou Avoir au présent", icon:"🧩",
+      cours:"« Être » sert à décrire un état (je suis, tu es, il est...). « Avoir » sert à posséder quelque chose (j'ai, tu as, il a...). Regarde bien le sens de la phrase.",
+      exos:[
+        {type:"qcm", q:"« Vous ….... en vacances »", options:["êtes","ai","a"], answer:"êtes"},
+        {type:"qcm", q:"« J'….. des chaussures »", options:["ai","es","est"], answer:"ai"},
+        {type:"qcm", q:"« Je …....... un garçon »", options:["suis","ai","es"], answer:"suis"},
+        {type:"qcm", q:"« Elle …...... un joli pull »", options:["a","est","ai"], answer:"a"}
+      ]
+    },
+    {
+      id:"lec14", title:"Le temps et le sujet d'une phrase", icon:"⏳",
+      cours:"Le sujet, c'est qui fait l'action. Le temps, c'est quand ça se passe : au passé (c'est déjà arrivé), au présent (ça arrive maintenant), ou au futur (ça va arriver plus tard).",
+      exos:[
+        {type:"qcm", q:"Dans la phrase « Le chat court dans le jardin », quel est le sujet ?", options:["le chat","court","le jardin"], answer:"le chat"},
+        {type:"qcm", q:"« Le chat court dans le jardin » est à quel temps ?", options:["passé","présent","futur"], answer:"présent"},
+        {type:"qcm", q:"« Hier, j'ai été dans la piscine » est à quel temps ?", options:["passé","présent","futur"], answer:"passé"},
+        {type:"qcm", q:"« Demain, nous ferons un gâteau » est à quel temps ?", options:["passé","présent","futur"], answer:"futur"}
+      ]
+    },
+    {
+      id:"lec15", title:"Nature des mots : la lune", icon:"🌙", montessori:true,
+      cours:"En grammaire Montessori, chaque nature de mot a une forme et une couleur : ▲ petit bleu clair = article, ▲ noir = nom, ▲ bleu = adjectif, ● rouge = verbe, ⌒ vert = préposition, ▲ violet (grand) = pronom, ▬ rose = conjonction. Lis bien chaque phrase avant de répondre.",
+      exos:[
+        {type:"qcm", q:"Dans « La pleine lune brille dans la nuit noire », quelle est la nature du mot LUNE ?", options:["nom","adjectif","verbe","article"], answer:"nom"},
+        {type:"qcm", q:"Dans « Ils regardent la lune rousse », quelle est la nature du mot ILS ?", options:["pronom","nom","verbe","article"], answer:"pronom"},
+        {type:"qcm", q:"Dans « La fusée spatiale s'envole vers la lune », quelle est la nature du mot SPATIALE ?", options:["adjectif","nom","verbe","préposition"], answer:"adjectif"},
+        {type:"qcm", q:"Dans « Les courageux astronautes montent dans la fusée », quelle est la nature du mot DANS ?", options:["préposition","verbe","nom","adjectif"], answer:"préposition"}
+      ]
+    },
+    {
+      id:"lec16", title:"Nature des mots : la ferme", icon:"🐄", montessori:true,
+      cours:"On continue avec le même code couleur : ▲ petit bleu clair = article, ▲ noir = nom, ▲ bleu = adjectif, ● rouge = verbe, ⌒ vert = préposition. Lis bien chaque phrase de la ferme avant de répondre.",
+      exos:[
+        {type:"qcm", q:"Dans « La jolie vache brune broute dans le pré », quelle est la nature du mot JOLIE ?", options:["adjectif","nom","verbe","article"], answer:"adjectif"},
+        {type:"qcm", q:"Dans « La chèvre agile grimpe dans l'arbre fruitier », quelle est la nature du mot GRIMPE ?", options:["verbe","nom","adjectif","préposition"], answer:"verbe"},
+        {type:"qcm", q:"Dans « Les trois petits chats coquins jouent dans l'herbe », quelle est la nature du mot CHATS ?", options:["nom","adjectif","verbe","article"], answer:"nom"},
+        {type:"qcm", q:"Dans « Le fermier a démarré son vieux tracteur », quelle est la nature du mot LE ?", options:["article","nom","adjectif","pronom"], answer:"article"}
+      ]
+    },
+    {
+      id:"lec17", title:"Vocabulaire : le monde des transports", icon:"🚀",
+      cours:"Il existe plein de familles de véhicules : dans les airs, sur l'eau, à 2 roues, les camions, les voitures, en ville, et sur les rails. À toi de ranger chaque véhicule dans la bonne famille !",
+      exos:[
+        {type:"qcm", q:"Dans quelle famille ranges-tu L'HÉLICOPTÈRE ?", options:["Dans les airs","Sur l'eau","Sur les rails","En ville"], answer:"Dans les airs"},
+        {type:"qcm", q:"Dans quelle famille ranges-tu LE TGV ?", options:["Sur les rails","Dans les airs","Camions","À 2 roues"], answer:"Sur les rails"},
+        {type:"qcm", q:"Dans quelle famille ranges-tu LE SOUS-MARIN ?", options:["Sur l'eau","Dans les airs","Voitures","En ville"], answer:"Sur l'eau"},
+        {type:"qcm", q:"Dans quelle famille ranges-tu LE CAMION CITERNE ?", options:["Camions","Voitures","En ville","Sur les rails"], answer:"Camions"}
+      ]
+    },
+    {
+      id:"lec18", title:"La lettre C : son [s] ou son [k] ?", icon:"🔤",
+      cours:"La lettre C se prononce [k] devant A, O, U (comme dans CAMION). Elle se prononce [s] devant E, I, Y (comme dans CITRON). Avec une cédille (Ç) devant A, O, U, elle fait aussi le son [s] (comme dans GARÇON).",
+      exos:[
+        {type:"qcm", q:"Quel son fait la lettre C dans CAMION ?", options:["son k","son s"], answer:"son k"},
+        {type:"qcm", q:"Quel son fait la lettre C dans CITRON ?", options:["son k","son s"], answer:"son s"},
+        {type:"qcm", q:"Quel son fait la lettre C dans CURIEUX ?", options:["son k","son s"], answer:"son k"},
+        {type:"qcm", q:"Quel son fait la lettre C dans CYCLE ?", options:["son k","son s"], answer:"son s"}
+      ]
+    },
+    {
+      id:"lec19", title:"La lettre G : son [g] ou son [j] ?", icon:"🔤",
+      cours:"La lettre G se prononce [g] devant A, O, U (comme dans GÂTEAU). Elle se prononce [j] devant E, I, Y (comme dans GIRAFE). Avec un U placé entre G et E/I, elle garde le son [g] (comme dans GUÊPE).",
+      exos:[
+        {type:"qcm", q:"Quel son fait la lettre G dans GÂTEAU ?", options:["son g","son j"], answer:"son g"},
+        {type:"qcm", q:"Quel son fait la lettre G dans GIRAFE ?", options:["son g","son j"], answer:"son j"},
+        {type:"qcm", q:"Quel son fait la lettre G dans GUÊPE ?", options:["son g","son j"], answer:"son g"},
+        {type:"qcm", q:"Quel son fait la lettre G dans GENTIL ?", options:["son g","son j"], answer:"son j"}
+      ]
+    },
+    {
+      id:"lec20", title:"Les marques de voitures", icon:"🚗",
+      cours:"Chaque marque de voiture a son propre logo. Devine la marque à partir de la description de son logo !",
+      exos:[
+        {type:"qcm", q:"Quelle marque a pour logo quatre anneaux argentés entrelacés ?", options:["Audi","BMW","Toyota","Renault"], answer:"Audi"},
+        {type:"qcm", q:"Quelle marque a pour logo un cheval noir cabré sur un écusson jaune ?", options:["Ferrari","Lamborghini","Porsche","Peugeot"], answer:"Ferrari"},
+        {type:"qcm", q:"Quelle marque a pour logo un losange gris ?", options:["Renault","Citroën","Peugeot","Seat"], answer:"Renault"},
+        {type:"qcm", q:"Quelle marque a pour logo un lion qui marche sur ses pattes arrière ?", options:["Peugeot","Jaguar","Ferrari","Lamborghini"], answer:"Peugeot"}
+      ]
+    },
+    {
+      id:"lec21", title:"Jeu : Mots mêlés", icon:"🔎",
+      cours:"Trouve tous les mots cachés dans la grille de lettres ! Un mot peut être écrit à l'horizontale, à la verticale, en diagonale, et même à l'envers. Glisse ton doigt (ou ta souris) d'une lettre à l'autre pour le sélectionner.",
+      game:"motsmeles",
+      words:["SAC","AMI","BOA","SUMO","DOMINO","TAPIS","PUMA"],
+      exos:[]
+    }
+  ],
+  maths: [
+    {
+      id:"mat1", title:"Compter jusqu'à 10", icon:"🔟",
+      cours:"On compte : 1, 2, 3, 4, 5, 6, 7, 8, 9, 10. Entraîne-toi à dire les nombres dans l'ordre, et à les reconnaître.",
+      exos:[
+        {type:"qcm", q:"Quel nombre vient juste après 6 ?", options:["7","5","8","9"], answer:"7"},
+        {type:"texte", q:"Combien y a-t-il d'étoiles ? ⭐⭐⭐⭐", answer:"4"},
+        {type:"qcm", q:"Quel est le plus petit nombre ?", options:["3","7","2","9"], answer:"2"},
+        {type:"texte", q:"Écris en chiffre le nombre dix.", answer:"10"}
+      ]
+    },
+    {
+      id:"mat2", title:"Nombres jusqu'à 20", icon:"🎯",
+      cours:"Après 10 viennent 11, 12, 13... jusqu'à 20. Regarde bien l'ordre des nombres.",
+      exos:[
+        {type:"qcm", q:"Quel nombre vient juste avant 15 ?", options:["14","16","13","12"], answer:"14"},
+        {type:"texte", q:"Écris en chiffres : quinze.", answer:"15"},
+        {type:"qcm", q:"Quel nombre est entre 17 et 19 ?", options:["18","16","20","15"], answer:"18"},
+        {type:"texte", q:"Combien font 10 + 7 ?", answer:"17"}
+      ]
+    },
+    {
+      id:"mat3", title:"Dizaines et unités", icon:"🧮",
+      cours:"Dans un nombre à deux chiffres, le premier chiffre compte les dizaines (paquets de 10) et le second les unités. Dans 34, il y a 3 dizaines et 4 unités.",
+      exos:[
+        {type:"qcm", q:"Dans le nombre 34, combien y a-t-il de dizaines ?", options:["3","4","7","34"], answer:"3"},
+        {type:"texte", q:"Combien y a-t-il d'unités dans le nombre 52 ?", answer:"2"},
+        {type:"qcm", q:"Quel nombre s'écrit avec 5 dizaines et 6 unités ?", options:["56","65","506","15"], answer:"56"},
+        {type:"texte", q:"Écris en chiffres : quarante-deux.", answer:"42"}
+      ]
+    },
+    {
+      id:"mat4", title:"Comparer les nombres", icon:"⚖️",
+      cours:"Pour comparer deux nombres, on utilise < (plus petit que), > (plus grand que) et = (égal à).",
+      exos:[
+        {type:"qcm", q:"Quel signe faut-il entre 23 et 32 ? 23 ___ 32", options:["<",">","="], answer:"<"},
+        {type:"qcm", q:"Quel est le plus grand nombre ?", options:["47","74","17","41"], answer:"74"},
+        {type:"texte", q:"Parmi 12, 21, 9, 30 — écris le plus petit.", answer:"9"},
+        {type:"qcm", q:"45 ___ 45. Quel signe ?", options:["=","<",">"], answer:"="}
+      ]
+    },
+    {
+      id:"mat5", title:"Additions", icon:"➕",
+      cours:"Additionner, c'est réunir deux quantités. 12 + 5 : je pars de 12 et j'avance de 5.",
+      exos:[
+        {type:"texte", q:"Combien font 12 + 5 ?", answer:"17"},
+        {type:"texte", q:"Combien font 23 + 14 ?", answer:"37"},
+        {type:"qcm", q:"Quel est le résultat de 6 + 3 ?", options:["9","8","10","7"], answer:"9"},
+        {type:"texte", q:"Combien font 30 + 20 ?", answer:"50"}
+      ]
+    },
+    {
+      id:"mat6", title:"Soustractions", icon:"➖",
+      cours:"Soustraire, c'est enlever une quantité. 9 - 4 : je pars de 9 et j'enlève 4.",
+      exos:[
+        {type:"texte", q:"Combien font 9 - 4 ?", answer:"5"},
+        {type:"texte", q:"Combien font 18 - 6 ?", answer:"12"},
+        {type:"qcm", q:"Quel est le résultat de 10 - 3 ?", options:["7","8","6","9"], answer:"7"},
+        {type:"texte", q:"Combien font 25 - 5 ?", answer:"20"}
+      ]
+    },
+    {
+      id:"mat7", title:"Doubles et moitiés", icon:"👯",
+      cours:"Le double d'un nombre, c'est ce nombre additionné à lui-même (le double de 4 = 4+4 = 8). La moitié, c'est le partager en deux parts égales.",
+      exos:[
+        {type:"texte", q:"Quel est le double de 4 ?", answer:"8"},
+        {type:"texte", q:"Quel est le double de 6 ?", answer:"12"},
+        {type:"qcm", q:"Quelle est la moitié de 10 ?", options:["5","4","6","2"], answer:"5"},
+        {type:"texte", q:"Quel est le double de 9 ?", answer:"18"}
+      ]
+    },
+    {
+      id:"mat8", title:"Petits problèmes", icon:"🧠",
+      cours:"Lis bien l'histoire, cherche ce qu'on te demande, puis calcule.",
+      exos:[
+        {type:"texte", q:"Léa a 3 bonbons. Sa maman lui en donne 4 de plus. Combien Léa a-t-elle de bonbons ?", answer:"7"},
+        {type:"texte", q:"Il y avait 8 oiseaux sur une branche. 3 se sont envolés. Combien reste-t-il d'oiseaux ?", answer:"5"},
+        {type:"qcm", q:"Tom a 5 billes, il en gagne 2. Combien a-t-il de billes ?", options:["7","6","8","5"], answer:"7"},
+        {type:"texte", q:"Une classe a 12 filles et 9 garçons. Combien d'élèves y a-t-il en tout ?", answer:"21"}
+      ]
+    },
+    {
+      id:"mat9", title:"Atelier Montessori : Divisions", icon:"🪵", montessori:true,
+      cours:"Comme sur les cartes à pince Montessori : choisis la bonne réponse parmi celles proposées, comme si tu pinçais la bonne pince sur la carte.",
+      exos:[
+        {type:"qcm", q:"15 ➗ 3 = ?", options:["5","6","7"], answer:"5"},
+        {type:"qcm", q:"20 ➗ 5 = ?", options:["2","4","6"], answer:"4"},
+        {type:"qcm", q:"36 ➗ 6 = ?", options:["6","8","5"], answer:"6"},
+        {type:"qcm", q:"48 ➗ 6 = ?", options:["6","8","10"], answer:"8"}
+      ]
+    },
+    {
+      id:"mat10", title:"Atelier Montessori : Additions à trous", icon:"🪵", montessori:true,
+      cours:"Trouve le nombre caché qui manque pour compléter l'addition, comme sur les cartes à pince.",
+      exos:[
+        {type:"qcm", q:"8 + ... = 15", options:["6","7","8"], answer:"7"},
+        {type:"qcm", q:"4 + ... = 9", options:["4","5","6"], answer:"5"},
+        {type:"qcm", q:"12 + ... = 21", options:["8","9","10"], answer:"9"},
+        {type:"qcm", q:"15 + ... = 22", options:["6","7","8"], answer:"7"}
+      ]
+    },
+    {
+      id:"mat11", title:"Atelier Montessori : Additions de dizaines", icon:"🪵", montessori:true,
+      cours:"Additionne les dizaines entières, comme sur les cartes à pince.",
+      exos:[
+        {type:"qcm", q:"80 + 50 = ?", options:["110","120","130"], answer:"130"},
+        {type:"qcm", q:"10 + 40 = ?", options:["40","50","60"], answer:"50"},
+        {type:"qcm", q:"120 + 80 = ?", options:["190","200","210"], answer:"200"},
+        {type:"qcm", q:"60 + 60 = ?", options:["110","120","130"], answer:"120"}
+      ]
+    },
+    {
+      id:"mat12", title:"Atelier Montessori : Doubles et moitiés", icon:"🪵", montessori:true,
+      cours:"Le double, c'est deux fois plus. La moitié, c'est deux fois moins. Choisis la bonne pince.",
+      exos:[
+        {type:"qcm", q:"Quel est le double de 7 ?", options:["12","14","16"], answer:"14"},
+        {type:"qcm", q:"Quelle est la moitié de 12 ?", options:["3","6","24"], answer:"6"},
+        {type:"qcm", q:"Quel est le double de 9 ?", options:["16","18","20"], answer:"18"},
+        {type:"qcm", q:"Quelle est la moitié de 16 ?", options:["4","6","8"], answer:"8"}
+      ]
+    },
+    {
+      id:"mat13", title:"Atelier Montessori : Multiplications (les abeilles)", icon:"🐝", montessori:true,
+      cours:"Place le nombre d'abeilles indiqué dans le nombre de ruches indiqué, et calcule le résultat.",
+      exos:[
+        {type:"qcm", q:"2 x 4 = ?", options:["6","8","10"], answer:"8"},
+        {type:"qcm", q:"3 x 5 = ?", options:["12","15","18"], answer:"15"},
+        {type:"qcm", q:"6 x 3 = ?", options:["16","18","21"], answer:"18"},
+        {type:"qcm", q:"4 x 3 = ?", options:["10","12","14"], answer:"12"}
+      ]
+    },
+    {
+      id:"mat14", title:"Atelier Montessori : Petits problèmes (la ruche)", icon:"🐝", montessori:true,
+      cours:"Lis bien chaque petite histoire d'abeilles avant de choisir la bonne réponse.",
+      exos:[
+        {type:"qcm", q:"L'abeille Lippie transporte 70mg de pollen maximum et récolte 10mg par fleur. Combien de fleurs peut-elle butiner avant de retourner à la ruche ?", options:["5","7","9","11"], answer:"7"},
+        {type:"qcm", q:"Dans la ruche, il y a 1 reine, 22 nourrices et 34 butineuses. Combien y a-t-il d'abeilles en tout ?", options:["54","57","47","67"], answer:"57"},
+        {type:"qcm", q:"Les abeilles produisent 50g de miel par jour. Combien en ont-elles produit en 10 jours ?", options:["500","5000","50","550"], answer:"500"},
+        {type:"texte", q:"La ruche a produit 240g de miel. L'apiculteur en prend 120g. Combien reste-t-il de miel pour les abeilles ?", answer:"120"}
+      ]
+    },
+    {
+      id:"mat15", title:"Atelier Montessori : Calcul en chaîne (fusées)", icon:"🚀", montessori:true,
+      cours:"Pars du nombre affiché sur la Terre, applique chaque opération dans l'ordre des fusées, et trouve le nombre final sur la Lune.",
+      exos:[
+        {type:"texte", q:"Pars de 350. Ajoute 50, puis ajoute 150, puis enlève 200, puis ajoute 250, puis ajoute 400. Quel est le résultat final ?", answer:"1000"},
+        {type:"texte", q:"Pars de 290. Ajoute 30, puis ajoute 40, puis enlève 20, puis ajoute 60, puis ajoute 80. Quel est le résultat final ?", answer:"480"},
+        {type:"texte", q:"Pars de 128. Ajoute 35, puis ajoute 15, puis enlève 18, puis ajoute 45, puis ajoute 95. Quel est le résultat final ?", answer:"300"},
+        {type:"texte", q:"Pars de 332. Ajoute 18, puis ajoute 44, puis enlève 74, puis ajoute 25, puis ajoute 115. Quel est le résultat final ?", answer:"460"}
+      ]
+    },
+    {
+      id:"mat16", title:"Atelier Montessori : La fleur des nombres", icon:"🌸", montessori:true,
+      cours:`Regarde bien la fleur modèle : au centre, le nombre. Sur les pétales autour : sa décomposition (dizaines + unités), le nombre juste avant et le nombre juste après, et le compte des dizaines et des unités.
+        <div class="flower-wrap">
+          <div class="flower-petal top" style="background:#F3E3CB;">10 + 2</div>
+          <div class="flower-petal left" style="background:#F3E3CB;">11 &lt;</div>
+          <div class="flower-petal right" style="background:#F3E3CB;">&lt; 13</div>
+          <div class="flower-petal bl" style="background:#F3E3CB;">1 dizaine</div>
+          <div class="flower-petal br" style="background:#F3E3CB;">2 unités</div>
+          <div class="flower-center">12</div>
+        </div>
+        Maintenant, à toi de compléter la fleur du nombre 36 !`,
+      exos:[
+        {type:"texte", q:"Combien de dizaines y a-t-il dans le nombre 36 ?", answer:"3"},
+        {type:"texte", q:"Combien d'unités y a-t-il dans le nombre 36 ?", answer:"6"},
+        {type:"texte", q:"Quel nombre vient juste avant 36 ?", answer:"35"},
+        {type:"texte", q:"Quel nombre vient juste après 36 ?", answer:"37"}
+      ]
+    },
+    {
+      id:"mat17", title:"Atelier Montessori : Le soleil, la lune et l'arc-en-ciel", icon:"🌈", montessori:true,
+      cours:"Résous les égalités les unes après les autres pour trouver la valeur de chaque symbole. Puis fais glisser le bon nombre sur chaque symbole avec ton doigt (ou ta souris).",
+      exos:[
+        {
+          type:"glisser",
+          q:"🧩 Résous les énigmes ci-dessous, puis fais glisser le bon nombre sur chaque symbole.",
+          qAudio:["Résous les énigmes.","Soleil plus 4 égale 10.","Soleil plus lune égale 15.","Lune moins arc-en-ciel égale 5.","Fais glisser le bon nombre sur chaque symbole."],
+          equations:["☀ + 4 = 10","☀ + 🌙 = 15","🌙 − 🌈 = 5"],
+          zones:[{id:"soleil",symbol:"☀"},{id:"lune",symbol:"🌙"},{id:"arc",symbol:"🌈"}],
+          pieces:[{id:"p1",value:"6"},{id:"p2",value:"9"},{id:"p3",value:"4"},{id:"p4",value:"7"}],
+          answer:{"soleil":"6","lune":"9","arc":"4"}
+        }
+      ]
+    }
+  ],
+  bible: [
+    {
+      id:"bib1", title:"La Création", icon:"🌍",
+      cours:"Au commencement, Dieu a créé le ciel et la terre. Il a créé la lumière, puis les plantes, les animaux, et enfin l'homme et la femme. Il a vu que tout ce qu'il avait fait était très bon.",
+      exos:[
+        {type:"qcm", q:"Que Dieu a-t-il créé en premier ?", options:["le ciel et la terre","les animaux","l'homme","la lune"], answer:"le ciel et la terre"},
+        {type:"qcm", q:"Comment Dieu a-t-il trouvé sa création ?", options:["très bonne","mauvaise","triste","effrayante"], answer:"très bonne"},
+        {type:"texte", q:"Complète : « Dieu a créé la ___. » (elle brille le jour)", answer:"lumiere"},
+        {type:"qcm", q:"Qui Dieu a-t-il créé en dernier ?", options:["l'homme et la femme","les poissons","les oiseaux","les étoiles"], answer:"l'homme et la femme"}
+      ]
+    },
+    {
+      id:"bib2", title:"Noé et l'arche", icon:"🌈",
+      cours:"Dieu demande à Noé de construire une grande arche en bois. Noé fait entrer les animaux, deux par deux. La pluie tombe longtemps, mais Noé, sa famille et les animaux restent en sécurité. À la fin, Dieu envoie un arc-en-ciel dans le ciel.",
+      exos:[
+        {type:"qcm", q:"Que construit Noé ?", options:["une arche","une maison","un bateau de pêche","un pont"], answer:"une arche"},
+        {type:"qcm", q:"Comment les animaux entrent-ils dans l'arche ?", options:["deux par deux","un par un","tous ensemble","trois par trois"], answer:"deux par deux"},
+        {type:"texte", q:"Qu'est-ce que Dieu envoie dans le ciel à la fin de l'histoire ?", answer:"un arc-en-ciel"},
+        {type:"qcm", q:"Qui reste avec Noé dans l'arche ?", options:["sa famille et les animaux","ses voisins","des soldats","personne"], answer:"sa famille et les animaux"}
+      ]
+    },
+    {
+      id:"bib3", title:"La promesse à Abraham", icon:"⭐",
+      cours:"Dieu dit à Abraham de regarder le ciel la nuit. « Compte les étoiles, si tu le peux » lui dit Dieu. « Ta famille sera aussi nombreuse que ces étoiles. » Abraham fait confiance à la promesse de Dieu.",
+      exos:[
+        {type:"qcm", q:"Que Dieu demande-t-il à Abraham de regarder ?", options:["les étoiles","les nuages","les montagnes","les animaux"], answer:"les étoiles"},
+        {type:"qcm", q:"À quoi Dieu compare-t-il la famille future d'Abraham ?", options:["aux étoiles","aux grains de sable","aux oiseaux","aux fleurs"], answer:"aux étoiles"},
+        {type:"texte", q:"Complète : « Abraham fait ___ à la promesse de Dieu. » (il y croit)", answer:"confiance"},
+        {type:"qcm", q:"Quel moment de la journée Abraham regarde-t-il le ciel ?", options:["la nuit","le matin","midi","le coucher du soleil"], answer:"la nuit"}
+      ]
+    },
+    {
+      id:"bib4", title:"Moïse sauvé des eaux", icon:"🧺",
+      cours:"Un bébé nommé Moïse est en danger. Sa maman le place dans un petit panier et le dépose sur le fleuve, parmi les roseaux. La fille du pharaon trouve le panier, découvre le bébé, et décide de l'élever comme son propre fils.",
+      exos:[
+        {type:"qcm", q:"Où la maman de Moïse dépose-t-elle le panier ?", options:["sur le fleuve","dans un champ","dans une grotte","sur une montagne"], answer:"sur le fleuve"},
+        {type:"qcm", q:"Qui trouve le bébé Moïse ?", options:["la fille du pharaon","un berger","un soldat","un pêcheur"], answer:"la fille du pharaon"},
+        {type:"texte", q:"Dans quoi la maman de Moïse place-t-elle son bébé ?", answer:"un panier"},
+        {type:"qcm", q:"Que décide de faire la fille du pharaon ?", options:["élever Moïse comme son fils","le laisser sur le fleuve","le donner à un voisin","le ramener à sa maman aussitôt"], answer:"élever Moïse comme son fils"}
+      ]
+    },
+    {
+      id:"bib5", title:"David et Goliath", icon:"🪨",
+      cours:"Goliath est un géant très fort qui fait peur à toute l'armée. David, un jeune berger, n'a pas peur car il fait confiance à Dieu. Avec seulement une fronde et une petite pierre, David affronte le géant et le vainc.",
+      exos:[
+        {type:"qcm", q:"Quel est le métier de David au début de l'histoire ?", options:["berger","soldat","roi","pêcheur"], answer:"berger"},
+        {type:"qcm", q:"Avec quoi David affronte-t-il Goliath ?", options:["une fronde et une pierre","une épée","un bouclier","un arc"], answer:"une fronde et une pierre"},
+        {type:"texte", q:"Comment s'appelle le géant de l'histoire ?", answer:"goliath"},
+        {type:"qcm", q:"Pourquoi David n'a-t-il pas peur ?", options:["il fait confiance à Dieu","il est très grand","il a une armée","il ne comprend pas le danger"], answer:"il fait confiance à Dieu"}
+      ]
+    },
+    {
+      id:"bib6", title:"Daniel dans la fosse aux lions", icon:"🦁",
+      cours:"Daniel prie Dieu chaque jour, même quand c'est interdit par le roi. À cause de cela, il est jeté dans une fosse remplie de lions. Mais Dieu envoie un ange qui ferme la bouche des lions, et Daniel ressort de la fosse sans aucune blessure.",
+      exos:[
+        {type:"qcm", q:"Que fait Daniel chaque jour, même quand c'est interdit ?", options:["il prie Dieu","il chante","il dort","il travaille"], answer:"il prie Dieu"},
+        {type:"qcm", q:"Où Daniel est-il jeté ?", options:["dans une fosse aux lions","dans un puits","dans une rivière","dans une prison"], answer:"dans une fosse aux lions"},
+        {type:"texte", q:"Qui Dieu envoie-t-il pour fermer la bouche des lions ?", answer:"un ange"},
+        {type:"qcm", q:"Comment Daniel ressort-il de la fosse ?", options:["sans aucune blessure","très fatigué","blessé","malade"], answer:"sans aucune blessure"}
+      ]
+    },
+    {
+      id:"bib7", title:"La naissance de Jésus", icon:"⭐",
+      cours:"Marie et Joseph voyagent jusqu'à Bethléem. Comme il n'y a plus de place dans l'auberge, Jésus naît dans une étable et il est couché dans une mangeoire. Une étoile brille dans le ciel, et des bergers viennent lui rendre visite après avoir entendu le message des anges.",
+      exos:[
+        {type:"qcm", q:"Dans quelle ville Jésus naît-il ?", options:["Bethléem","Jérusalem","Nazareth","Rome"], answer:"Bethléem"},
+        {type:"qcm", q:"Où Jésus est-il couché juste après sa naissance ?", options:["dans une mangeoire","dans un lit","dans un panier","dans une barque"], answer:"dans une mangeoire"},
+        {type:"texte", q:"Qui vient rendre visite à Jésus après avoir entendu les anges ?", answer:"les bergers"},
+        {type:"qcm", q:"Que voit-on briller dans le ciel cette nuit-là ?", options:["une étoile","la lune","un arc-en-ciel","un feu"], answer:"une étoile"}
+      ]
+    },
+    {
+      id:"bib8", title:"Jésus partage les pains", icon:"🐟",
+      cours:"Une grande foule suit Jésus toute la journée pour l'écouter, et personne n'a de quoi manger. Un petit garçon donne cinq pains et deux poissons. Jésus remercie Dieu, partage la nourriture, et tout le monde mange à sa faim : il en reste même douze paniers pleins.",
+      exos:[
+        {type:"qcm", q:"Que donne le petit garçon à Jésus ?", options:["cinq pains et deux poissons","deux pains et cinq poissons","du pain et du fromage","des fruits"], answer:"cinq pains et deux poissons"},
+        {type:"qcm", q:"Que fait Jésus avant de partager la nourriture ?", options:["il remercie Dieu","il compte la foule","il attend la nuit","il part se reposer"], answer:"il remercie Dieu"},
+        {type:"texte", q:"Combien de paniers de nourriture reste-t-il à la fin ?", answer:"douze"},
+        {type:"qcm", q:"Pourquoi la foule suit-elle Jésus ?", options:["pour l'écouter","pour le chasser","pour lui vendre du pain","pour se cacher"], answer:"pour l'écouter"}
+      ]
+    }
+  ]
+};
+
+/* =========================================================================
+   SYNTHÈSE VOCALE — les consignes sont toujours lues à voix haute,
+   car l'élève apprend encore à lire.
+   ========================================================================= */
+const loginInstructions = "Bonjour ! Écris ton prénom, puis ton code secret à quatre chiffres, et appuie sur le bouton c'est parti pour commencer à jouer.";
+let audioEnabled = true;
+let lastSpokenText = "";
+let frenchVoice = null;
+let replayCurrent = ()=>{};
+
+function pickBestVoice(voices){
+  const priority = ["google", "neural", "enhanced", "premium", "natural", "siri", "audrey", "amelie", "thomas"];
+  for(const key of priority){
+    const found = voices.find(v => v.name.toLowerCase().includes(key));
+    if(found) return found;
+  }
+  return voices[0] || null;
+}
+
+function loadFrenchVoice(){
+  if(!window.speechSynthesis) return;
+  const voices = window.speechSynthesis.getVoices().filter(v => v.lang && v.lang.toLowerCase().startsWith("fr"));
+  frenchVoice = pickBestVoice(voices);
+  populateVoiceSelector(voices);
+}
+
+function populateVoiceSelector(voices){
+  const sel = document.getElementById("voice-select");
+  if(!sel) return;
+  if(!voices.length){ sel.innerHTML = `<option>Aucune voix française trouvée</option>`; return; }
+  sel.innerHTML = voices.map((v,i)=>`<option value="${i}">${v.name}</option>`).join("");
+  const idx = frenchVoice ? voices.indexOf(frenchVoice) : 0;
+  sel.value = idx >= 0 ? idx : 0;
+  sel.onchange = ()=>{
+    frenchVoice = voices[Number(sel.value)];
+    speak("Voici comment je sonne maintenant.");
+  };
+}
+if(window.speechSynthesis){
+  loadFrenchVoice();
+  window.speechSynthesis.onvoiceschanged = loadFrenchVoice;
+}
+
+function speak(textOrParts){
+  if(Array.isArray(textOrParts)) return speakSequence(textOrParts);
+  const text = textOrParts;
+  lastSpokenText = text || lastSpokenText;
+  if(!audioEnabled || !window.speechSynthesis || !text) return;
+  window.speechSynthesis.cancel();
+  setTimeout(()=>{
+    window.speechSynthesis.cancel(); // sécurité anti-bavure (bug connu de Chrome)
+    const utter = new SpeechSynthesisUtterance(text);
+    utter.lang = "fr-FR";
+    utter.rate = 0.85;   // débit un peu plus lent, comme une maîtresse qui explique
+    utter.pitch = 1.05;
+    if(frenchVoice) utter.voice = frenchVoice;
+    window.speechSynthesis.speak(utter);
+  }, 180);
+}
+
+function speakSequence(parts){
+  lastSpokenText = parts.join(". ");
+  if(!audioEnabled || !window.speechSynthesis) return;
+  window.speechSynthesis.cancel();
+  const clean = parts.filter(p => p && p.trim());
+  let i = 0;
+  const speakNext = ()=>{
+    if(i >= clean.length) return;
+    const utter = new SpeechSynthesisUtterance(clean[i]);
+    utter.lang = "fr-FR";
+    utter.rate = 0.78;   // encore plus lent pour les listes de réponses
+    utter.pitch = 1.05;
+    if(frenchVoice) utter.voice = frenchVoice;
+    utter.onend = ()=>{ i++; setTimeout(speakNext, 450); }; // vraie pause entre chaque réponse
+    window.speechSynthesis.speak(utter);
+  };
+  setTimeout(speakNext, 180);
+}
+
+function toggleAudio(){
+  audioEnabled = !audioEnabled;
+  document.getElementById("audio-toggle-btn").textContent = audioEnabled ? "🔊" : "🔇";
+  if(!audioEnabled && window.speechSynthesis) window.speechSynthesis.cancel();
+}
+
+function spokenTextForExo(exo){
+  if(exo.type === "qcm"){
+    const parts = [exo.qAudio];
+    exo.options.forEach((opt,i)=> parts.push("Réponse " + (i+1) + ". " + opt));
+    return parts;
+  }
+  return exo.qAudio;
+}
+
+/* =========================================================================
+   ÉTAT DE L'ÉLÈVE
+   ========================================================================= */
+let student = {
+  prenom:"", code:"",
+  points:0, streak:0, lastConnection:"",
+  completed:{lecture:[], maths:[], bible:[]},
+  badges:[]
+};
+let currentTrack = "lecture";
+let currentLesson = null;
+let exoIndex = 0;
+let exoScore = 0;
+let waitingContinue = false;
+let selectedOptionIdx = null;
+let contentOverrides = {}; // { lessonId: { title, cours, coursAudio, exos:[{q,qAudio,options,answer}] } }
+let isAdmin = false;
+let editingField = null; // null | "cours" | "exo"
+let mediaRecorder = null;
+let recordedChunks = [];
+let isRecording = false;
+let pendingRecording = null; // data URL en cours d'édition, avant sauvegarde
+
+function getSupportedMimeType(){
+  const types = ["audio/webm;codecs=opus", "audio/webm", "audio/mp4"];
+  for(const t of types){
+    if(window.MediaRecorder && MediaRecorder.isTypeSupported && MediaRecorder.isTypeSupported(t)) return t;
+  }
+  return "";
+}
+
+function blobToDataURL(blob){
+  return new Promise((resolve, reject)=>{
+    const reader = new FileReader();
+    reader.onloadend = ()=> resolve(reader.result);
+    reader.onerror = reject;
+    reader.readAsDataURL(blob);
+  });
+}
+
+async function startRecording(){
+  if(!navigator.mediaDevices || !window.MediaRecorder){
+    alert("L'enregistrement micro n'est pas disponible sur ce navigateur.");
+    return;
+  }
+  try{
+    const stream = await navigator.mediaDevices.getUserMedia({audio:true});
+    recordedChunks = [];
+    const mimeType = getSupportedMimeType();
+    mediaRecorder = mimeType ? new MediaRecorder(stream, {mimeType, audioBitsPerSecond:24000}) : new MediaRecorder(stream);
+    mediaRecorder.ondataavailable = e => { if(e.data.size > 0) recordedChunks.push(e.data); };
+    mediaRecorder.onstop = async ()=>{
+      const blob = new Blob(recordedChunks, {type: mediaRecorder.mimeType || "audio/webm"});
+      pendingRecording = await blobToDataURL(blob);
+      stream.getTracks().forEach(t => t.stop());
+      isRecording = false;
+      renderLessonScreen();
+    };
+    mediaRecorder.start();
+    isRecording = true;
+    renderLessonScreen();
+  }catch(e){
+    alert("Impossible d'accéder au micro : autorise l'accès dans ton navigateur.");
+  }
+}
+
+function stopRecording(){
+  if(mediaRecorder && mediaRecorder.state !== "inactive") mediaRecorder.stop();
+}
+
+function deletePendingRecording(){
+  pendingRecording = null;
+  renderLessonScreen();
+}
+
+function micBlockHtml(){
+  if(isRecording){
+    return `
+      <div class="mic-block">
+        <div class="rec-indicator">🔴 Enregistrement en cours…</div>
+        <div class="mic-row">
+          <button class="mic-btn stop" onclick="stopRecording()">⏹️ Arrêter</button>
+        </div>
+      </div>`;
+  }
+  if(pendingRecording){
+    return `
+      <div class="mic-block">
+        <label style="font-weight:800;font-size:12px;color:#5b5a7a;">🎤 Ta voix enregistrée (remplace la voix de synthèse)</label>
+        <div class="mic-row">
+          <audio class="preview-audio" controls src="${pendingRecording}"></audio>
+          <button class="mic-btn record" onclick="startRecording()">🔴 Réenregistrer</button>
+          <button class="mic-btn delete" onclick="deletePendingRecording()">🗑️ Supprimer</button>
+        </div>
+      </div>`;
+  }
+  return `
+    <div class="mic-block">
+      <label style="font-weight:800;font-size:12px;color:#5b5a7a;">🎤 Enregistre ta voix (remplace la voix de synthèse pour ce texte)</label>
+      <div class="mic-row">
+        <button class="mic-btn record" onclick="startRecording()">🔴 Enregistrer</button>
+      </div>
+    </div>`;
+}
+
+/* =========================================================================
+   OUTILS
+   ========================================================================= */
+function normalize(str){
+  return String(str).trim().toLowerCase()
+    .normalize("NFD").replace(/[\u0300-\u036f]/g,"")
+    .replace(/\s+/g," ");
+}
+function todayStr(){
+  const d = new Date();
+  return d.getFullYear()+"-"+(d.getMonth()+1)+"-"+d.getDate();
+}
+function updateStreak(){
+  const today = todayStr();
+  if(student.lastConnection === today) return;
+  const last = student.lastConnection ? new Date(student.lastConnection) : null;
+  const now = new Date();
+  if(last){
+    const diffDays = Math.round((now - last) / 86400000);
+    student.streak = (diffDays === 1) ? (student.streak + 1) : 1;
+  } else {
+    student.streak = 1;
+  }
+  student.lastConnection = today;
+}
+function checkBadges(){
+  const nbLec = student.completed.lecture.length;
+  const nbMat = student.completed.maths.length;
+  const nbBib = student.completed.bible.length;
+  const want = [];
+  if(nbLec >= 4) want.push({id:"lec-4", icon:"📖", label:"4 leçons de lecture"});
+  if(nbLec >= CONTENT.lecture.length) want.push({id:"lec-8", icon:"🏆", label:"Lecture terminée"});
+  if(nbMat >= 4) want.push({id:"mat-4", icon:"🔢", label:"4 leçons de maths"});
+  if(nbMat >= CONTENT.maths.length) want.push({id:"mat-8", icon:"🏆", label:"Maths terminées"});
+  if(nbBib >= 4) want.push({id:"bib-4", icon:"⭐", label:"4 histoires bibliques"});
+  if(nbBib >= CONTENT.bible.length) want.push({id:"bib-8", icon:"🕊️", label:"Étude biblique terminée"});
+  if(student.points >= 100) want.push({id:"pts-100", icon:"⭐", label:"100 points"});
+  if(student.streak >= 3) want.push({id:"streak-3", icon:"🔥", label:"3 jours de suite"});
+  want.forEach(b=>{
+    if(!student.badges.find(x=>x.id===b.id)) student.badges.push(b);
+  });
+}
+
+/* =========================================================================
+   CONTENU MODIFIABLE (fusion CONTENT + overrides admin)
+   ========================================================================= */
+function getLessonData(track, lessonId){
+  const base = CONTENT[track].find(l => l.id === lessonId);
+  if(!base) return null;
+  const ov = contentOverrides[lessonId];
+  if(!ov) return Object.assign({}, base, {
+    coursAudio: base.cours, coursRecording: null,
+    exos: base.exos.map(e=>Object.assign({}, e, {qAudio:e.q, qRecording:null}))
+  });
+  return {
+    id: base.id,
+    icon: base.icon,
+    montessori: base.montessori || false,
+    game: base.game || null,
+    words: base.words || null,
+    title: ov.title || base.title,
+    cours: ov.cours || base.cours,
+    coursAudio: ov.coursAudio || ov.cours || base.cours,
+    coursRecording: ov.coursRecording || null,
+    exos: base.exos.map((exo, i)=>{
+      const oe = (ov.exos && ov.exos[i]) || {};
+      return {
+        type: exo.type,
+        q: oe.q || exo.q,
+        qAudio: oe.qAudio || oe.q || exo.q,
+        qRecording: oe.qRecording || null,
+        options: oe.options || exo.options,
+        answer: oe.answer || exo.answer
+      };
+    })
+  };
+}
+
+async function loadContentOverrides(){
+  if(!CONFIG.SCRIPT_URL || CONFIG.SCRIPT_URL.indexOf("COLLE_ICI") !== -1) return;
+  try{
+    const res = await fetch(CONFIG.SCRIPT_URL + "?" + new URLSearchParams({action:"loadContent"}).toString());
+    const data = await res.json();
+    if(data && data.ok && data.content) contentOverrides = data.content;
+  }catch(e){ /* silencieux : on garde le contenu par défaut */ }
+}
+loadContentOverrides();
+
+/* =========================================================================
+   SYNCHRONISATION (Google Apps Script)
+   ========================================================================= */
+async function apiCall(action, extraParams){
+  if(!CONFIG.SCRIPT_URL || CONFIG.SCRIPT_URL.indexOf("COLLE_ICI") !== -1){
+    return {ok:false, offline:true};
+  }
+  const params = new URLSearchParams({action, prenom: student.prenom, code: student.code, ...(extraParams||{})});
+  try{
+    const res = await fetch(CONFIG.SCRIPT_URL + "?" + params.toString());
+    const data = await res.json();
+    return data;
+  }catch(e){
+    return {ok:false, error:String(e)};
+  }
+}
+
+async function saveContentPost(lessonId, data){
+  if(!CONFIG.SCRIPT_URL || CONFIG.SCRIPT_URL.indexOf("COLLE_ICI") !== -1){
+    return {ok:false, offline:true};
+  }
+  try{
+    const res = await fetch(CONFIG.SCRIPT_URL, {
+      method:"POST",
+      headers:{"Content-Type":"text/plain;charset=utf-8"}, // évite le préflight CORS
+      body: JSON.stringify({action:"saveContent", lessonId, data})
+    });
+    return await res.json();
+  }catch(e){
+    return {ok:false, error:String(e)};
+  }
+}
+
+async function uploadAudio(lessonId, fieldKey, dataUri){
+  if(!CONFIG.SCRIPT_URL || CONFIG.SCRIPT_URL.indexOf("COLLE_ICI") !== -1){
+    return {ok:false, offline:true};
+  }
+  try{
+    const res = await fetch(CONFIG.SCRIPT_URL, {
+      method:"POST",
+      headers:{"Content-Type":"text/plain;charset=utf-8"},
+      body: JSON.stringify({action:"saveAudio", lessonId, fieldKey, dataUri})
+    });
+    return await res.json();
+  }catch(e){
+    return {ok:false, error:String(e)};
+  }
+}
+async function loadFromServer(){
+  const data = await apiCall("load");
+  if(data && data.ok && data.found){
+    student.points = data.points || 0;
+    student.streak = data.streak || 0;
+    student.lastConnection = data.lastConnection || "";
+    student.completed.lecture = data.completedLecture || [];
+    student.completed.maths = data.completedMaths || [];
+    student.completed.bible = data.completedBible || [];
+    student.badges = data.badges || [];
+  }
+  return data;
+}
+async function saveToServer(){
+  await apiCall("save", {
+    points: student.points,
+    streak: student.streak,
+    lastConnection: student.lastConnection,
+    completedLecture: JSON.stringify(student.completed.lecture),
+    completedMaths: JSON.stringify(student.completed.maths),
+    completedBible: JSON.stringify(student.completed.bible),
+    badges: JSON.stringify(student.badges)
+  });
+}
+
+/* =========================================================================
+   ESPACE ADMIN — modifier les textes et les audios des leçons
+   (connexion admin gérée directement dans le formulaire de connexion,
+   voir le gestionnaire de clic de btn-login plus bas)
+   ========================================================================= */
+async function saveCoursEdit(){
+  const lessonId = currentLesson.id;
+  const ov = contentOverrides[lessonId]
+    ? Object.assign({}, contentOverrides[lessonId])
+    : {exos: currentLesson.exos.map(()=>({}))};
+  ov.title = document.getElementById("edit-title").value.trim();
+  ov.cours = document.getElementById("edit-cours").value.trim();
+  ov.coursAudio = document.getElementById("edit-coursaudio").value.trim();
+
+  if(pendingRecording && pendingRecording.startsWith("data:")){
+    const up = await uploadAudio(lessonId, "cours", pendingRecording);
+    if(up && up.ok){ ov.coursRecording = up.url; }
+    else { alert("L'envoi de l'enregistrement audio a échoué, mais le texte a bien été sauvegardé."); }
+  } else {
+    ov.coursRecording = pendingRecording || "";
+  }
+
+  contentOverrides[lessonId] = ov;
+  const msg = await saveContentPost(lessonId, JSON.stringify(ov));
+  pendingRecording = null;
+  currentLesson = getLessonData(currentTrack, lessonId);
+  editingField = null;
+  renderLessonScreen();
+  if(msg && msg.error) alert(msg.error);
+}
+
+async function saveExoEdit(){
+  const lessonId = currentLesson.id;
+  const exo = currentLesson.exos[exoIndex];
+  const ov = contentOverrides[lessonId]
+    ? Object.assign({}, contentOverrides[lessonId])
+    : {};
+  if(!ov.exos) ov.exos = currentLesson.exos.map(()=>({}));
+  const entry = {
+    q: document.getElementById("edit-exoq").value.trim(),
+    qAudio: document.getElementById("edit-exoqaudio").value.trim(),
+    answer: document.getElementById("edit-exoanswer").value.trim()
+  };
+  if(exo.type === "qcm"){
+    entry.options = document.getElementById("edit-exooptions").value.split("|").map(s=>s.trim()).filter(Boolean);
+  }
+
+  if(pendingRecording && pendingRecording.startsWith("data:")){
+    const up = await uploadAudio(lessonId, "exo" + exoIndex, pendingRecording);
+    if(up && up.ok){ entry.qRecording = up.url; }
+    else { alert("L'envoi de l'enregistrement audio a échoué, mais le texte a bien été sauvegardé."); entry.qRecording = ""; }
+  } else {
+    entry.qRecording = pendingRecording || "";
+  }
+
+  ov.exos[exoIndex] = entry;
+  contentOverrides[lessonId] = ov;
+  const msg = await saveContentPost(lessonId, JSON.stringify(ov));
+  pendingRecording = null;
+  currentLesson = getLessonData(currentTrack, lessonId);
+  editingField = null;
+  renderLessonScreen();
+  if(msg && msg.error) alert(msg.error);
+}
+
+/* =========================================================================
+   DÉCONNEXION
+   ========================================================================= */
+function logout(){
+  isAdmin = false;
+  editingField = null;
+  student = {
+    prenom:"", code:"",
+    points:0, streak:0, lastConnection:"",
+    completed:{lecture:[], maths:[], bible:[]},
+    badges:[]
+  };
+  currentTrack = "lecture";
+  document.getElementById("lesson-screen").classList.add("hidden");
+  document.getElementById("app-screen").classList.add("hidden");
+  document.getElementById("login-screen").classList.remove("hidden");
+  document.getElementById("input-prenom").value = "";
+  document.getElementById("input-code").value = "";
+  document.getElementById("login-msg").textContent = "";
+  switchTrack("lecture");
+}
+
+document.getElementById("btn-login").addEventListener("click", async ()=>{
+  const prenom = document.getElementById("input-prenom").value.trim();
+  const code = document.getElementById("input-code").value.trim();
+  const msg = document.getElementById("login-msg");
+  if(!prenom || !code){
+    msg.textContent = "Écris ton prénom et ton code pour continuer.";
+    return;
+  }
+
+  // Identifiant admin : mêmes champs que l'élève, mais reconnu comme admin
+  if(prenom.toLowerCase() === CONFIG.ADMIN_ID.toLowerCase() && code === CONFIG.ADMIN_PASSWORD){
+    isAdmin = true;
+    student = {
+      prenom:"Admin", code:"",
+      points:0, streak:0, lastConnection:"",
+      completed:{lecture:[], maths:[], bible:[]},
+      badges:[]
+    };
+    document.getElementById("login-screen").classList.add("hidden");
+    document.getElementById("app-screen").classList.remove("hidden");
+    switchTrack("lecture");
+    return;
+  }
+
+  student.prenom = prenom;
+  student.code = code;
+  msg.textContent = "Connexion en cours...";
+  const result = await loadFromServer();
+  if(result && result.offline){
+    msg.textContent = "Mode hors-ligne : la progression ne sera pas sauvegardée tant que l'URL Apps Script n'est pas configurée.";
+  } else if(result && !result.ok){
+    msg.textContent = "Impossible de contacter le serveur, on continue quand même !";
+  } else {
+    msg.textContent = "";
+  }
+  updateStreak();
+  saveToServer();
+  document.getElementById("login-screen").classList.add("hidden");
+  document.getElementById("app-screen").classList.remove("hidden");
+  renderApp();
+});
+
+/* =========================================================================
+   NAVIGATION PRINCIPALE
+   ========================================================================= */
+function switchTrack(track){
+  currentTrack = track;
+  ["lecture","maths","bible","jeux"].forEach(t=>{
+    document.getElementById("tab-"+t).classList.toggle("active", track===t);
+  });
+  renderApp();
+}
+
+function renderApp(){
+  document.getElementById("topbar-name").textContent = student.prenom + (isAdmin ? " (mode admin)" : "");
+  document.getElementById("topbar-points").textContent = student.points;
+  document.getElementById("topbar-streak").textContent = student.streak;
+
+  // Badges
+  const badgesRow = document.getElementById("badges-row");
+  badgesRow.innerHTML = "";
+  student.badges.forEach(b=>{
+    const chip = document.createElement("div");
+    chip.className = "badge-chip";
+    chip.innerHTML = `<span>${b.icon}</span><span>${b.label}</span>`;
+    badgesRow.appendChild(chip);
+  });
+
+  // Chemin de leçons (ou écran spécial pour l'onglet Jeux)
+  if(currentTrack === "jeux"){
+    renderJeuxTab();
+    return;
+  }
+  const container = document.getElementById("path-container");
+  container.innerHTML = "";
+  const lessons = CONTENT[currentTrack];
+  const done = student.completed[currentTrack];
+  const positions = ["left","center","right","center"];
+
+  lessons.forEach((lesson, i)=>{
+    const merged = getLessonData(currentTrack, lesson.id);
+    const isDone = done.includes(lesson.id);
+    const isUnlocked = isAdmin || i === 0 || done.includes(lessons[i-1].id);
+    const isCurrent = isUnlocked && !isDone;
+
+    const wrap = document.createElement("div");
+    wrap.className = "node-wrap " + positions[i % positions.length];
+
+    const node = document.createElement("div");
+    node.className = "node" + (isDone ? " done" : "") + (!isUnlocked ? " locked" : "") + (isCurrent ? " current" : "");
+    node.innerHTML = `<span class="icon">${isDone ? "✅" : lesson.icon}</span><span>${merged.title}</span>`;
+    if(isUnlocked){
+      node.addEventListener("click", ()=> openLesson(merged, lesson.id));
+    }
+    wrap.appendChild(node);
+    container.appendChild(wrap);
+  });
+}
+
+/* =========================================================================
+   LEÇON + EXERCICES
+   ========================================================================= */
+/* =========================================================================
+   ONGLET JEUX — jeux liés au contenu déjà appris dans les leçons
+   ========================================================================= */
+function renderJeuxTab(){
+  const container = document.getElementById("path-container");
+  const nbCompleted = student.completed.lecture.length + student.completed.maths.length + student.completed.bible.length;
+  const ready = nbCompleted >= 3;
+  container.innerHTML = `
+    <div class="lesson-card pop-in" style="text-align:center;">
+      <h2>⚡ Révision éclair</h2>
+      <p>Un mini-quiz avec des questions piochées au hasard parmi toutes les leçons que tu as déjà terminées (lecture, maths et Bible confondues).</p>
+      <button class="btn btn-full" style="background:var(--game);color:white;box-shadow:0 5px 0 #c73764;" onclick="startRevisionGame()" ${ready ? "" : "disabled"}>
+        ${ready ? "Jouer !" : "Termine encore quelques leçons pour débloquer ce jeu"}
+      </button>
+    </div>
+  `;
+}
+
+function buildRevisionPool(){
+  const pool = [];
+  ["lecture","maths","bible"].forEach(track=>{
+    student.completed[track].forEach(lessonId=>{
+      const lesson = getLessonData(track, lessonId);
+      if(!lesson || !lesson.exos) return;
+      lesson.exos.forEach(exo=>{
+        if(exo.type === "qcm" || exo.type === "texte") pool.push(exo);
+      });
+    });
+  });
+  return pool;
+}
+
+function shuffleArray(arr){
+  const a = arr.slice();
+  for(let i=a.length-1; i>0; i--){
+    const j = Math.floor(Math.random()*(i+1));
+    [a[i], a[j]] = [a[j], a[i]];
+  }
+  return a;
+}
+
+function startRevisionGame(){
+  const pool = buildRevisionPool();
+  if(pool.length < 3){
+    alert("Termine encore quelques leçons avant de pouvoir jouer à la révision éclair !");
+    return;
+  }
+  const picked = shuffleArray(pool).slice(0, Math.min(10, pool.length));
+  const revisionLesson = {
+    id: "revision-" + Date.now(),
+    icon: "⚡",
+    montessori: false,
+    title: "Révision éclair",
+    cours: "Réponds aux questions le plus vite possible ! Elles viennent de tes leçons déjà terminées.",
+    coursAudio: "Réponds aux questions le plus vite possible ! Elles viennent de tes leçons déjà terminées.",
+    coursRecording: null,
+    exos: picked.map(e => Object.assign({}, e))
+  };
+  openLesson(revisionLesson, revisionLesson.id);
+}
+
+function openLesson(lesson, lessonId){
+  currentLesson = lesson;
+  currentLesson._id = lessonId || lesson.id;
+  exoIndex = -1; // -1 = écran de cours
+  exoScore = 0;
+  editingField = null;
+  pendingRecording = null;
+  document.getElementById("lesson-screen").classList.remove("hidden");
+  renderLessonScreen();
+}
+function closeLesson(){
+  document.getElementById("lesson-screen").classList.add("hidden");
+  renderApp();
+}
+
+function playAudioOrSpeak(recording, text){
+  if(!audioEnabled) return;
+  lastSpokenText = text;
+  if(recording){
+    const el = document.getElementById("tts-audio-player");
+    el.onended = null;
+    el.src = recording;
+    el.play().catch(()=>{});
+  } else {
+    speak(text);
+  }
+}
+
+function playExercise(exo){
+  if(exo.qRecording){
+    lastSpokenText = exo.qAudio;
+    const el = document.getElementById("tts-audio-player");
+    el.onended = ()=>{
+      el.onended = null;
+      if(exo.type === "qcm"){
+        speakSequence(exo.options.map((opt,i)=>"Réponse " + (i+1) + ". " + opt));
+      }
+    };
+    el.src = exo.qRecording;
+    el.play().catch(()=>{});
+  } else {
+    speak(spokenTextForExo(exo));
+  }
+}
+
+function openEditCours(){
+  pendingRecording = currentLesson.coursRecording;
+  editingField = "cours";
+  renderLessonScreen();
+}
+function openEditExo(){
+  pendingRecording = currentLesson.exos[exoIndex].qRecording;
+  editingField = "exo";
+  renderLessonScreen();
+}
+
+function renderLessonScreen(){
+  const inner = document.getElementById("lesson-inner");
+  if(exoIndex === -1){
+    if(isAdmin && editingField === "cours"){
+      inner.innerHTML = `
+        <button class="back-btn" onclick="pendingRecording=null; editingField=null; renderLessonScreen();">← Annuler</button>
+        <div class="lesson-card pop-in">
+          <div class="admin-field"><label>Titre de la leçon</label><input id="edit-title" value="${currentLesson.title}"></div>
+          <div class="admin-field"><label>Cours (texte affiché)</label><textarea id="edit-cours">${currentLesson.cours}</textarea></div>
+          <div class="admin-field"><label>Cours (texte lu à voix haute par la synthèse, laisser vide si identique)</label><textarea id="edit-coursaudio">${currentLesson.coursAudio === currentLesson.cours ? "" : currentLesson.coursAudio}</textarea></div>
+          ${micBlockHtml()}
+          <button class="btn btn-leaf btn-full" onclick="saveCoursEdit()">💾 Enregistrer</button>
+        </div>
+      `;
+      return;
+    }
+    replayCurrent = ()=> playAudioOrSpeak(currentLesson.coursRecording, currentLesson.coursAudio);
+    inner.innerHTML = `
+      <button class="back-btn" onclick="closeLesson()">← Retour</button>
+      <div class="lesson-card pop-in${currentLesson.montessori ? ' montessori' : ''}">
+        ${currentLesson.montessori ? '<div class="montessori-badge">🪵 Atelier Montessori</div><br>' : ''}
+        <h2>${currentLesson.icon} ${currentLesson.title}</h2>
+        <button class="speaker-btn" onclick="replayCurrent()">🔊 Réécouter</button>
+        ${isAdmin ? `<button class="speaker-btn" onclick="openEditCours()">✏️ Modifier</button>` : ""}
+        <div class="cours-text">${currentLesson.cours}</div>
+        <button class="btn btn-leaf btn-full" onclick="${currentLesson.game === 'motsmeles' ? 'startMotsMeles()' : 'startExercises()'}">Je m'entraîne</button>
+      </div>
+    `;
+    playAudioOrSpeak(currentLesson.coursRecording, currentLesson.coursAudio);
+    return;
+  }
+  if(exoIndex >= currentLesson.exos.length){
+    renderResult();
+    return;
+  }
+  const exo = currentLesson.exos[exoIndex];
+  const total = currentLesson.exos.length;
+
+  if(isAdmin && editingField === "exo"){
+    inner.innerHTML = `
+      <button class="back-btn" onclick="pendingRecording=null; editingField=null; renderLessonScreen();">← Annuler</button>
+      <div class="lesson-card pop-in">
+        <div class="admin-field"><label>Question ${exoIndex+1} (texte affiché)</label><textarea id="edit-exoq">${exo.q}</textarea></div>
+        <div class="admin-field"><label>Question ${exoIndex+1} (texte lu à voix haute par la synthèse, laisser vide si identique)</label><textarea id="edit-exoqaudio">${exo.qAudio === exo.q ? "" : exo.qAudio}</textarea></div>
+        ${micBlockHtml()}
+        ${exo.type === "qcm" ? `<div class="admin-field"><label>Réponses possibles (séparées par | )</label><input id="edit-exooptions" value="${exo.options.join(" | ")}"></div>` : ""}
+        <div class="admin-field"><label>Bonne réponse</label><input id="edit-exoanswer" value="${exo.answer}"></div>
+        <button class="btn btn-leaf btn-full" onclick="saveExoEdit()">💾 Enregistrer</button>
+      </div>
+    `;
+    return;
+  }
+
+  selectedOptionIdx = null;
+  let progressHtml = "";
+  for(let i=0;i<total;i++){
+    progressHtml += `<span class="${i < exoIndex ? 'filled' : ''}"></span>`;
+  }
+
+  let bodyHtml = "";
+  if(exo.type === "qcm"){
+    const clip = currentLesson.montessori ? "📎 " : "";
+    bodyHtml = `<div class="options">` + exo.options.map((opt,idx)=>
+      `<button class="option-btn" data-idx="${idx}" onclick="selectOption(${idx})">${clip}${opt}</button>`
+    ).join("") + `</div>
+    <div class="continue-wrap">
+      <button class="btn btn-lilac" id="validate-btn" onclick="validateQcm()" disabled>Valider</button>
+    </div>`;
+  } else if(exo.type === "glisser"){
+    bodyHtml = renderGlisserBody(exo);
+  } else {
+    bodyHtml = `
+      <div class="text-answer">
+        <input type="text" id="text-input" placeholder="Ta réponse">
+      </div>
+      <div class="continue-wrap">
+        <button class="btn btn-lilac" onclick="answerTexte()">Valider</button>
+      </div>
+    `;
+  }
+
+  replayCurrent = ()=> playExercise(exo);
+  inner.innerHTML = `
+    <button class="back-btn" onclick="closeLesson()">← Retour</button>
+    <div class="lesson-card pop-in${currentLesson.montessori ? ' montessori' : ''}">
+      ${currentLesson.montessori ? '<div class="montessori-badge">🪵 Atelier Montessori</div><br>' : ''}
+      <div class="exo-progress">${progressHtml}</div>
+      <button class="speaker-btn" onclick="replayCurrent()">🔊 Réécouter</button>
+      ${isAdmin ? `<button class="speaker-btn" onclick="openEditExo()">✏️ Modifier</button>` : ""}
+      <div class="exo-question">${exo.q}</div>
+      ${bodyHtml}
+      <div class="feedback" id="feedback"></div>
+    </div>
+  `;
+  playExercise(exo);
+  if(exo.type === "texte"){
+    const input = document.getElementById("text-input");
+    input.focus();
+    input.addEventListener("keydown", e=>{ if(e.key === "Enter") answerTexte(); });
+  }
+  if(exo.type === "glisser"){
+    initGlisserDrag(exo);
+  }
+  waitingContinue = false;
+}
+
+/* =========================================================================
+   GLISSER-DÉPOSER (vrai jeu tactile, pointer events)
+   ========================================================================= */
+let glisserFilled = {};
+
+function renderGlisserBody(exo){
+  const eqHtml = exo.equations.map(e=>`<div>${e}</div>`).join("");
+  const zonesHtml = exo.zones.map(z=>`
+    <div class="glisser-zone" id="zone-${z.id}" data-zone="${z.id}">
+      <span class="zone-symbol">${z.symbol}</span>
+      <span class="zone-value" id="zone-value-${z.id}"></span>
+    </div>
+  `).join("");
+  const piecesHtml = exo.pieces.map(p=>`
+    <div class="glisser-piece" id="piece-${p.id}" data-piece="${p.id}" data-value="${p.value}">${p.value}</div>
+  `).join("");
+  return `
+    <div class="glisser-equations">${eqHtml}</div>
+    <div class="glisser-zones">${zonesHtml}</div>
+    <div class="glisser-tray" id="glisser-tray">${piecesHtml}</div>
+    <div class="continue-wrap">
+      <button class="btn btn-lilac" id="validate-btn" onclick="validateGlisser()" disabled>Valider</button>
+    </div>
+  `;
+}
+
+function initGlisserDrag(exo){
+  glisserFilled = {};
+  document.querySelectorAll(".glisser-piece").forEach(pieceEl=>{
+    pieceEl.addEventListener("pointerdown", (e)=> onGlisserPointerDown(e, pieceEl, exo));
+  });
+}
+
+function onGlisserPointerDown(e, pieceEl, exo){
+  if(pieceEl.classList.contains("placed")) return;
+  e.preventDefault();
+  const startRect = pieceEl.getBoundingClientRect();
+  const offsetX = e.clientX - startRect.left;
+  const offsetY = e.clientY - startRect.top;
+  pieceEl.style.left = startRect.left + "px";
+  pieceEl.style.top = startRect.top + "px";
+  pieceEl.style.width = startRect.width + "px";
+  pieceEl.style.height = startRect.height + "px";
+  pieceEl.classList.add("dragging");
+  try{ pieceEl.setPointerCapture(e.pointerId); }catch(err){}
+
+  const move = (ev)=>{
+    pieceEl.style.left = (ev.clientX - offsetX) + "px";
+    pieceEl.style.top = (ev.clientY - offsetY) + "px";
+  };
+  const up = (ev)=>{
+    pieceEl.removeEventListener("pointermove", move);
+    pieceEl.removeEventListener("pointerup", up);
+    pieceEl.classList.remove("dragging");
+    pieceEl.style.left = ""; pieceEl.style.top = ""; pieceEl.style.width = ""; pieceEl.style.height = "";
+    const dropEl = document.elementFromPoint(ev.clientX, ev.clientY);
+    const zoneEl = dropEl ? dropEl.closest(".glisser-zone") : null;
+    if(zoneEl){
+      const zoneId = zoneEl.dataset.zone;
+      const value = pieceEl.dataset.value;
+      if(!glisserFilled[zoneId] && String(exo.answer[zoneId]) === String(value)){
+        glisserFilled[zoneId] = pieceEl.dataset.piece;
+        zoneEl.classList.add("filled");
+        const zv = document.getElementById("zone-value-"+zoneId);
+        if(zv) zv.textContent = value;
+        pieceEl.classList.add("placed");
+        speak("Bravo, " + value + " va à cet endroit.");
+        checkGlisserDone(exo);
+      } else {
+        speak("Ce n'est pas la bonne case, essaie encore.");
+      }
+    }
+  };
+  pieceEl.addEventListener("pointermove", move);
+  pieceEl.addEventListener("pointerup", up);
+}
+
+function checkGlisserDone(exo){
+  const btn = document.getElementById("validate-btn");
+  if(btn) btn.disabled = Object.keys(glisserFilled).length < exo.zones.length;
+}
+
+function validateGlisser(){
+  if(waitingContinue) return;
+  waitingContinue = true;
+  const btn = document.getElementById("validate-btn");
+  if(btn) btn.disabled = true;
+  showFeedback(true);
+}
+
+/* =========================================================================
+   MOTS MÊLÉS (vraie grille interactive)
+   ========================================================================= */
+let mmGrid = [], mmSize = 0, mmFound = {}, mmSelecting = false, mmStart = null, mmCurrent = null;
+
+function generateWordSearch(words){
+  const upperWords = words.map(w=>w.toUpperCase());
+  const maxLen = Math.max(...upperWords.map(w=>w.length));
+  const size = Math.max(10, maxLen + 2);
+  const grid = Array.from({length:size}, ()=>Array(size).fill(null));
+  const dirs = [[0,1],[1,0],[1,1],[1,-1],[0,-1],[-1,0],[-1,-1],[-1,1]];
+  const sorted = upperWords.slice().sort((a,b)=>b.length-a.length);
+  sorted.forEach(word=>{
+    let placed = false;
+    for(let attempt=0; attempt<300 && !placed; attempt++){
+      const dir = dirs[Math.floor(Math.random()*dirs.length)];
+      const row0 = Math.floor(Math.random()*size);
+      const col0 = Math.floor(Math.random()*size);
+      const endRow = row0 + dir[0]*(word.length-1);
+      const endCol = col0 + dir[1]*(word.length-1);
+      if(endRow<0||endRow>=size||endCol<0||endCol>=size) continue;
+      let ok = true;
+      for(let i=0;i<word.length;i++){
+        const r=row0+dir[0]*i, c=col0+dir[1]*i;
+        if(grid[r][c] !== null && grid[r][c] !== word[i]){ ok=false; break; }
+      }
+      if(!ok) continue;
+      for(let i=0;i<word.length;i++){
+        const r=row0+dir[0]*i, c=col0+dir[1]*i;
+        grid[r][c]=word[i];
+      }
+      placed = true;
+    }
+  });
+  const letters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+  for(let r=0;r<size;r++) for(let c=0;c<size;c++){
+    if(grid[r][c]===null) grid[r][c] = letters[Math.floor(Math.random()*letters.length)];
+  }
+  return {grid, size};
+}
+
+function startMotsMeles(){
+  const gen = generateWordSearch(currentLesson.words);
+  mmGrid = gen.grid; mmSize = gen.size; mmFound = {};
+  document.getElementById("lesson-inner").innerHTML = renderMotsMelesHtml();
+  attachMotsMelesEvents();
+  speak(["Trouve tous les mots de la liste dans la grille.", "Glisse ton doigt en ligne droite d'une lettre à l'autre."]);
+}
+
+function renderMotsMelesHtml(){
+  const wordsHtml = currentLesson.words.map(w=>
+    `<span class="mm-word-chip" id="mm-chip-${w}">${w}</span>`
+  ).join("");
+  let cellsHtml = "";
+  for(let r=0;r<mmSize;r++){
+    for(let c=0;c<mmSize;c++){
+      cellsHtml += `<div class="mm-cell" data-r="${r}" data-c="${c}" id="mm-cell-${r}-${c}">${mmGrid[r][c]}</div>`;
+    }
+  }
+  return `
+    <button class="back-btn" onclick="closeLesson()">← Retour</button>
+    <div class="lesson-card pop-in">
+      <h2>${currentLesson.icon} ${currentLesson.title}</h2>
+      <div class="mm-wordlist" id="mm-wordlist">${wordsHtml}</div>
+      <div class="mm-grid" id="mm-grid" style="grid-template-columns:repeat(${mmSize}, 1fr); max-width:${mmSize*34}px;">${cellsHtml}</div>
+    </div>
+  `;
+}
+
+function attachMotsMelesEvents(){
+  const gridEl = document.getElementById("mm-grid");
+  gridEl.addEventListener("pointerdown", (e)=>{
+    const cell = e.target.closest(".mm-cell");
+    if(!cell) return;
+    mmSelecting = true;
+    mmStart = {r:+cell.dataset.r, c:+cell.dataset.c};
+    mmCurrent = mmStart;
+    updateMmSelectionVisual();
+    try{ gridEl.setPointerCapture(e.pointerId); }catch(err){}
+  });
+  gridEl.addEventListener("pointermove", (e)=>{
+    if(!mmSelecting) return;
+    const el = document.elementFromPoint(e.clientX, e.clientY);
+    const cell = el ? el.closest(".mm-cell") : null;
+    if(!cell) return;
+    const r = +cell.dataset.r, c = +cell.dataset.c;
+    const dr = r - mmStart.r, dc = c - mmStart.c;
+    if(dr===0 || dc===0 || Math.abs(dr)===Math.abs(dc)){
+      mmCurrent = {r,c};
+      updateMmSelectionVisual();
+    }
+  });
+  gridEl.addEventListener("pointerup", ()=>{
+    if(!mmSelecting) return;
+    mmSelecting = false;
+    finalizeMmSelection();
+  });
+}
+
+function getMmSelectedCells(){
+  const cells = [];
+  const dr = Math.sign(mmCurrent.r - mmStart.r);
+  const dc = Math.sign(mmCurrent.c - mmStart.c);
+  const len = Math.max(Math.abs(mmCurrent.r-mmStart.r), Math.abs(mmCurrent.c-mmStart.c)) + 1;
+  for(let i=0;i<len;i++) cells.push({r:mmStart.r+dr*i, c:mmStart.c+dc*i});
+  return cells;
+}
+
+function updateMmSelectionVisual(){
+  document.querySelectorAll(".mm-cell.selecting").forEach(el=>el.classList.remove("selecting"));
+  getMmSelectedCells().forEach(({r,c})=>{
+    const el = document.getElementById("mm-cell-"+r+"-"+c);
+    if(el && !el.classList.contains("found")) el.classList.add("selecting");
+  });
+}
+
+function finalizeMmSelection(){
+  const cells = getMmSelectedCells();
+  document.querySelectorAll(".mm-cell.selecting").forEach(el=>el.classList.remove("selecting"));
+  const letters = cells.map(({r,c})=>mmGrid[r][c]).join("");
+  const reversed = letters.split("").reverse().join("");
+  const target = currentLesson.words.find(w=>{
+    const W = w.toUpperCase();
+    return (W===letters || W===reversed) && !mmFound[W];
+  });
+  if(target){
+    const W = target.toUpperCase();
+    mmFound[W] = true;
+    cells.forEach(({r,c})=>{
+      const el = document.getElementById("mm-cell-"+r+"-"+c);
+      if(el) el.classList.add("found");
+    });
+    const chip = document.getElementById("mm-chip-"+target);
+    if(chip) chip.classList.add("found");
+    speak("Bravo, tu as trouvé " + target + " !");
+    if(Object.keys(mmFound).length === currentLesson.words.length){
+      setTimeout(finishMotsMeles, 900);
+    }
+  }
+}
+
+function finishMotsMeles(){
+  const earned = currentLesson.words.length * 10;
+  student.points += earned;
+  const list = student.completed[currentTrack];
+  if(list && !list.includes(currentLesson.id)) list.push(currentLesson.id);
+  checkBadges();
+  if(!isAdmin) saveToServer();
+  document.getElementById("lesson-inner").innerHTML = `
+    <div class="lesson-card result-card pop-in">
+      <div class="result-emoji">🏆</div>
+      <h2>Bravo, grille terminée !</h2>
+      <p>Tu as trouvé tous les mots.</p>
+      <div class="result-points">+ ${earned} points ⭐</div>
+      <button class="btn btn-leaf btn-full" style="margin-top:18px;" onclick="closeLesson()">Continuer</button>
+    </div>
+  `;
+  speak("Bravo, tu as terminé la grille de mots mêlés !");
+}
+
+function goToNextExo(){
+  exoIndex++;
+  editingField = null;
+  renderLessonScreen();
+}
+
+function showFeedback(isCorrect){
+  const fb = document.getElementById("feedback");
+  fb.className = "feedback " + (isCorrect ? "ok" : "ko");
+  fb.textContent = isCorrect ? "Bravo, bonne réponse ! ⭐" : "Pas tout à fait, continue !";
+  speak(isCorrect ? "Bravo, bonne réponse !" : "Pas tout à fait, continue.");
+  if(isCorrect) exoScore++;
+  setTimeout(goToNextExo, 1100);
+}
+
+function selectOption(idx){
+  if(waitingContinue) return;
+  selectedOptionIdx = idx;
+  const exo = currentLesson.exos[exoIndex];
+  document.querySelectorAll(".option-btn").forEach((b,i)=>{
+    b.classList.toggle("selected", i === idx);
+  });
+  const validateBtn = document.getElementById("validate-btn");
+  if(validateBtn) validateBtn.disabled = false;
+  speak("Tu as choisi : " + exo.options[idx]);
+}
+
+function validateQcm(){
+  if(waitingContinue || selectedOptionIdx === null) return;
+  waitingContinue = true;
+  const exo = currentLesson.exos[exoIndex];
+  const buttons = document.querySelectorAll(".option-btn");
+  const chosen = normalize(exo.options[selectedOptionIdx]);
+  const correct = normalize(exo.answer);
+  buttons.forEach((b,i)=>{
+    b.disabled = true;
+    if(normalize(exo.options[i]) === correct) b.classList.add("correct");
+    else if(i === selectedOptionIdx) b.classList.add("wrong");
+  });
+  const validateBtn = document.getElementById("validate-btn");
+  if(validateBtn) validateBtn.disabled = true;
+  showFeedback(chosen === correct);
+}
+
+function answerTexte(){
+  if(waitingContinue) return;
+  waitingContinue = true;
+  const exo = currentLesson.exos[exoIndex];
+  const val = document.getElementById("text-input").value;
+  const isCorrect = normalize(val) === normalize(exo.answer);
+  showFeedback(isCorrect);
+}
+
+function startExercises(){
+  exoIndex = 0;
+  editingField = null;
+  renderLessonScreen();
+}
+
+function renderResult(){
+  const total = currentLesson.exos.length;
+  const earned = exoScore * 10 + (total - exoScore) * 3;
+  student.points += earned;
+
+  const list = student.completed[currentTrack];
+  if(list && !list.includes(currentLesson.id)) list.push(currentLesson.id);
+
+  checkBadges();
+  if(!isAdmin) saveToServer();
+
+  const inner = document.getElementById("lesson-inner");
+  inner.innerHTML = `
+    <div class="lesson-card result-card pop-in">
+      <div class="result-emoji">${exoScore === total ? "🏆" : "🎉"}</div>
+      <h2>Leçon terminée !</h2>
+      <p>${exoScore} / ${total} bonnes réponses</p>
+      <div class="result-points">+ ${earned} points ⭐</div>
+      <button class="btn btn-leaf btn-full" style="margin-top:18px;" onclick="closeLesson()">Continuer</button>
+    </div>
+  `;
+  speak("Bravo, tu as terminé la leçon ! Tu as gagné " + earned + " points.");
+}
+</script>
+</body>
+</html>
